@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "yeplist-evo": {
+      "hosting": {
+        "yeplist-evo": [
+          "yeplist-evo"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "yeplist-evo"
+  }
+}
