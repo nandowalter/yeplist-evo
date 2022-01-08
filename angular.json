@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/yeplist-evo",
+            "outputPath": "dist/yeplist-evo/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -98,6 +98,80 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "ssr": "cloud-functions",
+            "prerender": false,
+            "firebaseProject": "yeplist-evo",
+            "firebaseHostingSite": "yeplist-evo",
+            "functionName": "ssr_yeplist_evo",
+            "functionsNodeVersion": "14",
+            "region": "us-central1",
+            "browserTarget": "yeplist-evo:build:production",
+            "serverTarget": "yeplist-evo:server:production",
+            "prerenderTarget": "yeplist-evo:prerender:production",
+            "outputPath": "dist/yeplist-evo/functions"
+          }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/yeplist-evo/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "yeplist-evo:build:development",
+              "serverTarget": "yeplist-evo:server:development"
+            },
+            "production": {
+              "browserTarget": "yeplist-evo:build:production",
+              "serverTarget": "yeplist-evo:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "yeplist-evo:build:production",
+              "serverTarget": "yeplist-evo:server:production"
+            },
+            "development": {
+              "browserTarget": "yeplist-evo:build:development",
+              "serverTarget": "yeplist-evo:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

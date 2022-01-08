@@ -1,0 +1,25 @@
+<section>
+    <div 
+        class="h-screen bg-cover"
+        style="background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)),url(/assets/images/login-bg/inside-weather-Uxqlfigh6oE-unsplash.jpg)"
+    >
+        <div class="max-w-md h-full flex flex-col items-center">
+            <div class="flex-1 align-middle flex flex-row items-center">
+                <img class="mx-auto max-w-lg w-2/5" src="/assets/images/logo-slim.webp" alt="">
+                <h1 class="text-5xl text-center font-bold">
+                    yeplist
+                </h1>
+            </div>
+            <div class="flex-1 pt-12 flex flex-col gap-y-4 items-center">
+                <button class="btn btn-active" (click)="loginWithGoogle()">
+                    <img src="/assets/btn_google_light_normal_ios.svg" alt="">
+                    autenticati con google
+                </button>
+                <!--<button class="btn btn-active w-48" (click)="loginWithApple()">
+                    <img style="height:24px;width:24px;margin:12px" src="/assets/apple.svg" alt="">
+                    <div class="inline">apple</div>
+                </button>-->
+            </div>
+        </div>
+    </div>
+</section>
