@@ -6,12 +6,23 @@ import { AuthButtonComponent } from './auth-button/auth-button.component';
 import { MainPageComponent } from './main-page/main-page.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { AuthenticationGuard } from './_services/authentication.guard';
+import { HomeSectionComponent } from './main-page/home-section/home-section.component';
+import { ListsSectionComponent } from './main-page/lists-section/lists-section.component';
+import { ListEditPageComponent } from './list-edit-page/list-edit-page.component';
 
 const routes: Routes = [
   {
     path: '',
     component: MainPageComponent,
-    canActivate: [ AuthenticationGuard ]
+    canActivate: [ AuthenticationGuard ],
+    children: [
+      { path: '', component: HomeSectionComponent },
+      { path: 'lists', component: ListsSectionComponent }
+    ]
+  },
+  {
+    path: 'lists/edit',
+    component: ListEditPageComponent
   },
   {
     path: 'login',
@@ -24,7 +35,10 @@ const routes: Routes = [
     AppComponent,
     AuthButtonComponent,
     MainPageComponent,
-    LoginPageComponent
+    ListEditPageComponent,
+    LoginPageComponent,
+    HomeSectionComponent,
+    ListsSectionComponent
   ],
   imports: [
     CommonModule,

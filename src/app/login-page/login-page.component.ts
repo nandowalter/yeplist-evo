@@ -1,5 +1,5 @@
 import { Component, OnInit, Optional } from '@angular/core';
-import { Auth, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
+import { Auth, browserLocalPersistence, GoogleAuthProvider, setPersistence, signInWithPopup } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
 @Component({
