@@ -9,6 +9,7 @@ import { AuthenticationGuard } from './_services/authentication.guard';
 import { HomeSectionComponent } from './main-page/home-section/home-section.component';
 import { ListsSectionComponent } from './main-page/lists-section/lists-section.component';
 import { ListEditPageComponent } from './list-edit-page/list-edit-page.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const routes: Routes = [
   {
@@ -22,10 +23,12 @@ const routes: Routes = [
   },
   {
     path: 'lists/edit',
+    canActivate: [ AuthenticationGuard ],
     component: ListEditPageComponent
   },
   {
     path: 'login',
+    canActivate: [ AuthenticationGuard ],
     component: LoginPageComponent
   }
 ];
@@ -44,7 +47,8 @@ const routes: Routes = [
     CommonModule,
     RouterModule.forRoot(routes, {
       initialNavigation: 'enabledBlocking'
-    })
+    }),
+    ReactiveFormsModule
   ],
   exports: [
     AppComponent,
