@@ -10,6 +10,7 @@ import { HomeSectionComponent } from './main-page/home-section/home-section.comp
 import { ListsSectionComponent } from './main-page/lists-section/lists-section.component';
 import { ListEditPageComponent } from './list-edit-page/list-edit-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NoAuthenticationGuard } from './_services/no-authentication.guard';
 
 const routes: Routes = [
   {
@@ -17,8 +18,8 @@ const routes: Routes = [
     component: MainPageComponent,
     canActivate: [ AuthenticationGuard ],
     children: [
-      { path: '', component: HomeSectionComponent },
-      { path: 'lists', component: ListsSectionComponent }
+      { path: '', component: HomeSectionComponent, canActivate: [ AuthenticationGuard ] },
+      { path: 'lists', component: ListsSectionComponent, canActivate: [ AuthenticationGuard ] }
     ]
   },
   {
@@ -28,7 +29,7 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    canActivate: [ AuthenticationGuard ],
+    canActivate: [ NoAuthenticationGuard ],
     component: LoginPageComponent
   }
 ];
@@ -46,7 +47,8 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forRoot(routes, {
-      initialNavigation: 'enabledBlocking'
+      initialNavigation: 'enabledBlocking',
+      enableTracing: false
     }),
     ReactiveFormsModule
   ],
