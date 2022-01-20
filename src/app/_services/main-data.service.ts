@@ -1,24 +1,18 @@
 import { Injectable, Optional } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { addDoc, collection, collectionData, deleteDoc, doc, DocumentData, Firestore, Query, query, updateDoc, where } from '@angular/fire/firestore';
+import { addDoc, collection, collectionData, deleteDoc, doc, DocumentData, Firestore, Query, query, QueryConstraint, updateDoc, where } from '@angular/fire/firestore';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 import { List } from '../_models/list';
 
 @Injectable({providedIn: 'root'})
 export class MainDataService {
-    private dataRef: Query<DocumentData>;
     private data$: Observable<List[]>;
     
     constructor(
         private firestore: Firestore,
         @Optional() private auth: Auth
     ) {
-        this.dataRef = query(
-            collection(this.firestore, 'ylists'),
-            where('userIds', 'array-contains', this.auth.currentUser?.uid)
-        );
-
-        this.data$ = collectionData(this.dataRef, { idField: 'id' }).pipe(
+        this.data$ = collectionData(this.getYListsQuery(), { idField: 'id' }).pipe(
             switchMap((items: List[]) => {
                 if (items.length === 0)
                     return of(items);
@@ -48,5 +42,15 @@ export class MainDataService {
 
     async updateList(list: List) {
         await updateDoc(doc(this.firestore, `ylists/${list.id}`), (list as { [x: string]: any }));
+    }
+
+    private getYListsQuery(...constraints: QueryConstraint[]) {
+        return query(
+            collection(this.firestore, 'ylists'),
+            ...[
+                where('userIds', 'array-contains', this.auth.currentUser?.uid),
+                ...constraints
+            ]
+        );
     }
 }

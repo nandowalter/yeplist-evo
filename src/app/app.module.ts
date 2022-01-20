@@ -11,6 +11,7 @@ import { ListsSectionComponent } from './main-page/lists-section/lists-section.c
 import { ListEditPageComponent } from './list-edit-page/list-edit-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NoAuthenticationGuard } from './_services/no-authentication.guard';
+import { AlertComponent } from './alert/alert.component';
 
 const routes: Routes = [
   {
@@ -38,6 +39,7 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     AuthButtonComponent,
+    AlertComponent,
     MainPageComponent,
     ListEditPageComponent,
     LoginPageComponent,

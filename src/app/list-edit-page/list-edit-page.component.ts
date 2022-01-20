@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, Optional } from '@angular/c
 import { Auth } from '@angular/fire/auth';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AlertType } from '../alert/alert-type';
 import { List } from '../_models/list';
 import { MainDataService } from '../_services/main-data.service';
 
@@ -13,6 +14,7 @@ import { MainDataService } from '../_services/main-data.service';
 })
 
 export class ListEditPageComponent implements OnInit {
+    alertType = AlertType;
     dataGroup: FormGroup = new FormGroup({
         name: new FormControl('', [ Validators.required, Validators.maxLength(25) ])
     });
