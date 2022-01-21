@@ -1,4 +1,4 @@
-<div class="alert alert-{{alertType}}">
+<div class="alert alert-{{alertType.toString()}}">
     <div class="flex-1">
         <ng-container [ngSwitch]="alertType">
             <svg *ngSwitchCase="'error'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 mx-2 stroke-current">    

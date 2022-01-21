@@ -24,13 +24,11 @@
         <div class="form-control">
             <label class="label">
               <span class="label-text">Nome</span>
-            </label> 
-            <input formControlName="name" type="text" placeholder="nome" maxlength="25" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid}">
-            <label class="label" *ngIf="dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid">
-                <span class="label-text-alt" *ngIf="dataGroup.get('name')?.errors?.['required']">Informazione obbligatoria</span>
-                <span class="label-text-alt" *ngIf="dataGroup.get('name')?.errors?.['maxlength']">Lunghezza massima 25 caratteri</span>
             </label>
+            <input formControlName="name" type="text" placeholder="nome" maxlength="25" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid}">
+            <div [attr.data-tip]="getErrorMessage('name', dataGroup.get('name')?.errors)" class="tooltip-open tooltip-error tooltip-bottom" [ngClass]="{'tooltip': dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid}">
+                <label></label>
+            </div>
         </div>
     </div>
 </div>
-<app-alert class="fixed bottom-0 left-0 right-0" [alertType]="alertType.error"></app-alert>
