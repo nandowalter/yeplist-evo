@@ -1,11 +1,11 @@
-import { Component, OnInit, Optional } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Optional } from '@angular/core';
 import { Auth, browserLocalPersistence, GoogleAuthProvider, setPersistence, signInWithPopup } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.css']
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginPageComponent implements OnInit {
   redirect = ['/'];

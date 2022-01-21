@@ -3,11 +3,7 @@
     <div class="h-screen flex flex-col drawer-content">
         <div class="navbar mb-2 shadow-lg bg-primary text-neutral-content">
             <div class="flex-none"> 
-                <label for="my-drawer" class="btn btn-square btn-ghost drawer-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current">           
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>               
-                    </svg>
-                </label>
+                <label for="my-drawer" class="btn btn-square btn-ghost drawer-button" [app-icon]="icons.menu"></label>
             </div> 
             <div class="flex-1 px-2 mx-2">
                 <span class="text-lg font-bold">
@@ -15,11 +11,7 @@
                 </span>
             </div> 
             <div class="flex-none">
-                <button class="btn btn-square btn-ghost">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </button>
+                <button class="btn btn-square btn-ghost" [app-icon]="icons.search"></button>
             </div>
         </div>
         <div class="grow overflow-auto">
@@ -29,25 +21,19 @@
             <ul class="menu shadow-lg horizontal w-screen flex flex-row">
                 <li class="flex-1" [ngClass]="{'bordered': router.url === '/', 'text-primary': router.url === '/', 'text-base-300': router.url != '/'}">
                     <a class="w-full flex flex-col" [routerLink]="['/']">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
+                        <app-icon [iconSvg]="icons.home"></app-icon>
                         <div>Home</div>
                     </a>
                 </li>
                 <li class="flex-1" [ngClass]="{'bordered': router.url === '/lists', 'text-primary': router.url === '/lists', 'text-base-300': router.url != '/lists'}">
                     <a class="w-full flex flex-col" [routerLink]="['/lists']">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
+                        <app-icon [iconSvg]="icons.collection"></app-icon>
                         <div>Liste</div>
                     </a>
                 </li> 
                 <li class="flex-1" [ngClass]="{'bordered': router.url === '/favorites', 'text-primary': router.url === '/favorites', 'text-base-300': router.url != '/favorites'}">
                     <a class="w-full flex flex-col">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-base-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
+                        <app-icon [iconSvg]="icons.heart"></app-icon>
                         <div class="text-base-300">Preferiti</div>
                     </a>
                 </li> 

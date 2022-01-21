@@ -12,6 +12,8 @@ import { ListEditPageComponent } from './list-edit-page/list-edit-page.component
 import { ReactiveFormsModule } from '@angular/forms';
 import { NoAuthenticationGuard } from './_services/no-authentication.guard';
 import { AlertComponent } from './alert/alert.component';
+import { IconComponent } from './icon/icon.component';
+import { IconDirective } from './icon/icon.directive';
 
 const routes: Routes = [
   {
@@ -44,7 +46,9 @@ const routes: Routes = [
     ListEditPageComponent,
     LoginPageComponent,
     HomeSectionComponent,
-    ListsSectionComponent
+    ListsSectionComponent,
+    IconComponent,
+    IconDirective
   ],
   imports: [
     CommonModule,

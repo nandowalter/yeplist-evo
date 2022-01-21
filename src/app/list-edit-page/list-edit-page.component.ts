@@ -2,17 +2,21 @@ import { ChangeDetectionStrategy, Component, OnInit, Optional } from '@angular/c
 import { Auth } from '@angular/fire/auth';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { icon_arrow_left, icon_save } from '../icon/icon-set';
 import { List } from '../_models/list';
 import { MainDataService } from '../_services/main-data.service';
 
 @Component({
     selector: 'app-list-edit-page',
     templateUrl: 'list-edit-page.component.html',
-    styleUrls: [ 'list-edit-page.component.css' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ListEditPageComponent implements OnInit {
+    icons = {
+        save: icon_save,
+        arrowLeft: icon_arrow_left
+    };
     dataGroup: FormGroup = new FormGroup({
         name: new FormControl('', [ Validators.required, Validators.maxLength(25) ])
     });
@@ -32,7 +36,8 @@ export class ListEditPageComponent implements OnInit {
     }
 
     getErrorMessage(fieldName: string, errors: any) {
-        console.log('error message');
+        if (!errors)
+            return '';
         let errorConfig: {[key:string]: {[key:string]: string}} = {
             name: {
                 required: 'Informazione obbligatoria',
