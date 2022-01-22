@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit, Optional } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
-import { Firestore, collection, collectionData, doc, CollectionReference, DocumentData, addDoc, query, where, deleteDoc } from '@angular/fire/firestore';
-import { map, Observable } from 'rxjs';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { combineLatestWith, map, mergeWith, tap } from 'rxjs/operators';
 import { icon_plus, icon_trash } from 'src/app/icon/icon-set';
 import { List } from 'src/app/_models/list';
 import { MainDataService } from 'src/app/_services/main-data.service';
@@ -12,23 +11,31 @@ import { MainDataService } from 'src/app/_services/main-data.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class ListsSectionComponent implements OnInit {
+export class ListsSectionComponent {
     icons = {
         trash: icon_trash,
         plus: icon_plus
     };
-    data$: Observable<List[]>;
+    loading$ = new BehaviorSubject<boolean>(false);
+    data$: Observable<List[] | null>;
+    state$: Observable<{ loading: boolean, data: List[] | null }>;
     
     constructor(
-        private firestore: Firestore,
-        @Optional() private auth: Auth,
         private mainData: MainDataService
     ) {
-        this.data$ = mainData.data;
+        this.initState();
     }
 
-    ngOnInit() {
-        
+    initState() {
+        this.data$ = of(null).pipe(
+            tap(value => this.loading$.next(true)),
+            mergeWith(this.mainData.data),
+            tap(value => value ? this.loading$.next(false) : null)
+        );
+        this.state$ = this.loading$.pipe(
+            combineLatestWith(this.data$),
+            map(value => ({ loading: value[0], data: value[1] }))
+        );
     }
 
     deleteList(id?: string) {

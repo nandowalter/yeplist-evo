@@ -22,13 +22,16 @@ const routes: Routes = [
     canActivate: [ AuthenticationGuard ],
     children: [
       { path: '', component: HomeSectionComponent, canActivate: [ AuthenticationGuard ] },
-      { path: 'lists', component: ListsSectionComponent, canActivate: [ AuthenticationGuard ] }
+      { path: 'lists', component: ListsSectionComponent, canActivate: [ AuthenticationGuard ], 
+        children: [
+          {
+            path: 'edit',
+            canActivate: [ AuthenticationGuard ],
+            component: ListEditPageComponent
+          }
+        ]
+      }
     ]
-  },
-  {
-    path: 'lists/edit',
-    canActivate: [ AuthenticationGuard ],
-    component: ListEditPageComponent
   },
   {
     path: 'login',

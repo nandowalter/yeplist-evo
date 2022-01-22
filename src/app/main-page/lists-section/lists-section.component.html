@@ -1,18 +1,25 @@
-<div class="grid grid-cols-1 gap-4 px-4">
-    <ng-container *ngIf="data$ | async as data">
-        <div class="card shadow-2xl" *ngFor="let list of data">
-            <div class="card-body p-4">
-                <h2 class="card-title">{{list.name}}</h2> 
-                <div class="flex flex-row gap-4">
-                    <div class="grow">elementi: {{list.items?.length}}</div>
-                    <div (click)="deleteList(list.id)" [app-icon]="icons.trash"></div>
+<div class="h-full flex flex-col gap-4">
+    <div class="grow" *ngIf="state$ | async as state">
+        <div class="grid grid-cols-1 gap-4 px-4" *ngIf="!state.loading">
+            <div class="h-24 card shadow-2xl" *ngFor="let list of state.data">
+                <div class="card-body p-4">
+                    <h2 class="card-title">{{list.name}}</h2> 
+                    <div class="flex flex-row gap-4">
+                        <div class="grow">elementi: {{list.items?.length}}</div>
+                        <div (click)="deleteList(list.id)" [app-icon]="icons.trash"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </ng-container>
+        <div class="h-full flex justify-center items-center" *ngIf="state.loading">
+            <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
+        </div>
+    </div>
     <a class="btn btn-wide btn-primary m-auto" [routerLink]="['/lists/edit']">
         <app-icon [iconSvg]="icons.plus"></app-icon>
         Nuova lista
     </a> 
 </div>
- 
+<div class="">
+    <router-outlet></router-outlet>
+</div>

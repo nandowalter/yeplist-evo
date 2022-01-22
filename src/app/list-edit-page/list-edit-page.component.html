@@ -1,7 +1,7 @@
-<div class="h-screen flex flex-col drawer-content">
+<div class="absolute top-0 left-0 h-screen w-screen bg-base-200 flex flex-col">
     <div class="navbar mb-2 shadow-lg bg-primary text-neutral-content">
         <div class="flex-none"> 
-            <a for="my-drawer" class="btn btn-square btn-ghost drawer-button" [routerLink]="['/lists']" [app-icon]="icons.arrowLeft"></a>
+            <a class="btn btn-square btn-ghost" [routerLink]="['/lists']" [app-icon]="icons.arrowLeft"></a>
         </div> 
         <div class="flex-1 px-2 mx-2">
             <span class="text-lg font-bold">
