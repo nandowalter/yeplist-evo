@@ -1,7 +1,7 @@
 import { Injectable, Optional } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { addDoc, collection, collectionData, deleteDoc, doc, DocumentData, Firestore, Query, query, QueryConstraint, updateDoc, where } from '@angular/fire/firestore';
-import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
+import { addDoc, collection, collectionData, deleteDoc, doc, Firestore, query, QueryConstraint, updateDoc, where } from '@angular/fire/firestore';
+import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
 import { List } from '../_models/list';
 
 @Injectable({providedIn: 'root'})
@@ -42,6 +42,12 @@ export class MainDataService {
 
     async updateList(list: List) {
         await updateDoc(doc(this.firestore, `ylists/${list.id}`), (list as { [x: string]: any }));
+    }
+
+    async findListByName(name: string) {
+        return await firstValueFrom(collectionData(this.getYListsQuery()).pipe(
+            map(value => (value && value.length > 0) ? value.find(i => i['name'].toLowerCase() === name.toLowerCase()) : null)
+        ));
     }
 
     private getYListsQuery(...constraints: QueryConstraint[]) {

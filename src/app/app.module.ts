@@ -27,7 +27,8 @@ const routes: Routes = [
           {
             path: 'edit',
             canActivate: [ AuthenticationGuard ],
-            component: ListEditPageComponent
+            component: ListEditPageComponent,
+            data: { animationState: 'One' }
           }
         ]
       }

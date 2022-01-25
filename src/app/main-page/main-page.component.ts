@@ -15,7 +15,7 @@ export class MainPageComponent implements OnInit {
     collection: icon_collection,
     heart: icon_heart
   };
-  
+
   constructor(
     public router: Router
   ) { }

@@ -1,4 +1,4 @@
-<div class="absolute top-0 left-0 h-screen w-screen bg-base-200 flex flex-col">
+<div class="w-full h-full bg-base-200 flex flex-col">
     <div class="navbar mb-2 shadow-lg bg-primary text-neutral-content">
         <div class="flex-none"> 
             <a class="btn btn-square btn-ghost" [routerLink]="['/lists']" [app-icon]="icons.arrowLeft"></a>
@@ -17,7 +17,7 @@
             <label class="label">
               <span class="label-text">Nome</span>
             </label>
-            <input formControlName="name" type="text" placeholder="nome" maxlength="25" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid}">
+            <input #nameInput formControlName="name" type="text" placeholder="nome" maxlength="25" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid}">
             <ng-container *ngIf="dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid">    
                 <div [attr.data-tip]="getErrorMessage('name', dataGroup.get('name')?.errors)" class="tooltip tooltip-open tooltip-error tooltip-bottom">
                     <label></label>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, Optional } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Optional, ViewChild } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,10 +9,12 @@ import { MainDataService } from '../_services/main-data.service';
 @Component({
     selector: 'app-list-edit-page',
     templateUrl: 'list-edit-page.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    host: {'class': 'fixed top-0 left-0 h-screen w-screen'}
 })
 
-export class ListEditPageComponent implements OnInit {
+export class ListEditPageComponent {
+    @ViewChild('nameInput') nameInput: ElementRef;
     icons = {
         save: icon_save,
         arrowLeft: icon_arrow_left
@@ -24,15 +26,24 @@ export class ListEditPageComponent implements OnInit {
     constructor(
         @Optional() private auth: Auth,
         private router: Router,
-        private mainData: MainDataService
+        private mainData: MainDataService,
+        private cd: ChangeDetectorRef
     ) { }
 
-    ngOnInit() { }
-
     async save() {
-        await this.mainData.addList({ name: this.dataGroup.get('name')?.value, userIds: [this.auth.currentUser?.uid] } as List);
-        this.dataGroup.reset();
-        this.router.navigate(['lists']);
+        let name = this.dataGroup.get('name')?.value;
+        let result = await this.mainData.findListByName(name);
+        if(result != null) {
+            this.dataGroup.controls['name'].setErrors({
+                notUnique: true
+            });
+            this.cd.markForCheck();
+            (this.nameInput.nativeElement as HTMLElement).focus();
+        } else {
+            await this.mainData.addList({ name, userIds: [this.auth.currentUser?.uid] } as List);
+            this.dataGroup.reset();
+            this.router.navigate(['lists']);
+        }
     }
 
     getErrorMessage(fieldName: string, errors: any) {
@@ -41,12 +52,11 @@ export class ListEditPageComponent implements OnInit {
         let errorConfig: {[key:string]: {[key:string]: string}} = {
             name: {
                 required: 'Informazione obbligatoria',
-                maxlength: 'Lunghezza massima 25 caratteri'
+                maxlength: 'Lunghezza massima 25 caratteri',
+                notUnique: 'Nome già utilizzato'
             }
         };
 
         return errorConfig[fieldName][errors.required ? 'required' : Object.keys(errors)[0]];
-
-
     }
 }

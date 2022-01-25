@@ -1,7 +1,7 @@
-<div class="h-full flex flex-col gap-4">
-    <div class="grow" *ngIf="state$ | async as state">
-        <div class="grid grid-cols-1 gap-4 px-4" *ngIf="!state.loading">
-            <div class="h-24 card shadow-2xl" *ngFor="let list of state.data">
+<div class="relative h-full flex flex-col gap-4" *ngIf="state$ | async as state">
+    <div class="grow mt-2">
+        <div @list class="grid grid-cols-1 gap-4 px-4">
+            <div @items class="h-24 card shadow-2xl" *ngFor="let list of state.data; trackBy: trackById">
                 <div class="card-body p-4">
                     <h2 class="card-title">{{list.name}}</h2> 
                     <div class="flex flex-row gap-4">
@@ -11,15 +11,15 @@
                 </div>
             </div>
         </div>
-        <div class="h-full flex justify-center items-center" *ngIf="state.loading">
-            <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
-        </div>
     </div>
-    <a class="btn btn-wide btn-primary m-auto" [routerLink]="['/lists/edit']">
+    <a class="btn btn-wide btn-primary m-auto mb-2" [routerLink]="['/lists/edit']">
         <app-icon [iconSvg]="icons.plus"></app-icon>
         Nuova lista
-    </a> 
+    </a>
+    <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="state.loading">
+        <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
+    </div> 
 </div>
-<div class="">
-    <router-outlet></router-outlet>
+<div class="w-0 h-0 overflow-hidden" [@secondaryPage]="outlet?.isActivated">
+    <router-outlet #outlet="outlet"></router-outlet>
 </div>

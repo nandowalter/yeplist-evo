@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { listAnimations, listItemsAnimations, secondaryPageAnimations } from './animations';
 
 @Component({
   selector: 'app-root',

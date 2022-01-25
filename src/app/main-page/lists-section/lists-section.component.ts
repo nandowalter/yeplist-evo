@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { RouterOutlet } from '@angular/router';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { combineLatestWith, map, mergeWith, tap } from 'rxjs/operators';
+import { listAnimations, listItemsAnimations, secondaryPageAnimations } from 'src/app/animations';
 import { icon_plus, icon_trash } from 'src/app/icon/icon-set';
 import { List } from 'src/app/_models/list';
 import { MainDataService } from 'src/app/_services/main-data.service';
@@ -8,7 +10,12 @@ import { MainDataService } from 'src/app/_services/main-data.service';
 @Component({
     selector: 'app-lists-section',
     templateUrl: 'lists-section.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    animations: [
+        secondaryPageAnimations,
+        listAnimations,
+        listItemsAnimations
+    ]
 })
 
 export class ListsSectionComponent {
@@ -41,6 +48,14 @@ export class ListsSectionComponent {
     deleteList(id?: string) {
         if (!id)
             return;
-        this.mainData.deleteList((id as string));
+
+        this.loading$.next(true);
+        from(this.mainData.deleteList(id as string)).pipe(
+            tap(value => this.loading$.next(false))
+        ).subscribe();
+    }
+
+    trackById(index: number, item: List) {
+        return item.id;
     }
 }
