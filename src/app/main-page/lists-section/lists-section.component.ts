@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
-import { combineLatestWith, map, mergeWith, tap } from 'rxjs/operators';
+import { combineLatestWith, map, mergeWith, switchMap, take, tap } from 'rxjs/operators';
 import { listAnimations, listItemsAnimations, secondaryPageAnimations } from 'src/app/animations';
 import { icon_plus, icon_trash } from 'src/app/icon/icon-set';
 import { List } from 'src/app/_models/list';
@@ -49,9 +49,11 @@ export class ListsSectionComponent {
         if (!id)
             return;
 
-        this.loading$.next(true);
-        from(this.mainData.deleteList(id as string)).pipe(
-            tap(value => this.loading$.next(false))
+        of(id).pipe(
+            tap(value => this.loading$.next(true)),
+            switchMap(value => this.mainData.deleteList(id as string)),
+            tap(value => this.loading$.next(false)),
+            take(1)
         ).subscribe();
     }
 

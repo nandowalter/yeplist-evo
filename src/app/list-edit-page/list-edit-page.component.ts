@@ -42,7 +42,8 @@ export class ListEditPageComponent {
         } else {
             await this.mainData.addList({ name, userIds: [this.auth.currentUser?.uid] } as List);
             this.dataGroup.reset();
-            this.router.navigate(['lists']);
+            this.router.navigate(['/lists']);
+            this.cd.markForCheck();
         }
     }
 

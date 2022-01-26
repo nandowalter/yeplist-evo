@@ -1,13 +1,21 @@
 import { trigger, transition, style, animate, query, stagger, animateChild, group } from '@angular/animations';
 
 export const secondaryPageAnimations = trigger('secondaryPage', [
-    // Transition for only enter
     transition('false => true', [
         query(':enter', [
-            style({ opacity: 0, transform: 'translateX(200px)' }),
+            style({ opacity: 0, transform: 'translateX(100%)' }),
             stagger(30, [
-              animate('500ms cubic-bezier(0.35, 0, 0.25, 1)',
+              animate('300ms cubic-bezier(0.35, 0, 0.25, 1)',
               style({ opacity: 1, transform: 'none' }))
+            ])
+        ])
+    ]),
+    transition('true => false', [
+        query(':leave', [
+            style({ opacity: 1, transform: 'none' }),
+            stagger(30, [
+              animate('300ms cubic-bezier(0.35, 0, 0.25, 1)',
+              style({ opacity: 0, transform: 'translateX(100%)' }))
             ])
         ])
     ])

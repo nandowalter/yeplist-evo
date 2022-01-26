@@ -25,7 +25,7 @@
                         <div>Home</div>
                     </a>
                 </li>
-                <li class="flex-1" [ngClass]="{'bordered': router.url === '/lists', 'text-primary': router.url === '/lists', 'text-base-300': router.url != '/lists'}">
+                <li class="flex-1" [ngClass]="{'bordered': router.url.startsWith('/lists'), 'text-primary': router.url.startsWith('/lists'), 'text-base-300': !router.url.startsWith('/lists')}">
                     <a class="w-full flex flex-col" [routerLink]="['/lists']">
                         <app-icon [iconSvg]="icons.collection"></app-icon>
                         <div>Liste</div>
