@@ -1,12 +1,12 @@
 <div class="relative h-full flex flex-col gap-4" *ngIf="state$ | async as state">
     <div class="grow mt-2">
         <div @list class="grid grid-cols-1 gap-4 px-4">
-            <div @items class="h-24 card shadow-2xl noselect" *ngFor="let list of state.data; trackBy: trackById" (press)="itemPress()">
+            <div @items class="h-24 card shadow-2xl noselect" *ngFor="let list of state.data; index as i; trackBy: trackById" (tap)="onItemTap(i)" (press)="processItemSelection(i)">
                 <div class="card-body p-4">
                     <h2 class="card-title">{{list.name}}</h2> 
                     <div class="flex flex-row gap-4">
                         <div class="grow">elementi: {{list.items?.length}}</div>
-                        <div (click)="deleteList(list.id)" [app-icon]="icons.trash"></div>
+                        <!--<div (click)="deleteList(list.id)" [app-icon]="icons.trash"></div>-->
                     </div>
                 </div>
             </div>

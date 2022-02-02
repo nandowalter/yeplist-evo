@@ -42,4 +42,14 @@ export const listItemsAnimations = trigger('items', [
         style({ transform: 'scale(1)', opacity: 1, height: '*' }),
         animate('1s cubic-bezier(.8,-0.6,0.2,1.5)', style({ transform: 'scale(0.5)', opacity: 0, height: '0px', margin: '0px' }))
     ]),      
-])
+]);
+
+export const rotateInOutAnimation = trigger('rotateInOut', [
+	transition(':enter', [
+		style({ opacity: 0, transform: 'rotate(-180deg)' }),
+		animate('250ms ease-out', style({ opacity: 1, transform: 'rotate(0deg)' })),
+	]),
+	transition(':leave', [
+		animate('250ms ease-in', style({ opacity: 0, transform: 'rotate(180deg)' })),
+	]),
+]);

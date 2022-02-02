@@ -4,13 +4,17 @@ module.exports = {
   ],
   plugins: [
     require('daisyui'),
-  ],
+  ]
+
+  /*
+  ,
   purge: {
-    content: ['**/*.html'],
+    content: ['**//*.html'],
     options: {
       safelist: [
         /data-theme$/,
       ]
     },
   }
+  */
 }
