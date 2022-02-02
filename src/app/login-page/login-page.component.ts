@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, Optional } from '@angular/core';
-import { Auth, browserLocalPersistence, GoogleAuthProvider, setPersistence, signInWithPopup } from '@angular/fire/auth';
+import { ChangeDetectionStrategy, Component, Optional } from '@angular/core';
+import { Auth, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,16 +7,13 @@ import { Router } from '@angular/router';
   templateUrl: './login-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginPageComponent implements OnInit {
+export class LoginPageComponent {
   redirect = ['/'];
 
   constructor(
     @Optional() private auth: Auth,
     private router: Router
   ) { }
-
-  ngOnInit(): void {
-  }
 
   async loginWithGoogle() {
     const provider = new GoogleAuthProvider();

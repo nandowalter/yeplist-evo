@@ -12,7 +12,6 @@ import { MainDataService } from '../_services/main-data.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {'class': 'fixed top-0 left-0 h-screen w-screen'}
 })
-
 export class ListEditPageComponent {
     @ViewChild('nameInput') nameInput: ElementRef;
     icons = {
@@ -22,6 +21,13 @@ export class ListEditPageComponent {
     dataGroup: FormGroup = new FormGroup({
         name: new FormControl('', [ Validators.required, Validators.maxLength(25) ])
     });
+    private readonly errorConfig: {[key:string]: {[key:string]: string}} = {
+        name: {
+            required: 'Informazione obbligatoria',
+            maxlength: 'Lunghezza massima 25 caratteri',
+            notUnique: 'Nome già utilizzato'
+        }
+    };
 
     constructor(
         @Optional() private auth: Auth,
@@ -50,14 +56,7 @@ export class ListEditPageComponent {
     getErrorMessage(fieldName: string, errors: any) {
         if (!errors)
             return '';
-        let errorConfig: {[key:string]: {[key:string]: string}} = {
-            name: {
-                required: 'Informazione obbligatoria',
-                maxlength: 'Lunghezza massima 25 caratteri',
-                notUnique: 'Nome già utilizzato'
-            }
-        };
-
-        return errorConfig[fieldName][errors.required ? 'required' : Object.keys(errors)[0]];
+        
+        return this.errorConfig[fieldName][errors.required ? 'required' : Object.keys(errors)[0]];
     }
 }

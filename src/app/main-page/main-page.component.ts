@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { icon_collection, icon_heart, icon_home, icon_menu, icon_search } from '../icon/icon-set';
 
@@ -7,7 +7,7 @@ import { icon_collection, icon_heart, icon_home, icon_menu, icon_search } from '
   templateUrl: './main-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent {
   icons = {
     menu: icon_menu,
     search: icon_search,
@@ -19,8 +19,4 @@ export class MainPageComponent implements OnInit {
   constructor(
     public router: Router
   ) { }
-
-  ngOnInit(): void {
-  }
-
 }

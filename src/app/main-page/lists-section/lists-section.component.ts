@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { combineLatestWith, map, mergeWith, switchMap, take, tap } from 'rxjs/operators';
 import { listAnimations, listItemsAnimations, secondaryPageAnimations } from 'src/app/animations';
 import { icon_plus, icon_trash } from 'src/app/icon/icon-set';
@@ -17,7 +16,6 @@ import { MainDataService } from 'src/app/_services/main-data.service';
         listItemsAnimations
     ]
 })
-
 export class ListsSectionComponent {
     icons = {
         trash: icon_trash,
@@ -59,5 +57,9 @@ export class ListsSectionComponent {
 
     trackById(index: number, item: List) {
         return item.id;
+    }
+
+    itemPress() {
+        window.alert('pressed');
     }
 }
