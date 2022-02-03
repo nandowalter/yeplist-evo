@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { rotateInOutAnimation } from '../animations';
 import { icon_collection, icon_heart, icon_home, icon_menu, icon_search, icon_trash, icon_x } from '../icon/icon-set';
+import { NavbarCommand } from '../_models/navbar-command';
 import { NavbarMode } from '../_models/navbar-mode';
 import { NavbarModeService } from '../_services/navbar-mode.service';
 
@@ -27,6 +28,7 @@ export class MainPageComponent {
   };
   state$: Observable<{ navbar: { mode: NavbarMode, label: string } }>;
   NavbarMode = NavbarMode;
+  NavbarCommand = NavbarCommand;
 
   constructor(
     public router: Router,
@@ -35,7 +37,7 @@ export class MainPageComponent {
     this.state$ = navbarModeService.state.pipe(map(value => ({ navbar: value })));
   }
 
-  onNavbarDelete() {
-    
+  onNavbarCommand(command: NavbarCommand) {
+    this.navbarModeService.triggerCommand(command);
   }
 }

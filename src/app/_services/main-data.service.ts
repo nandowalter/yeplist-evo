@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { addDoc, collection, collectionData, deleteDoc, doc, Firestore, query, QueryConstraint, updateDoc, where } from '@angular/fire/firestore';
+import { addDoc, collection, collectionData, deleteDoc, doc, Firestore, query, QueryConstraint, updateDoc, where, writeBatch } from '@angular/fire/firestore';
 import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
 import { List } from '../_models/list';
 
@@ -34,6 +34,14 @@ export class MainDataService {
 
     async deleteList(id: string) {
         await deleteDoc(doc(this.firestore, `ylists/${id}`));
+    }
+
+    async deleteLists(ids: string[]) {
+        if (!ids || ids.length === 0)
+            return new Promise(() => null);
+        let batch = writeBatch(this.firestore);
+        ids.forEach(id => batch.delete(doc(this.firestore, `ylists/${id}`)));
+        return batch.commit();
     }
 
     async addList(list: List) {

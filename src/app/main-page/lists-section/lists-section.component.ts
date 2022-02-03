@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { combineLatestWith, map, mergeWith, switchMap, take, tap } from 'rxjs/operators';
 import { listAnimations, listItemsAnimations, secondaryPageAnimations } from 'src/app/animations';
@@ -19,7 +19,7 @@ import { NavbarModeService } from 'src/app/_services/navbar-mode.service';
         listItemsAnimations
     ]
 })
-export class ListsSectionComponent {
+export class ListsSectionComponent implements OnDestroy {
     icons = {
         trash: icon_trash,
         plus: icon_plus
@@ -27,7 +27,7 @@ export class ListsSectionComponent {
     loading$ = new BehaviorSubject<boolean>(false);
     data$: Observable<List[] | null>;
     state$: Observable<{ loading: boolean, data: List[] | null }>;
-    selectedItems: number[] = [];
+    selectedItems: string[] = [];
     navbarCommand$$: Subscription;
     
     constructor(
@@ -49,57 +49,81 @@ export class ListsSectionComponent {
         );
     }
 
-    deleteList(id?: string) {
-        if (!id)
-            return;
+    deleteSelectedItems() {
+        this.deleteLists(this.selectedItems).subscribe({
+            complete: () => this.clearSelection()
+        });
+    }
 
-        of(id).pipe(
+    deleteLists(ids: string[]) {
+        if (!ids)
+            return of(null);
+
+        return of(ids).pipe(
             tap(value => this.loading$.next(true)),
-            switchMap(value => this.mainData.deleteList(id as string)),
+            switchMap(value => this.mainData.deleteLists(ids)),
             tap(value => this.loading$.next(false)),
             take(1)
-        ).subscribe();
+        );
     }
 
     trackById(index: number, item: List) {
         return item.id;
     }
 
-    processItemSelection(index: number) {
-        let selectedItemsIndex = this.selectedItems.indexOf(index);
+    processItemSelection(index: number, id: string) {
+        let selectedItemsIndex = this.selectedItems.indexOf(id);
 
         if (selectedItemsIndex === -1) {
-            this.selectedItems.push(index);
+            this.selectedItems.push(id);
         } else {
             this.selectedItems.splice(selectedItemsIndex, 1);
         }
 
         if (this.selectedItems.length === 0) {
-            this.navbarCommand$$ = this.navbarModeService.command.subscribe(value => this.onNavbarCommand(value));
-        } else {
-
+            this.navbarCommand$$.unsubscribe();
+            this.navbarCommand$$ = null;
+        } else if (!this.navbarCommand$$) {
+                this.navbarCommand$$ = this.navbarModeService.command.subscribe(value => this.onNavbarCommand(value));
         }
 
         this.navbarModeService.setLabel((this.selectedItems.length === 0) ? null : `${this.selectedItems.length}`);
         this.navbarModeService.setMode((this.selectedItems.length === 0) ? NavbarMode.Normal : NavbarMode.Selection);
     }
 
-    onItemTap(index: number) {
+    clearSelection() {
+        this.selectedItems = [];
+        if (this.navbarCommand$$)
+            this.navbarCommand$$.unsubscribe();
+
+        this.navbarCommand$$ = null;
+        this.navbarModeService.setLabel(null);
+        this.navbarModeService.setMode(NavbarMode.Normal);
+    }
+
+    onItemTap(index: number, id: string) {
         if (this.selectedItems.length > 0) {
-            this.processItemSelection(index);
+            this.processItemSelection(index, id);
         } else {
 
         }
     }
 
-    onNavbarCommand(command: NavbarCommand) {
+    async onNavbarCommand(command: NavbarCommand) {
         switch (command) {
             case NavbarCommand.Unselect:
-                
+                this.clearSelection();
                 break;
-        
+            case NavbarCommand.Delete:
+                this.deleteSelectedItems();
+                break;
             default:
                 break;
         }
+    }
+
+    ngOnDestroy(): void {
+        if (this.navbarCommand$$)
+            this.navbarCommand$$.unsubscribe();
     }
 }
