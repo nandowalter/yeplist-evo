@@ -109,7 +109,7 @@ export class ListsSectionComponent implements OnDestroy {
         }
     }
 
-    async onNavbarCommand(command: NavbarCommand) {
+    onNavbarCommand(command: NavbarCommand) {
         switch (command) {
             case NavbarCommand.Unselect:
                 this.clearSelection();
