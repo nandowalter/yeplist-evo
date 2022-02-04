@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { combineLatestWith, map, mergeWith, switchMap, take, tap } from 'rxjs/operators';
 import { listAnimations, listItemsAnimations, secondaryPageAnimations } from 'src/app/animations';
-import { icon_plus, icon_trash } from 'src/app/icon/icon-set';
+import { icon_check_circle, icon_chevron_right, icon_plus, icon_trash } from 'src/app/icon/icon-set';
 import { List } from 'src/app/_models/list';
 import { NavbarCommand } from 'src/app/_models/navbar-command';
 import { NavbarMode } from 'src/app/_models/navbar-mode';
@@ -22,7 +22,9 @@ import { NavbarModeService } from 'src/app/_services/navbar-mode.service';
 export class ListsSectionComponent implements OnDestroy {
     icons = {
         trash: icon_trash,
-        plus: icon_plus
+        plus: icon_plus,
+        chevron_right: icon_chevron_right,
+        check_circle: icon_check_circle
     };
     loading$ = new BehaviorSubject<boolean>(false);
     data$: Observable<List[] | null>;
@@ -32,7 +34,8 @@ export class ListsSectionComponent implements OnDestroy {
     
     constructor(
         private mainData: MainDataService,
-        private navbarModeService: NavbarModeService
+        private navbarModeService: NavbarModeService,
+        private cd: ChangeDetectorRef
     ) {
         this.initState();
     }
@@ -99,6 +102,7 @@ export class ListsSectionComponent implements OnDestroy {
         this.navbarCommand$$ = null;
         this.navbarModeService.setLabel(null);
         this.navbarModeService.setMode(NavbarMode.Normal);
+        this.cd.markForCheck();
     }
 
     onItemTap(index: number, id: string) {
