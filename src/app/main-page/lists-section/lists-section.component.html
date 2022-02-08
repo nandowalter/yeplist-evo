@@ -1,7 +1,12 @@
 <div class="relative h-full flex flex-col gap-4" *ngIf="state$ | async as state">
-    <div class="grow mt-2">
+    <div class="grow mt-2 overflow-auto" app-scroll-detect>
         <div @list class="grid grid-cols-1">
-            <div @items class="h-24 w-full border-b-2 border-b-neutral-700 noselect flex justify-left content-center" *ngFor="let list of state.data; index as i; trackBy: trackById" (tap)="onItemTap(i, list.id)" (press)="processItemSelection(i,list.id)">
+            <div 
+                @items 
+                class="h-24 w-full border-b-2 border-b-neutral-700 noselect flex justify-left content-center" 
+                *ngFor="let list of state.data; index as i; trackBy: trackById" 
+                (tap)="onItemTap(i, list.id)" (press)="processItemSelection(i,list.id)"
+            >
                 <div class="w-full flex flex-row mx-2">
                     <div class="justify-self-center self-center">
                         <img src="/assets/icons/list.png" alt="">

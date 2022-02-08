@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { combineLatestWith, map, mergeWith, switchMap, take, tap } from 'rxjs/operators';
 import { listAnimations, listItemsAnimations, secondaryPageAnimations } from 'src/app/animations';
@@ -125,6 +125,8 @@ export class ListsSectionComponent implements OnDestroy {
                 break;
         }
     }
+
+    
 
     ngOnDestroy(): void {
         if (this.navbarCommand$$)
