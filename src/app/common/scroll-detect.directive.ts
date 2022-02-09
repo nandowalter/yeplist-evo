@@ -1,7 +1,14 @@
-import { Directive, ElementRef, OnInit } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ScrollDirection } from './scroll-direction';
 
 @Directive({ selector: '[app-scroll-detect]' })
 export class ScrollDetectDirective implements OnInit {
+    @Input() offset = 50;
+    @Output() direction = new EventEmitter<ScrollDirection>();
+    scrollDirection: ScrollDirection;
+    prevScrollTop = 0;
+    turningPoint: number;
+
     constructor(
         private element: ElementRef
     ) { }
@@ -10,10 +17,21 @@ export class ScrollDetectDirective implements OnInit {
         this.element.nativeElement.addEventListener('scroll', this.onScroll.bind(this));
     }
 
-    scrollDirection: string;
-    oldScroll: number;
-    onScroll() {
-        console.log(`${this.oldScroll > this.element.nativeElement.scrollY} - ${this.element.nativeElement.scrollY}` );
-        this.oldScroll = this.element.nativeElement.scrollY;
+    onScroll(e) {
+        let scrollTop = e.currentTarget.scrollTop;
+
+        if (((this.prevScrollTop - scrollTop) > 0) && (this.scrollDirection != ScrollDirection.up)) {
+            this.turningPoint = scrollTop;
+            this.scrollDirection = ScrollDirection.up;
+        } else if (((this.prevScrollTop - scrollTop) <= 0) && (this.scrollDirection != ScrollDirection.down)) {
+            this.turningPoint = scrollTop;
+            this.scrollDirection = ScrollDirection.down;
+        }
+
+        let scrollDiff = (this.scrollDirection === ScrollDirection.up) ? (this.turningPoint - scrollTop) : (scrollTop - this.turningPoint);
+        if (scrollDiff >= this.offset)
+            this.direction.emit(this.scrollDirection);
+        
+        this.prevScrollTop = scrollTop;
     }
 }

@@ -16,7 +16,7 @@
                 <button class="btn btn-square btn-ghost" *ngIf="state.navbar.mode === NavbarMode.Selection" [app-icon]="icons.trash" (click)="onNavbarCommand(NavbarCommand.Delete)"></button>
             </div>
         </div>
-        <div class="grow overflow-auto">
+        <div class="grow relative overflow-hidden">
             <router-outlet></router-outlet>
         </div>
         <div class="bg-base-200">

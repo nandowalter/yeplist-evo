@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDe
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { combineLatestWith, map, mergeWith, switchMap, take, tap } from 'rxjs/operators';
 import { listAnimations, listItemsAnimations, secondaryPageAnimations } from 'src/app/animations';
+import { ScrollDirection } from 'src/app/common/scroll-direction';
 import { icon_check_circle, icon_chevron_right, icon_plus, icon_trash } from 'src/app/icon/icon-set';
 import { List } from 'src/app/_models/list';
 import { NavbarCommand } from 'src/app/_models/navbar-command';
@@ -31,6 +32,8 @@ export class ListsSectionComponent implements OnDestroy {
     state$: Observable<{ loading: boolean, data: List[] | null }>;
     selectedItems: string[] = [];
     navbarCommand$$: Subscription;
+    actualScrollDirection: ScrollDirection;
+    ScrollDirection = ScrollDirection;
     
     constructor(
         private mainData: MainDataService,
@@ -125,8 +128,6 @@ export class ListsSectionComponent implements OnDestroy {
                 break;
         }
     }
-
-    
 
     ngOnDestroy(): void {
         if (this.navbarCommand$$)
