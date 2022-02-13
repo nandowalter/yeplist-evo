@@ -90,7 +90,7 @@ export class ListsSectionComponent implements OnDestroy {
         if (this.selectedItems.length === 0) {
             this.clearSelection();
         } else if (!this.navbarCommand$$) {
-                this.navbarCommand$$ = this.navbarModeService.command.subscribe(value => this.onNavbarCommand(value));
+            this.navbarCommand$$ = this.navbarModeService.command.subscribe(value => this.onNavbarCommand(value));
         }
 
         this.navbarModeService.setLabel((this.selectedItems.length === 0) ? null : `${this.selectedItems.length}`);

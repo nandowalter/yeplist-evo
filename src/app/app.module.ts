@@ -15,6 +15,7 @@ import { AlertComponent } from './alert/alert.component';
 import { IconComponent } from './icon/icon.component';
 import { IconDirective } from './icon/icon.directive';
 import { AppScrollDirective } from './common/app-scroll.directive';
+import { SearchPageComponent } from './search-page/search-page.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,11 @@ const routes: Routes = [
     ]
   },
   {
+    path: 'search',
+    component: SearchPageComponent,
+    canActivate: [ AuthenticationGuard ]
+  },
+  {
     path: 'login',
     canActivate: [ NoAuthenticationGuard ],
     component: LoginPageComponent
@@ -54,7 +60,8 @@ const routes: Routes = [
     ListsSectionComponent,
     IconComponent,
     IconDirective,
-    AppScrollDirective
+    AppScrollDirective,
+    SearchPageComponent
   ],
   imports: [
     CommonModule,
