@@ -1,6 +1,6 @@
-<div class="relative h-full" *ngIf="state$ | async as state">
-    <div class="h-full overflow-auto" app-scroll-detect (direction)="actualScrollDirection=$event">
-        <div @list class="grid grid-cols-1">
+<div class="relative h-full overflow-hidden" *ngIf="state$ | async as state">
+    <div class="h-full overflow-auto" (appScroll)="actualScrollDirection=$event">
+        <div @list class="grid grid-cols-1 pb-12">
             <div 
                 @items 
                 class="h-24 w-full border-b-2 border-b-neutral-700 noselect flex justify-left content-center" 
@@ -26,8 +26,13 @@
             </div>
         </div>
     </div>
+    
     <div class="absolute bottom-0 mb-2 m-auto w-full flex justify-center items-center" style="bottom:0;">
-        <a class="btn btn-wide btn-primary" [routerLink]="['/lists/edit']" [ngClass]="{ invisible: (selectedItems?.length > 0) || (actualScrollDirection === ScrollDirection.down) }">
+        <a 
+            class="btn btn-wide btn-primary"
+            [@showHideBottom]="!state.loading && (selectedItems?.length === 0) && (actualScrollDirection != ScrollDirection.down)"
+            [routerLink]="['/lists/edit']"
+        >
             <app-icon [iconSvg]="icons.plus"></app-icon>
             Nuova lista
         </a>

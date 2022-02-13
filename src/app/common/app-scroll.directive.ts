@@ -1,10 +1,10 @@
 import { Directive, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ScrollDirection } from './scroll-direction';
 
-@Directive({ selector: '[app-scroll-detect]' })
-export class ScrollDetectDirective implements OnInit {
+@Directive({ selector: '[appScroll]' })
+export class AppScrollDirective implements OnInit {
     @Input() offset = 50;
-    @Output() direction = new EventEmitter<ScrollDirection>();
+    @Output() appScroll = new EventEmitter<ScrollDirection>();
     scrollDirection: ScrollDirection;
     prevScrollTop = 0;
     turningPoint: number;
@@ -30,7 +30,7 @@ export class ScrollDetectDirective implements OnInit {
 
         let scrollDiff = (this.scrollDirection === ScrollDirection.up) ? (this.turningPoint - scrollTop) : (scrollTop - this.turningPoint);
         if (scrollDiff >= this.offset)
-            this.direction.emit(this.scrollDirection);
+            this.appScroll.emit(this.scrollDirection);
         
         this.prevScrollTop = scrollTop;
     }

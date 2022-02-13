@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { combineLatestWith, map, mergeWith, switchMap, take, tap } from 'rxjs/operators';
-import { listAnimations, listItemsAnimations, secondaryPageAnimations } from 'src/app/animations';
+import { listAnimations, listItemsAnimations, secondaryPageAnimations, showHideBottomAnimation } from 'src/app/animations';
 import { ScrollDirection } from 'src/app/common/scroll-direction';
 import { icon_check_circle, icon_chevron_right, icon_plus, icon_trash } from 'src/app/icon/icon-set';
 import { List } from 'src/app/_models/list';
@@ -17,7 +17,8 @@ import { NavbarModeService } from 'src/app/_services/navbar-mode.service';
     animations: [
         secondaryPageAnimations,
         listAnimations,
-        listItemsAnimations
+        listItemsAnimations,
+        showHideBottomAnimation
     ]
 })
 export class ListsSectionComponent implements OnDestroy {
@@ -87,8 +88,7 @@ export class ListsSectionComponent implements OnDestroy {
         }
 
         if (this.selectedItems.length === 0) {
-            this.navbarCommand$$.unsubscribe();
-            this.navbarCommand$$ = null;
+            this.clearSelection();
         } else if (!this.navbarCommand$$) {
                 this.navbarCommand$$ = this.navbarModeService.command.subscribe(value => this.onNavbarCommand(value));
         }
@@ -105,6 +105,7 @@ export class ListsSectionComponent implements OnDestroy {
         this.navbarCommand$$ = null;
         this.navbarModeService.setLabel(null);
         this.navbarModeService.setMode(NavbarMode.Normal);
+        this.actualScrollDirection = null;
         this.cd.markForCheck();
     }
 

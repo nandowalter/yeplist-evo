@@ -10,7 +10,7 @@ import { MainDataService } from '../_services/main-data.service';
     selector: 'app-list-edit-page',
     templateUrl: 'list-edit-page.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {'class': 'fixed top-0 left-0 h-screen w-screen'}
+    host: {'class': 'fixed top-0 left-0 h-full w-screen'}
 })
 export class ListEditPageComponent {
     @ViewChild('nameInput') nameInput: ElementRef;

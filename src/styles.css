@@ -9,13 +9,13 @@
 }
 
 body {
-  min-height: 100vh;
-  /* mobile viewport bug fix */
-  min-height: -webkit-fill-available;
+  position: relative;
+  height: 100%;
+  
 }
 
 html {
-  height: -webkit-fill-available;
+  height: 100%;
 }
 
 .noselect {

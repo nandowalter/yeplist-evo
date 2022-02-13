@@ -14,7 +14,7 @@ import { NoAuthenticationGuard } from './_services/no-authentication.guard';
 import { AlertComponent } from './alert/alert.component';
 import { IconComponent } from './icon/icon.component';
 import { IconDirective } from './icon/icon.directive';
-import { ScrollDetectDirective } from './common/scroll-detect.directive';
+import { AppScrollDirective } from './common/app-scroll.directive';
 
 const routes: Routes = [
   {
@@ -54,7 +54,7 @@ const routes: Routes = [
     ListsSectionComponent,
     IconComponent,
     IconDirective,
-    ScrollDetectDirective
+    AppScrollDirective
   ],
   imports: [
     CommonModule,

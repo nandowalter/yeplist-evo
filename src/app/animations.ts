@@ -1,4 +1,4 @@
-import { trigger, transition, style, animate, query, stagger, animateChild, group } from '@angular/animations';
+import { trigger, transition, style, animate, query, stagger, animateChild, group, state } from '@angular/animations';
 
 export const secondaryPageAnimations = trigger('secondaryPage', [
     transition('false => true', [
@@ -52,4 +52,21 @@ export const rotateInOutAnimation = trigger('rotateInOut', [
 	transition(':leave', [
 		animate('250ms ease-in', style({ opacity: 0, transform: 'rotate(180deg)' })),
 	])
+]);
+
+export const showHideBottomAnimation = trigger('showHideBottom', [
+    state('true', style({
+        visibility: 'visible'
+    })),
+    state('false', style({
+        visibility: 'hidden'
+    })),
+    transition('true => false', [
+        style({ transform: 'none' }),
+		animate('150ms linear', style({ transform: 'translateY(100%)' })),
+    ]),
+    transition('false => true', [
+        style({ visibility: 'visible', transform: 'translateY(100%)' }),
+		animate('150ms linear', style({ visibility: 'visible' ,transform: 'none' })),
+    ])
 ]);
