@@ -8,14 +8,15 @@
     }
 }
 
+html {
+  height: 100vh;
+}
+
 body {
   position: relative;
   height: 100vh; 
 }
 
-html {
-  height: 100vh;
-}
 
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */

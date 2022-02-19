@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { rotateInOutAnimation } from '../animations';
+import { rotateInOutAnimation, secondaryPageAnimations } from '../animations';
 import { icon_collection, icon_heart, icon_home, icon_menu, icon_search, icon_trash, icon_x } from '../icon/icon-set';
 import { NavbarCommand } from '../_models/navbar-command';
 import { NavbarMode } from '../_models/navbar-mode';
@@ -13,6 +13,7 @@ import { NavbarModeService } from '../_services/navbar-mode.service';
   templateUrl: './main-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
+    secondaryPageAnimations,
     rotateInOutAnimation
   ]
 })

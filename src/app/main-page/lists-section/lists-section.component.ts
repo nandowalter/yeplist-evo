@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { combineLatestWith, map, mergeWith, switchMap, take, tap } from 'rxjs/operators';
 import { listAnimations, listItemsAnimations, secondaryPageAnimations, showHideBottomAnimation } from 'src/app/animations';
@@ -39,6 +40,8 @@ export class ListsSectionComponent implements OnDestroy {
     constructor(
         private mainData: MainDataService,
         private navbarModeService: NavbarModeService,
+        private router: Router,
+        private route: ActivatedRoute,
         private cd: ChangeDetectorRef
     ) {
         this.initState();
@@ -128,6 +131,10 @@ export class ListsSectionComponent implements OnDestroy {
             default:
                 break;
         }
+    }
+
+    goToAddList() {
+        this.router.navigate([{outlets: { 'secondaryPage': ['list']}} ], { relativeTo: this.route.parent });
     }
 
     ngOnDestroy(): void {

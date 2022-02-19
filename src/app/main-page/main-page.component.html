@@ -12,12 +12,15 @@
                 <span class="text-lg font-bold" *ngIf="state.navbar.mode === NavbarMode.Selection">{{state.navbar.label}}</span>
             </div> 
             <div class="flex-none">
-                <button class="btn btn-square btn-ghost" *ngIf="state.navbar.mode === NavbarMode.Normal" [app-icon]="icons.search" [routerLink]="['/search']"></button>
+                <button class="btn btn-square btn-ghost" *ngIf="state.navbar.mode === NavbarMode.Normal" [app-icon]="icons.search" [routerLink]="[{ outlets: { secondaryPage: ['search'] } }]"></button>
                 <button class="btn btn-square btn-ghost" *ngIf="state.navbar.mode === NavbarMode.Selection" [app-icon]="icons.trash" (click)="onNavbarCommand(NavbarCommand.Delete)"></button>
             </div>
         </div>
         <div class="grow relative overflow-auto">
             <router-outlet></router-outlet>
+        </div>
+        <div class="w-0 h-0 overflow-hidden" [@secondaryPage]="outlet?.isActivated">
+            <router-outlet #outlet="outlet" name="secondaryPage"></router-outlet>
         </div>
         <div class="flex-none bg-base-200">
             <ul class="menu shadow-lg horizontal w-screen flex flex-row">

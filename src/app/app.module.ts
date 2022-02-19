@@ -24,22 +24,20 @@ const routes: Routes = [
     canActivate: [ AuthenticationGuard ],
     children: [
       { path: '', component: HomeSectionComponent, canActivate: [ AuthenticationGuard ] },
-      { path: 'lists', component: ListsSectionComponent, canActivate: [ AuthenticationGuard ], 
-        children: [
-          {
-            path: 'edit',
-            canActivate: [ AuthenticationGuard ],
-            component: ListEditPageComponent,
-            data: { animationState: 'One' }
-          }
-        ]
+      { path: 'lists', component: ListsSectionComponent, canActivate: [ AuthenticationGuard ]},
+      {
+        path: 'list',
+        canActivate: [ AuthenticationGuard ],
+        outlet: 'secondaryPage',
+        component: ListEditPageComponent
+      },
+      {
+        path: 'search',
+        component: SearchPageComponent,
+        outlet: 'secondaryPage',
+        canActivate: [ AuthenticationGuard ]
       }
     ]
-  },
-  {
-    path: 'search',
-    component: SearchPageComponent,
-    canActivate: [ AuthenticationGuard ]
   },
   {
     path: 'login',

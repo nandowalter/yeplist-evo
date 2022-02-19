@@ -31,7 +31,7 @@
         <a 
             class="btn btn-wide btn-primary"
             [@showHideBottom]="!state.loading && (selectedItems?.length === 0) && (actualScrollDirection != ScrollDirection.down)"
-            [routerLink]="['/lists/edit']"
+            (click)="goToAddList()"
         >
             <app-icon [iconSvg]="icons.plus"></app-icon>
             Nuova lista

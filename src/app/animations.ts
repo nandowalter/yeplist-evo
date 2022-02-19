@@ -8,7 +8,7 @@ export const secondaryPageAnimations = trigger('secondaryPage', [
               animate('300ms cubic-bezier(0.35, 0, 0.25, 1)',
               style({ opacity: 1, transform: 'none' }))
             ])
-        ])
+        ], { optional: true })
     ]),
     transition('true => false', [
         query(':leave', [
@@ -17,7 +17,7 @@ export const secondaryPageAnimations = trigger('secondaryPage', [
               animate('300ms cubic-bezier(0.35, 0, 0.25, 1)',
               style({ opacity: 0, transform: 'translateX(100%)' }))
             ])
-        ])
+        ], { optional: true })
     ])
 ]);
 
