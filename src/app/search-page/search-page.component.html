@@ -1,18 +1,39 @@
-<div class="w-full h-full bg-base-200 flex flex-col">
+<div class="w-full h-full bg-base-200 flex flex-col" *ngIf="state$ | async as state">
     <div class="flex-none navbar shadow-lg bg-primary text-neutral-content">
         <div class="flex-none"> 
             <a class="btn btn-square btn-ghost" [routerLink]="['..']" [app-icon]="icons.arrowLeft"></a>
         </div> 
         <div class="flex-1 px-2 mx-2">
-            <span class="text-lg font-bold">
-                <input autofocus class="bg-primary border-none appearance-none outline-none focus:border-0 focus-visible:outline-0 focus-visible:border-0" type="text" placeholder="Cerca">    
+            <span class="text-lg font-bold" [formGroup]="dataGroup">
+                <input 
+                    autofocus 
+                    #searchInput 
+                    class="bg-primary border-none appearance-none outline-none focus:border-0 focus-visible:outline-0 focus-visible:border-0" 
+                    type="text" 
+                    placeholder="Cerca..."
+                    formControlName='searchText'
+                >
             </span>
-        </div> 
+        </div>
         <div class="flex-none">
             <!--<button class="btn btn-square btn-ghost" [app-icon]="icons.save"></button>-->
         </div>
     </div>
-    <div class="grow overflow-auto bg-base-200">
-        &nbsp;
+    <div class="tabs w-full flex flex-row">
+        <a class="tab tab-bordered tab-active grow" [ngClass]="{ 'tab-active': activePanel === 0 || !activePanel }" (click)="activePanel = 0">Liste</a> 
+        <a class="tab tab-bordered grow" [ngClass]="{ 'tab-active': activePanel === 1 }" (click)="activePanel = 1">Elementi</a>
+    </div> 
+    <div class="grow relative overflow-auto">
+        <div class="absolute h-full w-full bg-custom-pattern">
+            &nbsp;
+        </div>
+        <div class="grid grid-cols-1 pb-12">
+            <div
+                class="h-24 w-full border-b-2 border-b-neutral-700 noselect flex justify-left content-center" 
+                *ngFor="let list of state.lists"
+            >
+            {{list.name}}
+            </div>
+        </div>
     </div>
 </div>

@@ -8,7 +8,7 @@
                 <label @rotateInOut *ngIf="state.navbar.mode === NavbarMode.Selection" class="absolute left-0 btn btn-square btn-ghost" [app-icon]="icons.x" (click)="onNavbarCommand(NavbarCommand.Unselect)"></label>
             </div> 
             <div class="flex-1 px-2 mx-2">
-                <span class="text-lg font-bold" *ngIf="state.navbar.mode === NavbarMode.Normal">yepneed</span>
+                <span class="text-lg font-bold" *ngIf="state.navbar.mode === NavbarMode.Normal"><img class="w-24" alt="" src="assets/images/logo_text_negative.svg"></span>
                 <span class="text-lg font-bold" *ngIf="state.navbar.mode === NavbarMode.Selection">{{state.navbar.label}}</span>
             </div> 
             <div class="flex-none">

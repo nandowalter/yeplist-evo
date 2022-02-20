@@ -58,6 +58,12 @@ export class MainDataService {
         ));
     }
 
+    async findLists(searchText: string) {
+        return await firstValueFrom(collectionData(this.getYListsQuery(), { idField: 'id' }).pipe(
+            map(value => (value && value.length > 0) ? value.filter(i => i['name'].toLowerCase().indexOf(searchText) > -1) : null)
+        ));
+    }
+
     private getYListsQuery(...constraints: QueryConstraint[]) {
         return query(
             collection(this.firestore, 'ylists'),

@@ -106,17 +106,12 @@
         "deploy": {
           "builder": "@angular/fire:deploy",
           "options": {
-            "ssr": "cloud-functions",
             "prerender": false,
             "firebaseProject": "yeplist-evo",
             "firebaseHostingSite": "yeplist-evo",
-            "functionName": "ssr_yeplist_evo",
-            "functionsNodeVersion": "14",
             "region": "us-central1",
             "browserTarget": "yeplist-evo:build:production",
-            "serverTarget": "yeplist-evo:server:production",
-            "prerenderTarget": "yeplist-evo:prerender:production",
-            "outputPath": "dist/yeplist-evo/functions"
+            "prerenderTarget": "yeplist-evo:prerender:production"
           }
         },
         "server": {

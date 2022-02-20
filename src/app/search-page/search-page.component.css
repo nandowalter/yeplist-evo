@@ -1,0 +1,5 @@
+.bg-custom-pattern {
+    background-color: #e5e5f7;
+    opacity: 0.1;
+    background-image:  repeating-radial-gradient( circle at 0 0, transparent 0, #e5e5f7 10px ), repeating-linear-gradient( #673bb755, #673bb7 );
+}

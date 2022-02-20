@@ -3,10 +3,6 @@
     {
       "target": "yeplist-evo",
       "public": "dist/yeplist-evo/browser",
-      "ignore": [
-        "**/.*",
-        "index.html"
-      ],
       "headers": [
         {
           "source": "*.[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].+(css|js)",
@@ -26,16 +22,7 @@
             }
           ]
         }
-      ],
-      "rewrites": [
-        {
-          "source": "**",
-          "function": "ssr_yeplist_evo"
-        }
       ]
     }
-  ],
-  "functions": {
-    "source": "dist/yeplist-evo/functions"
-  }
+  ]
 }
