@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, map, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, concat, map, of, switchMap, tap } from 'rxjs';
 import { icon_arrow_left } from '../icon/icon-set';
 import { GenericPageStateObservables } from '../_models/generic-page-state-observables';
 import { List } from '../_models/list';
@@ -9,7 +9,8 @@ import { MainDataService } from '../_services/main-data.service';
 @Component({
     selector: 'app-list-edit-page',
     templateUrl: 'list-edit-page.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    host: {'class': 'fixed top-0 left-0 h-full w-screen'}
 })
 
 export class ListEditPageComponent implements OnInit {
@@ -22,20 +23,25 @@ export class ListEditPageComponent implements OnInit {
     constructor(
         private mainData: MainDataService,
         private route: ActivatedRoute
-    ) { }
+    ) {
+        this.initState();
+    }
 
     ngOnInit(): void {
-        this.initState();
+        
     }
 
     initState() {
         this.stateObservables = new GenericPageStateObservables<List>(
             new BehaviorSubject<boolean>(false), 
-            this.route.paramMap.pipe(
-                map(values => values.get('listId')),
-                tap(value => this.stateObservables.loading$.next(true)),
-                switchMap(value => this.mainData.getList(value)),
-                tap(value => value ? this.stateObservables.loading$.next(false) : null)
+            concat(
+                of(null),
+                this.route.paramMap.pipe(
+                    map(values => values.get('listId')),
+                    tap(value => this.stateObservables.loading$.next(true)),
+                    switchMap(value => this.mainData.getList(value)),
+                    tap(value => value ? this.stateObservables.loading$.next(false) : null)
+                )
             )
         );
     }
