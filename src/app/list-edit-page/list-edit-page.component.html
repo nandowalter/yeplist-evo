@@ -21,8 +21,20 @@
                 <!-- <button class="btn btn-square btn-ghost" (click)="save()" *ngIf="dataGroup.valid" [app-icon]="icons.save"></button> -->
             </div>
         </div>
-        <div class="grow overflow-auto p-4">
+        <div class="grow overflow-auto p-4" (appScroll)="actualScrollDirection=$event">
             &nbsp;
+        </div>
+        <div class="absolute bottom-0 mb-2 m-auto w-full flex justify-center items-center" style="bottom:0;">
+            <a 
+                class="btn btn-wide btn-primary"
+                [@showHideBottom]="!state.loading && (selectedItems?.length === 0) && (actualScrollDirection != ScrollDirection.down)"
+            >
+                <app-icon [iconSvg]="icons.plus"></app-icon>
+                Nuovo elemento
+            </a>
+        </div>
+        <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="state.loading">
+            <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
         </div>
     </ng-container>
 </div>
