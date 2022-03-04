@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { addDoc, collection, collectionData, deleteDoc, doc, Firestore, query, QueryConstraint, updateDoc, where, writeBatch } from '@angular/fire/firestore';
+import { addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, query, QueryConstraint, updateDoc, where, writeBatch } from '@angular/fire/firestore';
 import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
 import { List } from '../_models/list';
 
@@ -32,6 +32,21 @@ export class MainDataService {
         return this.data$;
     }
 
+    async getList(id: string) {
+        return await firstValueFrom(docData(doc(this.firestore, `ylists/${id}`)).pipe(
+            switchMap((item: List) => {
+                if (!item)
+                    return of(item);
+                return collectionData(query(collection(this.firestore, `ylists/${item.id}/items`)), { idField: 'id' }).pipe(
+                    map(subColl => {
+                        item.items = subColl;
+                        return item;
+                    })
+                );
+            })
+        ));
+    }
+
     async deleteList(id: string) {
         await deleteDoc(doc(this.firestore, `ylists/${id}`));
     }
@@ -59,8 +74,21 @@ export class MainDataService {
     }
 
     async findLists(searchText: string) {
+        const normalizedSearchText = searchText.toLowerCase();
         return await firstValueFrom(collectionData(this.getYListsQuery(), { idField: 'id' }).pipe(
-            map(value => (value && value.length > 0) ? value.filter(i => i['name'].toLowerCase().indexOf(searchText) > -1) : null)
+            map(value => (value && value.length > 0) ? value.filter(i => i['name'].toLowerCase().indexOf(normalizedSearchText) > -1) : null),
+            switchMap((items: List[]) => {
+                if (items.length === 0)
+                    return of(items);
+                return combineLatest(items.map(i => {
+                    return collectionData(query(collection(this.firestore, `ylists/${i.id}/items`)), { idField: 'id' }).pipe(
+                        map(subColl => {
+                            i.items = subColl;
+                            return i;
+                        })
+                    );
+                }));
+            })
         ));
     }
 

@@ -1,29 +1,15 @@
 <div class="relative h-full overflow-hidden" *ngIf="state$ | async as state">
     <div class="h-full overflow-auto" (appScroll)="actualScrollDirection=$event">
         <div @list class="grid grid-cols-1 pb-12">
-            <div 
-                @items 
-                class="h-24 w-full border-b-2 border-b-neutral-700 noselect flex justify-left content-center" 
+            <app-list-entry
+                @items
                 *ngFor="let list of state.data; index as i; trackBy: trackById" 
-                (tap)="onItemTap(i, list.id)" (press)="processItemSelection(i,list.id)"
-            >
-                <div class="w-full flex flex-row mx-2">
-                    <div class="justify-self-center self-center">
-                        <img src="/assets/icons/list.png" alt="">
-                    </div>
-                    <div class="grow p-4">
-                        <h2 class="text-lg font-semibold">{{list.name}}</h2> 
-                        <div class="flex flex-row gap-4">
-                            <div class="grow text-sm text-slate-400">elementi: {{list.items?.length}}</div>
-                            <!--<div (click)="deleteList(list.id)" [app-icon]="icons.trash"></div>-->
-                        </div>
-                    </div>
-                    <div class="justify-self-center self-center">
-                        <app-icon class="text-slate-400" *ngIf="!selectedItems || selectedItems.length === 0" [iconSvg]="icons.chevron_right"></app-icon>
-                        <app-icon class="text-green-500" *ngIf="selectedItems?.indexOf(list.id) > -1" [iconSvg]="icons.check_circle"></app-icon>
-                    </div>
-                </div>
-            </div>
+                [list]="list"
+                [mode]="selectedItems?.length > 0 ? ListEntryMode.Selection : ListEntryMode.Normal"
+                [selected]="selectedItems?.indexOf(list.id) > -1"
+                (entryTap)="onItemTap(i, $event)"
+                (entryPress)="processItemSelection(i,$event)"
+            ></app-list-entry>
         </div>
     </div>
     

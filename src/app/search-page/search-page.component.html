@@ -24,15 +24,14 @@
         <a class="tab tab-bordered grow" [ngClass]="{ 'tab-active': activePanel === 1 }" (click)="activePanel = 1">Elementi</a>
     </div> 
     <div class="grow relative overflow-auto">
-        <div class="absolute h-full w-full bg-custom-pattern">
-            &nbsp;
-        </div>
-        <div class="grid grid-cols-1 pb-12">
-            <div
-                class="h-24 w-full border-b-2 border-b-neutral-700 noselect flex justify-left content-center" 
-                *ngFor="let list of state.lists"
-            >
-            {{list.name}}
+        <div class="h-full w-full bg-custom-pattern">
+            <div class="grid grid-cols-1 pb-12">
+                <app-list-entry
+                    *ngFor="let list of state.lists; index as i; trackBy: trackListsById" 
+                    [list]="list"
+                    [mode]="ListEntryMode.Normal"
+                    (entryTap)="onListItemTap(i, $event)"
+                ></app-list-entry>
             </div>
         </div>
     </div>

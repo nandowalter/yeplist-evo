@@ -1,0 +1,20 @@
+<div  
+    class="h-24 w-full bg-primary-content border-b-2 border-b-neutral-700 noselect flex justify-left content-center" 
+    (tap)="onTap(list.id)" (press)="onPress(list.id)"
+>
+    <div class="w-full flex flex-row mx-2">
+        <div class="justify-self-center self-center">
+            <img src="/assets/icons/list.png" alt="">
+        </div>
+        <div class="grow p-4">
+            <h2 class="text-lg font-semibold">{{list.name}}</h2> 
+            <div class="flex flex-row gap-4">
+                <div class="grow text-sm text-slate-400">elementi: {{list.items?.length}}</div>
+            </div>
+        </div>
+        <div class="justify-self-center self-center">
+            <app-icon class="text-slate-400" *ngIf="mode === ListEntryMode.Normal" [iconSvg]="icons.chevron_right"></app-icon>
+            <app-icon class="text-green-500" *ngIf="selected" [iconSvg]="icons.check_circle"></app-icon>
+        </div>
+    </div>
+</div>

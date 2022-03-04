@@ -1,6 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject } from 'rxjs';
+import { ListEntryMode } from '../common/list-entry/list-entry-mode';
 import { icon_arrow_left } from '../icon/icon-set';
 import { List } from '../_models/list';
 import { MainDataService } from '../_services/main-data.service';
@@ -19,6 +20,7 @@ export class SearchPageComponent implements OnInit, AfterViewInit {
     dataGroup: FormGroup;
     lists$ = new BehaviorSubject<List[]>(null);
     state$: Observable<{ lists: List[] }>;
+    ListEntryMode = ListEntryMode;
 
     icons = {
         arrowLeft: icon_arrow_left
@@ -40,6 +42,14 @@ export class SearchPageComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.searchInput.nativeElement.focus();
+    }
+
+    trackListsById(index: number, item: List) {
+        return item.id;
+    }
+
+    onListItemTap(index: number, listId: string) {
+
     }
 
     private initForm() {

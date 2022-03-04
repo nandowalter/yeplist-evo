@@ -8,7 +8,7 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { AuthenticationGuard } from './_services/authentication.guard';
 import { HomeSectionComponent } from './main-page/home-section/home-section.component';
 import { ListsSectionComponent } from './main-page/lists-section/lists-section.component';
-import { ListEditPageComponent } from './list-edit-page/list-edit-page.component';
+import { ListCreatePageComponent } from './list-create-page/list-create-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NoAuthenticationGuard } from './_services/no-authentication.guard';
 import { AlertComponent } from './alert/alert.component';
@@ -16,6 +16,8 @@ import { IconComponent } from './icon/icon.component';
 import { IconDirective } from './icon/icon.directive';
 import { AppScrollDirective } from './common/app-scroll.directive';
 import { SearchPageComponent } from './search-page/search-page.component';
+import { ListEntryComponent } from './common/list-entry/list-entry.component';
+import { ListEditPageComponent } from './list-edit-page/list-edit-page.component';
 
 const routes: Routes = [
   {
@@ -27,6 +29,12 @@ const routes: Routes = [
       { path: 'lists', component: ListsSectionComponent, canActivate: [ AuthenticationGuard ]},
       {
         path: 'list',
+        canActivate: [ AuthenticationGuard ],
+        outlet: 'secondaryPage',
+        component: ListCreatePageComponent
+      },
+      {
+        path: 'list/edit/:listId',
         canActivate: [ AuthenticationGuard ],
         outlet: 'secondaryPage',
         component: ListEditPageComponent
@@ -52,10 +60,12 @@ const routes: Routes = [
     AuthButtonComponent,
     AlertComponent,
     MainPageComponent,
+    ListCreatePageComponent,
     ListEditPageComponent,
     LoginPageComponent,
     HomeSectionComponent,
     ListsSectionComponent,
+    ListEntryComponent,
     IconComponent,
     IconDirective,
     AppScrollDirective,
