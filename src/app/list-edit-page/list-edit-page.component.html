@@ -30,10 +30,14 @@
             <a 
                 class="btn btn-wide btn-primary"
                 [@showHideBottom]="!state.loading && (selectedItems?.length === 0) && (actualScrollDirection != ScrollDirection.down)"
+                [routerLink]="['item']"
             >
                 <app-icon [iconSvg]="icons.plus"></app-icon>
                 Nuovo elemento
             </a>
+        </div>
+        <div class="w-0 h-0 overflow-hidden">
+            <router-outlet #outlet="outlet"></router-outlet>
         </div>
         <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="state.loading">
             <button class="btn btn-ghost btn-lg btn-circle loading"></button> 

@@ -18,6 +18,7 @@ import { AppScrollDirective } from './common/app-scroll.directive';
 import { SearchPageComponent } from './search-page/search-page.component';
 import { ListEntryComponent } from './common/list-entry/list-entry.component';
 import { ListEditPageComponent } from './list-edit-page/list-edit-page.component';
+import { ItemEditPageComponent } from './item-edit-page/item-edit-page.component';
 
 const routes: Routes = [
   {
@@ -37,7 +38,14 @@ const routes: Routes = [
         path: 'list/edit/:listId',
         canActivate: [ AuthenticationGuard ],
         outlet: 'secondaryPage',
-        component: ListEditPageComponent
+        component: ListEditPageComponent,
+        children: [
+          {
+            path: 'item',
+            canActivate: [ AuthenticationGuard ],
+            component: ItemEditPageComponent
+          }
+        ]
       },
       {
         path: 'search',
@@ -69,7 +77,8 @@ const routes: Routes = [
     IconComponent,
     IconDirective,
     AppScrollDirective,
-    SearchPageComponent
+    SearchPageComponent,
+    ItemEditPageComponent
   ],
   imports: [
     CommonModule,

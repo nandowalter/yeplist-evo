@@ -1,0 +1,63 @@
+<div class="fixed top-0 w-screen h-screen bg-base-200 flex flex-col">
+    <ng-container>
+        <div class="navbar shadow-lg bg-primary text-neutral-content">
+            <div class="flex-none"> 
+                <a class="btn btn-square btn-ghost" [routerLink]="['..']" [app-icon]="icons.arrowLeft"></a>
+            </div> 
+            <div class="flex-1 px-2 mx-2 flex flex-row">
+                <div class="grow">
+                    <h2 class="text-lg font-semibold">Nuovo elemento</h2> 
+                </div>
+            </div> 
+            <div class="flex-none">
+                <button class="btn btn-square btn-ghost" (click)="save()" *ngIf="dataGroup.valid" [app-icon]="icons.save"></button>
+            </div>
+        </div>
+        <div class="grow overflow-auto p-4" [formGroup]="dataGroup">
+            <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Nome</span>
+                </label>
+                <input formControlName="name" type="text" placeholder="nome" maxlength="25" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid}">
+                <!-- <ng-container *ngIf="dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid">    
+                    <div [attr.data-tip]="getErrorMessage('name', dataGroup.get('name')?.errors)" class="tooltip tooltip-open tooltip-error tooltip-bottom">
+                        <label></label>
+                    </div>
+                </ng-container> -->
+            </div>
+            <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Categoria</span>
+                </label>
+                <select class="select select-bordered" formControlName="category" [ngClass]="{ 'select-error': dataGroup.get('category')?.touched && dataGroup.get('category')?.invalid}">
+                    <option>generico</option>
+                    <option>frutta</option>
+                    <option>verdura</option>
+                    <option>ortofrutta</option>
+                    <option>banco frigo</option>
+                    <option>gastronomia</option>
+                </select>
+                <ng-container *ngIf="dataGroup.get('category')?.touched && dataGroup.get('category')?.invalid">    
+                    <div [attr.data-tip]="getErrorMessage('category', dataGroup.get('category')?.errors)" class="tooltip tooltip-open tooltip-error tooltip-bottom">
+                        <label></label>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Quantità</span>
+                </label>
+                <input formControlName="qty" type="number" placeholder="quantità" maxlength="25" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid}">
+                <ng-container *ngIf="dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid">    
+                    <div [attr.data-tip]="getErrorMessage('qty', dataGroup.get('qty')?.errors)" class="tooltip tooltip-open tooltip-error tooltip-bottom">
+                        <label></label>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+        <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="false">
+            <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
+        </div>
+    </ng-container>
+</div>
