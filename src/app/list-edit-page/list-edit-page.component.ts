@@ -11,6 +11,7 @@ import { MainDataService } from '../_services/main-data.service';
 @Component({
     selector: 'app-list-edit-page',
     templateUrl: 'list-edit-page.component.html',
+    styleUrls: [ 'list-edit-page.component.css' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {'class': 'fixed top-0 left-0 h-full w-screen'},
     animations: [
