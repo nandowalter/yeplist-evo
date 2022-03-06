@@ -10,7 +10,7 @@ import { MainDataService } from '../_services/main-data.service';
     selector: 'app-list-create-page',
     templateUrl: 'list-create-page.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {'class': 'fixed top-0 left-0 h-full w-screen'}
+    host: {'class': 'fixed top-0 left-0 h-full w-screen z-30'}
 })
 export class ListCreatePageComponent {
     @ViewChild('nameInput') nameInput: ElementRef;

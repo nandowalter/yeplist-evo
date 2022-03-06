@@ -11,7 +11,7 @@ import { MainDataService } from '../_services/main-data.service';
     templateUrl: 'search-page.component.html',
     styleUrls: [ 'search-page.component.css' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {'class': 'fixed top-0 left-0 h-screen w-screen'}
+    host: {'class': 'fixed top-0 left-0 h-screen w-screen z-30'}
 })
 
 export class SearchPageComponent implements OnInit, AfterViewInit {

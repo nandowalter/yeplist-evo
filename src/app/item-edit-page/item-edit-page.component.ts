@@ -6,7 +6,7 @@ import { icon_arrow_left, icon_plus, icon_save } from '../icon/icon-set';
     selector: 'app-item-edit-page',
     templateUrl: 'item-edit-page.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {'class': 'fixed top-0 left-0 h-full w-screen'}
+    host: {'class': 'fixed top-0 left-0 h-full w-screen z-30'}
 })
 
 export class ItemEditPageComponent implements OnInit {

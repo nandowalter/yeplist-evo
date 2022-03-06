@@ -13,7 +13,7 @@ import { MainDataService } from '../_services/main-data.service';
     templateUrl: 'list-edit-page.component.html',
     styleUrls: [ 'list-edit-page.component.css' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {'class': 'fixed top-0 left-0 h-full w-screen'},
+    host: {'class': 'fixed top-0 left-0 h-full w-screen z-30'},
     animations: [
         showHideBottomAnimation
     ]
