@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject } from 'rxjs';
-import { ListEntryMode } from '../common/list-entry/list-entry-mode';
+import { ListEntryMode } from '../common/list-entry-mode';
 import { icon_arrow_left } from '../icon/icon-set';
 import { List } from '../_models/list';
 import { MainDataService } from '../_services/main-data.service';

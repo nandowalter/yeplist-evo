@@ -32,8 +32,8 @@ export class MainDataService {
         return this.data$;
     }
 
-    async getList(id: string) {
-        return await firstValueFrom(docData(doc(this.firestore, `ylists/${id}`)).pipe(
+    getList(id: string) {
+        return docData(doc(this.firestore, `ylists/${id}`), { idField: 'id' }).pipe(
             switchMap((item: List) => {
                 if (!item)
                     return of(item);
@@ -44,7 +44,7 @@ export class MainDataService {
                     })
                 );
             })
-        ));
+        );
     }
 
     async deleteList(id: string) {
@@ -90,6 +90,15 @@ export class MainDataService {
                 }));
             })
         ));
+    }
+
+    addItem(listId: string, item: any) {
+        return new Observable<void>(subscriber => {
+            addDoc(collection(this.firestore, `ylists/${listId}/items`), item).then((resp) => {
+                subscriber.next();
+                subscriber.complete();
+            });
+        });
     }
 
     private getYListsQuery(...constraints: QueryConstraint[]) {

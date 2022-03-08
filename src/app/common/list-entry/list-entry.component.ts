@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { icon_check_circle, icon_chevron_right, icon_plus, icon_trash } from 'src/app/icon/icon-set';
 import { List } from 'src/app/_models/list';
-import { ListEntryMode } from './list-entry-mode';
+import { ListEntryMode } from '../list-entry-mode';
 
 @Component({
     selector: 'app-list-entry',

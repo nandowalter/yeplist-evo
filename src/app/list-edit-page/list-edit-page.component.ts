@@ -44,14 +44,11 @@ export class ListEditPageComponent implements OnInit {
     initState() {
         this.stateObservables = new GenericPageStateObservables<List>(
             new BehaviorSubject<boolean>(false), 
-            concat(
-                of(null),
-                this.route.paramMap.pipe(
-                    map(values => values.get('listId')),
-                    tap(value => this.stateObservables.loading$.next(true)),
-                    switchMap(value => this.mainData.getList(value)),
-                    tap(value => value ? this.stateObservables.loading$.next(false) : null)
-                )
+            this.route.paramMap.pipe(
+                map(values => values.get('listId')),
+                tap(value => this.stateObservables.loading$.next(true)),
+                switchMap(value => this.mainData.getList(value)),
+                tap(value => value ? this.stateObservables.loading$.next(false) : null)
             )
         );
     }

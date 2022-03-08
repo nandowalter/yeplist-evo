@@ -25,6 +25,11 @@
             <div class="h-full flex justify-center items-center" *ngIf="!state.data?.items || state.data.items.length === 0">
                 <img class="m-auto" alt="" src="assets/images/empty_list_msg_it_small.webp">
             </div>
+
+            <ng-container *ngIf="state.data?.items?.length > 0">
+                <app-item-element *ngFor="let item of state.data.items" [item]="item"></app-item-element>
+            </ng-container>
+            
         </div>
         <div class="absolute bottom-0 mb-2 m-auto w-full flex justify-center items-center" style="bottom:0;">
             <a 

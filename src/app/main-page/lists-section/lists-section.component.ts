@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { combineLatestWith, map, mergeWith, switchMap, take, tap } from 'rxjs/operators';
 import { listAnimations, listItemsAnimations, secondaryPageAnimations, showHideBottomAnimation } from 'src/app/animations';
-import { ListEntryMode } from 'src/app/common/list-entry/list-entry-mode';
+import { ListEntryMode } from 'src/app/common/list-entry-mode';
 import { ScrollDirection } from 'src/app/common/scroll-direction';
 import { icon_check_circle, icon_chevron_right, icon_plus, icon_trash } from 'src/app/icon/icon-set';
 import { List } from 'src/app/_models/list';

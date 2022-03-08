@@ -18,7 +18,7 @@
                 <label class="label">
                   <span class="label-text">Nome</span>
                 </label>
-                <input formControlName="name" type="text" placeholder="nome" maxlength="25" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid}">
+                <input autofocus formControlName="name" type="text" placeholder="nome" maxlength="25" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid}">
                 <!-- <ng-container *ngIf="dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid">    
                     <div [attr.data-tip]="getErrorMessage('name', dataGroup.get('name')?.errors)" class="tooltip tooltip-open tooltip-error tooltip-bottom">
                         <label></label>
@@ -47,16 +47,22 @@
                 <label class="label">
                   <span class="label-text">Quantità</span>
                 </label>
-                <input formControlName="qty" type="number" placeholder="quantità" maxlength="25" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid}">
+                <input formControlName="qty" type="number" placeholder="quantità" min="1" max="999" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid}">
                 <ng-container *ngIf="dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid">    
                     <div [attr.data-tip]="getErrorMessage('qty', dataGroup.get('qty')?.errors)" class="tooltip tooltip-open tooltip-error tooltip-bottom">
                         <label></label>
                     </div>
                 </ng-container>
             </div>
+            <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Note</span>
+                </label>
+                <textarea formControlName="notes" placeholder="note" maxlength="100" rows="4" class="textarea textarea-bordered" [ngClass]="{ 'textarea-error': dataGroup.get('notes')?.touched && dataGroup.get('notes')?.invalid}"></textarea>
+            </div>
         </div>
 
-        <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="false">
+        <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="loading$ | async">
             <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
         </div>
     </ng-container>

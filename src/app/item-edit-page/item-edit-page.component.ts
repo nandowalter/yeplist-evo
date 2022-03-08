@@ -1,6 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, of, switchMap, take } from 'rxjs';
 import { icon_arrow_left, icon_plus, icon_save } from '../icon/icon-set';
+import { MainDataService } from '../_services/main-data.service';
 
 @Component({
     selector: 'app-item-edit-page',
@@ -17,10 +20,17 @@ export class ItemEditPageComponent implements OnInit {
         um: new FormControl(''),
         notes: new FormControl('',[ Validators.maxLength(100) ])
     });
+    loading$ = new BehaviorSubject<boolean>(false);
     private readonly errorConfig: {[key:string]: {[key:string]: string}} = {
         name: {
             required: 'Informazione obbligatoria',
             maxlength: 'Lunghezza massima 25 caratteri'
+        },
+        qty: {
+            max: 'Numero massimo 999'
+        },
+        notes: {
+            maxlength: 'Lunghezza massima 100 caratteri'
         }
     };
     icons = {
@@ -29,12 +39,30 @@ export class ItemEditPageComponent implements OnInit {
         save: icon_save
     };
 
-    constructor() { }
+    constructor(
+        private router: Router,
+        private route: ActivatedRoute,
+        private dataService: MainDataService,
+        private cd: ChangeDetectorRef
+    ) {
+        
+    }
 
     ngOnInit() { }
 
     save() {
-
+        this.loading$.next(true);
+        this.route.parent.paramMap.pipe(
+            take(1),
+            switchMap(value => this.dataService.addItem(value.get('listId'), this.dataGroup.value))
+        ).subscribe({
+            complete: () => {
+                this.loading$.next(false);
+                this.dataGroup.reset();
+                this.router.navigate(['..'], { relativeTo: this.route });
+                this.cd.markForCheck();
+            }   
+        });
     }
 
     getErrorMessage(fieldName: string, errors: any) {

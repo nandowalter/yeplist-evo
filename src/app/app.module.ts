@@ -19,6 +19,7 @@ import { SearchPageComponent } from './search-page/search-page.component';
 import { ListEntryComponent } from './common/list-entry/list-entry.component';
 import { ListEditPageComponent } from './list-edit-page/list-edit-page.component';
 import { ItemEditPageComponent } from './item-edit-page/item-edit-page.component';
+import { ItemElementComponent } from './common/item-element/item-element.component';
 
 const routes: Routes = [
   {
@@ -78,7 +79,8 @@ const routes: Routes = [
     IconDirective,
     AppScrollDirective,
     SearchPageComponent,
-    ItemEditPageComponent
+    ItemEditPageComponent,
+    ItemElementComponent
   ],
   imports: [
     CommonModule,
