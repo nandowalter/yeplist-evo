@@ -20,6 +20,7 @@ import { ListEntryComponent } from './common/list-entry/list-entry.component';
 import { ListEditPageComponent } from './list-edit-page/list-edit-page.component';
 import { ItemEditPageComponent } from './item-edit-page/item-edit-page.component';
 import { ItemElementComponent } from './common/item-element/item-element.component';
+import { PanManagerComponent } from './common/pan-manager/pan-manager.component';
 
 const routes: Routes = [
   {
@@ -80,7 +81,8 @@ const routes: Routes = [
     AppScrollDirective,
     SearchPageComponent,
     ItemEditPageComponent,
-    ItemElementComponent
+    ItemElementComponent,
+    PanManagerComponent
   ],
   imports: [
     CommonModule,

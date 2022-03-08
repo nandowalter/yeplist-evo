@@ -70,3 +70,13 @@ export const showHideBottomAnimation = trigger('showHideBottom', [
 		animate('150ms linear', style({ visibility: 'visible' ,transform: 'none' })),
     ])
 ]);
+
+export const panXReset = trigger('panXReset', [
+    state('panning', style({})),
+    state('normal', style({
+        transform: 'translateX(0)'
+    })),
+    transition('panning => normal', [
+		animate('150ms linear', style({ transform: 'translateX(0)' }))
+    ])
+]);

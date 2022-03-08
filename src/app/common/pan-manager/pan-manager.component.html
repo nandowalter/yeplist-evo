@@ -1,0 +1,3 @@
+<div class="relative" [@panXReset]="currentState" #container (panStart)="currentState='panning'" (panMove)="onPanMove($event, container)" (panEnd)="currentState='normal'">
+    <ng-content></ng-content>
+</div>

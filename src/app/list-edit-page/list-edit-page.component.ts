@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, concat, map, of, switchMap, tap } from 'rxjs';
 import { showHideBottomAnimation } from '../animations';
 import { ScrollDirection } from '../common/scroll-direction';
-import { icon_arrow_left, icon_plus } from '../icon/icon-set';
+import { icon_arrow_left, icon_check, icon_plus, icon_reply } from '../icon/icon-set';
 import { GenericPageStateObservables } from '../_models/generic-page-state-observables';
 import { List } from '../_models/list';
 import { MainDataService } from '../_services/main-data.service';
@@ -27,7 +27,9 @@ export class ListEditPageComponent implements OnInit {
     ScrollDirection = ScrollDirection;
     icons = {
         arrowLeft: icon_arrow_left,
-        plus: icon_plus
+        plus: icon_plus,
+        check: icon_check,
+        reply: icon_reply
     };
 
     constructor(

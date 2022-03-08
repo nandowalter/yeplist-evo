@@ -8,7 +8,7 @@ export class GestureConfig extends HammerGestureConfig {
     'swipe': { direction: Hammer.DIRECTION_ALL },
     'pinch': { enable: false },
     'rotate': { enable: false },
-    'pan': { direction: Hammer.DIRECTION_ALL }
+    'pan': { direction: Hammer.DIRECTION_HORIZONTAL }
   };
 
   override buildHammer(element: HTMLElement) {
