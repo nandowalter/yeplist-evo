@@ -94,9 +94,22 @@ export class MainDataService {
 
     addItem(listId: string, item: any) {
         return new Observable<void>(subscriber => {
-            addDoc(collection(this.firestore, `ylists/${listId}/items`), item).then((resp) => {
+            addDoc(collection(this.firestore, `ylists/${listId}/items`), item).then(resp => {
                 subscriber.next();
                 subscriber.complete();
+            }).catch(e => {
+                subscriber.error(e);
+            });
+        });
+    }
+
+    updateItem(listId: string, item: any) {
+        return new Observable<void>(subscriber => {
+            updateDoc(doc(this.firestore, `ylists/${listId}/items/${item.id}`), (item as { [x: string]: any })).then(resp => {
+                subscriber.next();
+                subscriber.complete();
+            }).catch(e => {
+                subscriber.error(e);
             });
         });
     }

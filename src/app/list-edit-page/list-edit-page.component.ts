@@ -20,7 +20,6 @@ import { MainDataService } from '../_services/main-data.service';
 })
 
 export class ListEditPageComponent implements OnInit {
-    @Input() listId: string;
     stateObservables: GenericPageStateObservables<List>;
     selectedItems: any[] = [];
     actualScrollDirection: ScrollDirection;
@@ -53,5 +52,10 @@ export class ListEditPageComponent implements OnInit {
                 tap(value => value ? this.stateObservables.loading$.next(false) : null)
             )
         );
+    }
+
+    markItem(listId: string, item: any) {
+        item.marked = item.marked ? false : true;
+        this.mainData.updateItem(listId, item).subscribe();
     }
 }

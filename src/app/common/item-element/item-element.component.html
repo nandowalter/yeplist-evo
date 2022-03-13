@@ -7,9 +7,9 @@
             <!-- <img src="/assets/icons/list.png" alt=""> -->
         </div>
         <div class="grow p-4">
-            <h2 class="text-lg font-semibold">{{item.name}}</h2> 
+            <h2 class="text-lg font-semibold {{item.marked ? 'line-through text-neutral/50' : 'no-underline text-neutral'}}">{{item.name}}</h2> 
             <div class="flex flex-row gap-4">
-                <div class="grow text-sm text-slate-400">categoria: {{item.category}}</div>
+                <div class="grow text-sm  {{item.marked ? 'line-through text-slate-400/50' : 'no-underline text-slate-400'}}">categoria: {{item.category}}</div>
             </div>
         </div>
         <div class="justify-self-center self-center">

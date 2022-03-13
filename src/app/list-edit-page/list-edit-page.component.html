@@ -28,12 +28,7 @@
 
             <ng-container *ngIf="state.data?.items?.length > 0">
                 <ng-container *ngFor="let item of state.data.items">
-                    <div class="h-24 -mb-24 w-full bg-success noselect flex flex-row justify-center content-center">
-                        <app-icon class="flex-none" [iconSvg]="icons.check"></app-icon>
-                        <div class="grow"></div>
-                        <app-icon class="flex-none" [iconSvg]="icons.check"></app-icon>
-                    </div>
-                    <app-pan-manager class="block relative">
+                    <app-pan-manager class="block relative" (action)="markItem(state.data.id, item)" [actionColor]="item.marked ? 'warning' : 'success'" [iconSvg]="item.marked ? icons.reply : icons.check">
                         <app-item-element [item]="item" panAction></app-item-element>
                     </app-pan-manager>
                 </ng-container> 
