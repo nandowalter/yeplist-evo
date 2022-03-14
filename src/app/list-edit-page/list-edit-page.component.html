@@ -1,12 +1,13 @@
 <div class="fixed top-0 w-screen h-screen bg-base-200 flex flex-col">
     <ng-container *ngIf="stateObservables.state$ | async as state">
         <div class="navbar shadow-lg bg-primary text-neutral-content">
-            <div class="flex-none"> 
-                <a class="btn btn-square btn-ghost" [routerLink]="['../../..']" [app-icon]="icons.arrowLeft"></a>
+            <div class="flex-none min-w-[48px]"> 
+                <a @rotateInOut class="absolute btn btn-square btn-ghost" *ngIf="selectedItems.length === 0" [routerLink]="['../../..']" [app-icon]="icons.arrowLeft"></a>
+                <a @rotateInOut class="absolute btn btn-square btn-ghost" *ngIf="selectedItems.length > 0" (click)="unselectAll()" [app-icon]="icons.x"></a>
             </div> 
             <div class="flex-1 px-2 mx-2 flex flex-row">
-                
-                    <div class="justify-self-center self-center">
+                <ng-container *ngIf="selectedItems.length === 0">
+                    <div class="justify-self-center self-center" *ngIf="selectedItems.length === 0">
                         <img class="max-w-[90%]" src="/assets/icons/list.png" alt="">
                     </div>
                     <div class="grow">
@@ -15,6 +16,12 @@
                             <div class="grow text-sm text-slate-400">elementi: {{state.data?.items?.length}}</div>
                         </div>
                     </div>
+                </ng-container>
+                <ng-container *ngIf="selectedItems.length > 0">
+                    <div class="grow">
+                        <h2 class="text-lg font-semibold">{{selectedItems.length}}</h2>
+                    </div>
+                </ng-container>
                 
             </div> 
             <div class="flex-none">
@@ -29,7 +36,7 @@
             <ng-container *ngIf="state.data?.items?.length > 0">
                 <ng-container *ngFor="let item of state.data.items">
                     <app-pan-manager class="block relative" (action)="markItem(state.data.id, item)" [actionColor]="item.marked ? 'warning' : 'success'" [iconSvg]="item.marked ? icons.reply : icons.check">
-                        <app-item-element [item]="item" panAction></app-item-element>
+                        <app-item-element [item]="item" panAction (tap)="onItemTap(item.id)" (press)="onItemPress(item.id)" [selected]="selectedItems?.indexOf(item.id) > -1"></app-item-element>
                     </app-pan-manager>
                 </ng-container> 
             </ng-container>

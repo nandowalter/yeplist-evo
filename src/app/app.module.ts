@@ -46,6 +46,11 @@ const routes: Routes = [
             path: 'item',
             canActivate: [ AuthenticationGuard ],
             component: ItemEditPageComponent
+          },
+          {
+            path: 'item/:itemId',
+            canActivate: [ AuthenticationGuard ],
+            component: ItemEditPageComponent
           }
         ]
       },

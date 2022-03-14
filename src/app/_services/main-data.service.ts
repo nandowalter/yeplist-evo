@@ -103,6 +103,10 @@ export class MainDataService {
         });
     }
 
+    getItem(listId: string, itemId: string) {
+        return docData(doc(this.firestore, `ylists/${listId}/items/${itemId}`));
+    }
+
     updateItem(listId: string, item: any) {
         return new Observable<void>(subscriber => {
             updateDoc(doc(this.firestore, `ylists/${listId}/items/${item.id}`), (item as { [x: string]: any })).then(resp => {

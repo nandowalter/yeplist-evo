@@ -17,27 +17,31 @@ export class PanManagerComponent implements OnInit {
     currentState: string;
     actionLeftActive: boolean;
     actionRightActive: boolean;
-    readonly DELTA_ACTION_ACTIVE = 68;
+    readonly DELTA_ACTION_ACTIVE = 120;
+    readonly PAN_OFFSET = 15;
 
     constructor() { }
 
     ngOnInit() { }
 
-    onPanStart(e: any, element: HTMLElement) {
-        this.currentState='panning';
-    }
-
     onPanMove(e: any, element: HTMLElement) {
-        element.style.transform = `translateX(${e.deltaX}px)`;
-        this.actionLeftActive = (e.deltaX >= this.DELTA_ACTION_ACTIVE) ? true : false;
-        this.actionRightActive = (e.deltaX <= (this.DELTA_ACTION_ACTIVE * -1)) ? true : false;
+        if (e.deltaX >= this.PAN_OFFSET || e.deltaX <= (this.PAN_OFFSET * -1) || this.currentState === 'panning') {
+            if (this.currentState != 'panning')
+                this.currentState='panning';
+            element.style.transform = `translateX(${e.deltaX}px)`;
+            this.actionLeftActive = (e.deltaX >= this.DELTA_ACTION_ACTIVE) ? true : false;
+            this.actionRightActive = (e.deltaX <= (this.DELTA_ACTION_ACTIVE * -1)) ? true : false;
+        }
     }
 
     onPanEnd(e: any, element: HTMLElement) {
         this.currentState='normal';
         if (this.actionLeftActive || this.actionRightActive)
-            setTimeout(() => this.action.emit(), 250);
-        this.actionLeftActive = false;
-        this.actionRightActive = false;
+            setTimeout(() => {
+                this.action.emit();
+                this.actionLeftActive = false;
+                this.actionRightActive = false;
+            }, 250);
+        
     }
 }

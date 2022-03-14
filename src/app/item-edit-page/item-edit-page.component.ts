@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, of, switchMap, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, of, switchMap, take, tap } from 'rxjs';
 import { icon_arrow_left, icon_plus, icon_save } from '../icon/icon-set';
 import { MainDataService } from '../_services/main-data.service';
 
@@ -13,6 +13,8 @@ import { MainDataService } from '../_services/main-data.service';
 })
 
 export class ItemEditPageComponent implements OnInit {
+    listId: string;
+    itemId: string;
     dataGroup = new FormGroup({
         name: new FormControl('', [ Validators.required, Validators.maxLength(25) ]),
         category: new FormControl('generico'),
@@ -48,18 +50,45 @@ export class ItemEditPageComponent implements OnInit {
         
     }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.loading$.next(true);
+        combineLatest([
+            this.route.parent.paramMap.pipe(take(1), map(value => value.get('listId'))),
+            this.route.paramMap.pipe(take(1), map(value => value.get('itemId')))
+        ]).pipe(
+            tap(values => {
+                this.listId = values[0];
+                this.itemId = values[1];
+            }),
+            switchMap(values => values[1] ? this.dataService.getItem(values[0], values[1]) : of(null))
+        ).subscribe({
+            next: (value: any) => {
+                this.loading$.next(false);
+                if (value) {
+                    this.dataGroup.patchValue({
+                        name: value.name,
+                        category: value.category,
+                        qty: value.qty,
+                        um: value.um,
+                        notes: value.notes
+                    });
+                }
+                this.cd.markForCheck();
+            }   
+        });
+    }
 
     save() {
         this.loading$.next(true);
-        this.route.parent.paramMap.pipe(
-            take(1),
-            switchMap(value => this.dataService.addItem(value.get('listId'), this.dataGroup.value))
+        (this.itemId ? 
+            this.dataService.updateItem(this.listId, { id: this.itemId, ...this.dataGroup.value }) 
+            : 
+            this.dataService.addItem(this.listId, this.dataGroup.value)
         ).subscribe({
             complete: () => {
                 this.loading$.next(false);
                 this.dataGroup.reset();
-                this.router.navigate(['..'], { relativeTo: this.route });
+                this.router.navigate([this.itemId ? '../..' : '..'], { relativeTo: this.route });
                 this.cd.markForCheck();
             }   
         });
