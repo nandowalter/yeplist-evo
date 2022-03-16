@@ -13,6 +13,7 @@ export class PanManagerComponent implements OnInit {
     @Input() iconSvg: string;
     @Input() actionColor: string = "success";
     @Input() iconColor: string = "base-100";
+    @Input() disabled: boolean;
     @Output() action = new EventEmitter<void>();
     currentState: string;
     actionLeftActive: boolean;
@@ -25,7 +26,7 @@ export class PanManagerComponent implements OnInit {
     ngOnInit() { }
 
     onPanMove(e: any, element: HTMLElement) {
-        if (e.deltaX >= this.PAN_OFFSET || e.deltaX <= (this.PAN_OFFSET * -1) || this.currentState === 'panning') {
+        if (!this.disabled && (e.deltaX >= this.PAN_OFFSET || e.deltaX <= (this.PAN_OFFSET * -1) || this.currentState === 'panning')) {
             if (this.currentState != 'panning')
                 this.currentState='panning';
             element.style.transform = `translateX(${e.deltaX}px)`;
@@ -41,7 +42,7 @@ export class PanManagerComponent implements OnInit {
                 this.action.emit();
                 this.actionLeftActive = false;
                 this.actionRightActive = false;
-            }, 250);
+            }, 150);
         
     }
 }

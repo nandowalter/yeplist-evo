@@ -12,8 +12,8 @@
                     </div>
                     <div class="grow">
                         <h2 class="text-lg font-semibold">{{state.data?.name}}</h2> 
-                        <div class="flex flex-row gap-4">
-                            <div class="grow text-sm text-slate-400">elementi: {{state.data?.items?.length}}</div>
+                        <div class="flex flex-row gap-4" *ngIf="state.data?.items?.length > 0">
+                            <div class="grow text-sm text-slate-400">elementi da spuntare: {{state.data?.unmarkedItems?.length}}&nbsp;su&nbsp;{{state.data?.items?.length}}</div>
                         </div>
                     </div>
                 </ng-container>
@@ -25,6 +25,8 @@
                 
             </div> 
             <div class="flex-none">
+                <button class="btn btn-square btn-ghost" *ngIf="selectedItems.length > 0 && canMarkSelected(selectedItems, state.data.items)" [app-icon]="icons.clipboardCheck" (click)="markSelected(state.data.id, selectedItems, state.data.items)"></button>
+                <button class="btn btn-square btn-ghost" *ngIf="selectedItems.length > 0" [app-icon]="icons.trash" (click)="deleteSelected(state.data.id, selectedItems, state.data.items)"></button>
                 <!-- <button class="btn btn-square btn-ghost" (click)="save()" *ngIf="dataGroup.valid" [app-icon]="icons.save"></button> -->
             </div>
         </div>
@@ -33,13 +35,13 @@
                 <img class="m-auto" alt="" src="assets/images/empty_list_msg_it_small.webp">
             </div>
 
-            <ng-container *ngIf="state.data?.items?.length > 0">
+            <div class="pb-12" *ngIf="state.data?.items?.length > 0">
                 <ng-container *ngFor="let item of state.data.items">
-                    <app-pan-manager class="block relative" (action)="markItem(state.data.id, item)" [actionColor]="item.marked ? 'warning' : 'success'" [iconSvg]="item.marked ? icons.reply : icons.check">
+                    <app-pan-manager class="block relative" [disabled]="selectedItems.length > 0" (action)="markItem(state.data.id, item)" [actionColor]="item.marked ? 'warning' : 'success'" [iconSvg]="item.marked ? icons.reply : icons.check">
                         <app-item-element [item]="item" panAction (tap)="onItemTap(item.id)" (press)="onItemPress(item.id)" [selected]="selectedItems?.indexOf(item.id) > -1"></app-item-element>
                     </app-pan-manager>
                 </ng-container> 
-            </ng-container>
+            </div>
             
         </div>
         <div class="absolute bottom-0 mb-2 m-auto w-full flex justify-center items-center" style="bottom:0;">

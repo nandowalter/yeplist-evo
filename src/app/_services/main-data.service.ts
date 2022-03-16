@@ -13,6 +13,7 @@ export class MainDataService {
         @Optional() private auth: Auth
     ) {
         this.data$ = collectionData(this.getYListsQuery(), { idField: 'id' }).pipe(
+            map(values => values.map(v => this.mapObjectToList(v))),
             switchMap((items: List[]) => {
                 if (items.length === 0)
                     return of(items);
@@ -34,6 +35,7 @@ export class MainDataService {
 
     getList(id: string) {
         return docData(doc(this.firestore, `ylists/${id}`), { idField: 'id' }).pipe(
+            map(value => this.mapObjectToList(value)),
             switchMap((item: List) => {
                 if (!item)
                     return of(item);
@@ -118,6 +120,32 @@ export class MainDataService {
         });
     }
 
+    updateItems(listId: string, items: any[]) {
+        return new Observable<void>(subscriber => {
+            let batch = writeBatch(this.firestore);
+            items.forEach(item => batch.update(doc(this.firestore, `ylists/${listId}/items/${item.id}`), item));
+            batch.commit().then(resp => {
+                subscriber.next();
+                subscriber.complete();
+            }).catch(e => {
+                subscriber.error(e);
+            });
+        });
+    }
+
+    deleteItems(listId: string, items: any[]) {
+        return new Observable<void>(subscriber => {
+            let batch = writeBatch(this.firestore);
+            items.forEach(item => batch.delete(doc(this.firestore, `ylists/${listId}/items/${item.id}`)));
+            batch.commit().then(resp => {
+                subscriber.next();
+                subscriber.complete();
+            }).catch(e => {
+                subscriber.error(e);
+            });
+        });
+    }
+
     private getYListsQuery(...constraints: QueryConstraint[]) {
         return query(
             collection(this.firestore, 'ylists'),
@@ -126,5 +154,17 @@ export class MainDataService {
                 ...constraints
             ]
         );
+    }
+
+    mapObjectToList(obj: any) {
+        let newList = new List();
+        newList.id = obj.id;
+        newList.userIds = obj.userIds;
+        newList.uids = obj.uids;
+        newList.name = obj.name;
+        newList.items = obj.items;
+        newList.itemsCount = obj.itemsCount;
+
+        return newList;
     }
 }

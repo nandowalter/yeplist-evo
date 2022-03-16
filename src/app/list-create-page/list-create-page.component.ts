@@ -46,7 +46,10 @@ export class ListCreatePageComponent {
             this.cd.markForCheck();
             (this.nameInput.nativeElement as HTMLElement).focus();
         } else {
-            await this.mainData.addList({ name, userIds: [this.auth.currentUser?.uid] } as List);
+            let newList = new List();
+            newList.name = name;
+            newList.userIds = [this.auth.currentUser?.uid];
+            await this.mainData.addList(newList);
             this.dataGroup.reset();
             this.router.navigate(['/lists']);
             this.cd.markForCheck();

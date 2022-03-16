@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, concat, map, of, switchMap, tap } from 'rxjs';
 import { rotateInOutAnimation, showHideBottomAnimation } from '../animations';
 import { ScrollDirection } from '../common/scroll-direction';
-import { icon_arrow_left, icon_check, icon_plus, icon_reply, icon_x } from '../icon/icon-set';
+import { icon_arrow_left, icon_check, icon_clipboard_check, icon_plus, icon_reply, icon_trash, icon_x } from '../icon/icon-set';
 import { GenericPageStateObservables } from '../_models/generic-page-state-observables';
 import { List } from '../_models/list';
 import { MainDataService } from '../_services/main-data.service';
@@ -30,10 +30,13 @@ export class ListEditPageComponent implements OnInit {
         plus: icon_plus,
         check: icon_check,
         reply: icon_reply,
-        x: icon_x
+        x: icon_x,
+        trash: icon_trash,
+        clipboardCheck: icon_clipboard_check
     };
 
     constructor(
+        private cd: ChangeDetectorRef,
         private mainData: MainDataService,
         private route: ActivatedRoute,
         private router: Router
@@ -76,5 +79,27 @@ export class ListEditPageComponent implements OnInit {
 
     unselectAll() {
         this.selectedItems = [];
+    }
+
+    canMarkSelected(selectedItems: string[], items: any[]) {
+        return selectedItems.findIndex(itemId => items.findIndex(i => (i.id === itemId) && !i.marked) > -1) > -1;
+    }
+
+    deleteSelected(listId: string, selectedItems: string[], items: any[]) {
+        this.stateObservables.loading$.next(true);
+        this.mainData.deleteItems(listId, items.filter(i => selectedItems.indexOf(i.id) > -1)).subscribe({ complete: () => {
+            this.unselectAll();
+            this.stateObservables.loading$.next(false);
+        }});
+    }
+
+    markSelected(listId: string, selectedItems: string[], items: any[]) {
+        this.stateObservables.loading$.next(true);
+        let itemsToUpdate = items.filter(i => selectedItems.indexOf(i.id) > -1);
+        itemsToUpdate.forEach(i => i.marked = true);
+        this.mainData.updateItems(listId, itemsToUpdate).subscribe({ complete: () => {
+            this.unselectAll();
+            this.stateObservables.loading$.next(false);
+        }});
     }
 }

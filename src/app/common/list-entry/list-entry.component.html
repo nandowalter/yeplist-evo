@@ -1,5 +1,5 @@
 <div  
-    class="h-24 w-full bg-primary-content border-b-2 border-b-neutral-700 noselect flex justify-left content-center" 
+    class="h-24 w-full border-b-2 border-b-neutral-700 noselect flex justify-left content-center {{selected ? 'bg-slate-100' : 'bg-primary-content'}}" 
     (tap)="onTap(list.id)" (press)="onPress(list.id)"
 >
     <div class="w-full flex flex-row mx-2">
@@ -9,7 +9,8 @@
         <div class="grow p-4">
             <h2 class="text-lg font-semibold">{{list.name}}</h2> 
             <div class="flex flex-row gap-4">
-                <div class="grow text-sm text-slate-400">elementi: {{list.items?.length}}</div>
+                <div class="grow text-sm text-slate-400" *ngIf="list.items?.length > 0">elementi da spuntare: {{list.unmarkedItems?.length}}&nbsp;su&nbsp;{{list.items?.length}}</div>
+                <div class="grow text-sm text-slate-400" *ngIf="!list.items?.length">elementi: 0</div>
             </div>
         </div>
         <div class="justify-self-center self-center">
