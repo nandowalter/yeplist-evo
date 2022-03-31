@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { icon_check_circle, icon_chevron_right, icon_plus, icon_trash } from 'src/app/icon/icon-set';
 import { List } from 'src/app/_models/list';
 import { ListEntryMode } from '../list-entry-mode';
@@ -10,7 +10,11 @@ import { ListEntryMode } from '../list-entry-mode';
 })
 
 export class ListEntryComponent {
-    @Input() list: List;
+    @Input() set list(value: List) {
+        this._list = value;
+        this.cd.markForCheck();
+    };
+    _list: List;
     @Input() selected: boolean;
     @Input() mode: ListEntryMode;
     @Output() entryPress = new EventEmitter<string>();
@@ -21,7 +25,7 @@ export class ListEntryComponent {
         check_circle: icon_check_circle
     };
 
-    constructor() { }
+    constructor(private cd: ChangeDetectorRef) { }
 
     onTap(listId: string) {
         this.entryTap.emit(listId);

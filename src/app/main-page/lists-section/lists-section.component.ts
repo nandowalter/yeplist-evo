@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { combineLatestWith, map, mergeWith, switchMap, take, tap } from 'rxjs/operators';
@@ -23,7 +23,7 @@ import { NavbarModeService } from 'src/app/_services/navbar-mode.service';
         showHideBottomAnimation
     ]
 })
-export class ListsSectionComponent implements OnDestroy {
+export class ListsSectionComponent implements OnInit, OnDestroy {
     icons = {
         trash: icon_trash,
         plus: icon_plus,
@@ -46,7 +46,7 @@ export class ListsSectionComponent implements OnDestroy {
         private route: ActivatedRoute,
         private cd: ChangeDetectorRef
     ) {
-        this.initState();
+        
     }
 
     initState() {
@@ -57,7 +57,9 @@ export class ListsSectionComponent implements OnDestroy {
         );
         this.state$ = this.loading$.pipe(
             combineLatestWith(this.data$),
-            map(value => ({ loading: value[0], data: value[1] }))
+            map(value => {
+                return ({ loading: value[0], data: value[1] });
+            })
         );
     }
 
@@ -137,6 +139,10 @@ export class ListsSectionComponent implements OnDestroy {
 
     goToAddList() {
         this.router.navigate([{outlets: { 'secondaryPage': ['list']}} ], { relativeTo: this.route.parent });
+    }
+
+    ngOnInit() {
+        this.initState();
     }
 
     ngOnDestroy(): void {

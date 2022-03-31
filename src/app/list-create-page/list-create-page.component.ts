@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Optional, ViewChild } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { icon_arrow_left, icon_save } from '../icon/icon-set';
 import { List } from '../_models/list';
 import { MainDataService } from '../_services/main-data.service';
@@ -32,6 +32,7 @@ export class ListCreatePageComponent {
     constructor(
         @Optional() private auth: Auth,
         private router: Router,
+        private route: ActivatedRoute,
         private mainData: MainDataService,
         private cd: ChangeDetectorRef
     ) { }
@@ -46,12 +47,10 @@ export class ListCreatePageComponent {
             this.cd.markForCheck();
             (this.nameInput.nativeElement as HTMLElement).focus();
         } else {
-            let newList = new List();
-            newList.name = name;
-            newList.userIds = [this.auth.currentUser?.uid];
+            let newList = new List({ name, userIds: [this.auth.currentUser?.uid] });
             await this.mainData.addList(newList);
             this.dataGroup.reset();
-            this.router.navigate(['/lists']);
+            this.router.navigate(['..'], { relativeTo: this.route });
             this.cd.markForCheck();
         }
     }

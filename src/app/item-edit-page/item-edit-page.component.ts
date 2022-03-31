@@ -1,21 +1,25 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, map, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { icon_arrow_left, icon_plus, icon_save } from '../icon/icon-set';
+import { ListItem } from '../_models/list-item';
 import { MainDataService } from '../_services/main-data.service';
+import { ItemEditState, ItemEditStore } from './item-edit.store';
 
 @Component({
     selector: 'app-item-edit-page',
     templateUrl: 'item-edit-page.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {'class': 'fixed top-0 left-0 h-full w-screen z-30'}
+    host: {'class': 'fixed top-0 left-0 h-full w-screen z-30'},
+    providers: [
+        ItemEditStore
+    ],
 })
 
 export class ItemEditPageComponent implements OnInit {
-    listId: string;
-    itemId: string;
     dataGroup = new FormGroup({
+        id: new FormControl(null),
         name: new FormControl('', [ Validators.required, Validators.maxLength(25) ]),
         category: new FormControl('generico'),
         qty: new FormControl(1, [ Validators.max(999) ]),
@@ -40,58 +44,46 @@ export class ItemEditPageComponent implements OnInit {
         plus: icon_plus,
         save: icon_save
     };
+    state$: Observable<ItemEditState>;
 
     constructor(
         private router: Router,
         private route: ActivatedRoute,
         private dataService: MainDataService,
-        private cd: ChangeDetectorRef
-    ) {
-        
-    }
+        private cd: ChangeDetectorRef,
+        private pageStore: ItemEditStore
+    ) { }
 
     ngOnInit() {
-        this.loading$.next(true);
-        combineLatest([
+        this.state$ = this.pageStore.state$.pipe(tap(value => {
+            if (value?.item && this.dataGroup.get('id').value === null) {
+                this.dataGroup.patchValue({
+                    id: value.item.id,
+                    name: value.item.name,
+                    category: value.item.category,
+                    qty: value.item.qty,
+                    um: value.item.um,
+                    notes: value.item.notes
+                });
+            }
+
+            if (value?.saved) {
+                this.dataGroup.reset();
+                this.pageStore.updateSaved(false);
+                this.router.navigate([value?.item ? '../..' : '..'], { relativeTo: this.route });
+            }
+        }));
+
+        this.pageStore.getItem(combineLatest([
             this.route.parent.paramMap.pipe(take(1), map(value => value.get('listId'))),
             this.route.paramMap.pipe(take(1), map(value => value.get('itemId')))
         ]).pipe(
-            tap(values => {
-                this.listId = values[0];
-                this.itemId = values[1];
-            }),
-            switchMap(values => values[1] ? this.dataService.getItem(values[0], values[1]) : of(null))
-        ).subscribe({
-            next: (value: any) => {
-                this.loading$.next(false);
-                if (value) {
-                    this.dataGroup.patchValue({
-                        name: value.name,
-                        category: value.category,
-                        qty: value.qty,
-                        um: value.um,
-                        notes: value.notes
-                    });
-                }
-                this.cd.markForCheck();
-            }   
-        });
+            map(values => ({ listId: values[0], itemId: values[1] }))
+        ));
     }
 
-    save() {
-        this.loading$.next(true);
-        (this.itemId ? 
-            this.dataService.updateItem(this.listId, { id: this.itemId, ...this.dataGroup.value }) 
-            : 
-            this.dataService.addItem(this.listId, this.dataGroup.value)
-        ).subscribe({
-            complete: () => {
-                this.loading$.next(false);
-                this.dataGroup.reset();
-                this.router.navigate([this.itemId ? '../..' : '..'], { relativeTo: this.route });
-                this.cd.markForCheck();
-            }   
-        });
+    save(listId: string) {
+        this.pageStore.saveItem({ listId, item: new ListItem(this.dataGroup.value) });
     }
 
     getErrorMessage(fieldName: string, errors: any) {

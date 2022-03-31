@@ -3,6 +3,7 @@ import { Auth } from '@angular/fire/auth';
 import { addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, query, QueryConstraint, updateDoc, where, writeBatch } from '@angular/fire/firestore';
 import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
 import { List } from '../_models/list';
+import { ListItem } from '../_models/list-item';
 
 @Injectable({providedIn: 'root'})
 export class MainDataService {
@@ -13,16 +14,13 @@ export class MainDataService {
         @Optional() private auth: Auth
     ) {
         this.data$ = collectionData(this.getYListsQuery(), { idField: 'id' }).pipe(
-            map(values => values.map(v => this.mapObjectToList(v))),
-            switchMap((items: List[]) => {
-                if (items.length === 0)
-                    return of(items);
-                return combineLatest(items.map(i => {
+            map(values => values.map(v => new List(v))),
+            switchMap((lists: List[]) => {
+                if (lists.length === 0)
+                    return of(lists);
+                return combineLatest(lists.map(i => {
                     return collectionData(query(collection(this.firestore, `ylists/${i.id}/items`)), { idField: 'id' }).pipe(
-                        map(subColl => {
-                            i.items = subColl;
-                            return i;
-                        })
+                        map(subColl => i.patch({ items: Object.freeze(subColl.map(s => new ListItem(s))) }))
                     );
                 }));
             })
@@ -40,10 +38,7 @@ export class MainDataService {
                 if (!item)
                     return of(item);
                 return collectionData(query(collection(this.firestore, `ylists/${item.id}/items`)), { idField: 'id' }).pipe(
-                    map(subColl => {
-                        item.items = subColl;
-                        return item;
-                    })
+                    map(subColl => item.patch({ items: Object.freeze(subColl.map(s => new ListItem(s))) }))
                 );
             })
         );
@@ -62,11 +57,11 @@ export class MainDataService {
     }
 
     async addList(list: List) {
-        await addDoc(collection(this.firestore, 'ylists'), list);
+        await addDoc(collection(this.firestore, 'ylists'), list.toObject());
     }
 
     async updateList(list: List) {
-        await updateDoc(doc(this.firestore, `ylists/${list.id}`), (list as { [x: string]: any }));
+        await updateDoc(doc(this.firestore, `ylists/${list.id}`), list.toObject());
     }
 
     async findListByName(name: string) {
@@ -84,10 +79,7 @@ export class MainDataService {
                     return of(items);
                 return combineLatest(items.map(i => {
                     return collectionData(query(collection(this.firestore, `ylists/${i.id}/items`)), { idField: 'id' }).pipe(
-                        map(subColl => {
-                            i.items = subColl;
-                            return i;
-                        })
+                        map(subColl => i.patch({ items: Object.freeze(subColl.map(s => new ListItem(s))) }))
                     );
                 }));
             })
@@ -106,12 +98,14 @@ export class MainDataService {
     }
 
     getItem(listId: string, itemId: string) {
-        return docData(doc(this.firestore, `ylists/${listId}/items/${itemId}`));
+        return docData(doc(this.firestore, `ylists/${listId}/items/${itemId}`)).pipe(
+            map(value => new ListItem(value))
+        );
     }
 
-    updateItem(listId: string, item: any) {
+    updateItem(listId: string, item: ListItem) {
         return new Observable<void>(subscriber => {
-            updateDoc(doc(this.firestore, `ylists/${listId}/items/${item.id}`), (item as { [x: string]: any })).then(resp => {
+            updateDoc(doc(this.firestore, `ylists/${listId}/items/${item.id}`), item.toObject()).then(resp => {
                 subscriber.next();
                 subscriber.complete();
             }).catch(e => {
@@ -120,10 +114,10 @@ export class MainDataService {
         });
     }
 
-    updateItems(listId: string, items: any[]) {
+    updateItems(listId: string, items: ListItem[]) {
         return new Observable<void>(subscriber => {
             let batch = writeBatch(this.firestore);
-            items.forEach(item => batch.update(doc(this.firestore, `ylists/${listId}/items/${item.id}`), item));
+            items.forEach(item => batch.update(doc(this.firestore, `ylists/${listId}/items/${item.id}`), item.toObject()));
             batch.commit().then(resp => {
                 subscriber.next();
                 subscriber.complete();
@@ -133,7 +127,7 @@ export class MainDataService {
         });
     }
 
-    deleteItems(listId: string, items: any[]) {
+    deleteItems(listId: string, items: ListItem[]) {
         return new Observable<void>(subscriber => {
             let batch = writeBatch(this.firestore);
             items.forEach(item => batch.delete(doc(this.firestore, `ylists/${listId}/items/${item.id}`)));
@@ -157,14 +151,7 @@ export class MainDataService {
     }
 
     mapObjectToList(obj: any) {
-        let newList = new List();
-        newList.id = obj.id;
-        newList.userIds = obj.userIds;
-        newList.uids = obj.uids;
-        newList.name = obj.name;
-        newList.items = obj.items;
-        newList.itemsCount = obj.itemsCount;
-
+        let newList = new List(obj);
         return newList;
     }
 }
