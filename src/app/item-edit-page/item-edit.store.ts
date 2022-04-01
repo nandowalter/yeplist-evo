@@ -1,73 +1,50 @@
 import { Injectable } from "@angular/core";
-import { ComponentStore } from "@ngrx/component-store";
-import { combineLatest, Observable, of, switchMap, tap } from "rxjs";
+import { tapResponse } from "@ngrx/component-store";
+import { Observable, of, switchMap, tap } from "rxjs";
 import { ListItem } from "../_models/list-item";
 import { MainDataService } from "../_services/main-data.service";
+import { BaseState, BaseStore } from "../_store/base-store";
 
-export interface ItemEditState {
+export interface ItemEditState extends BaseState {
     listId: string;
-    loading: boolean;
     item: ListItem;
     saved: boolean;
-  }
+}
   
-  @Injectable()
-  export class ItemEditStore extends ComponentStore<ItemEditState> {
-    
+@Injectable()
+export class ItemEditStore extends BaseStore<ItemEditState> {
     constructor(
         private dataService: MainDataService
     ) {
-      super({ listId: null, loading: false, item: null, saved: false });
+      super({ listId: null, item: null, saved: false, loading: false, error: null });
     }
 
     readonly getItem = this.effect((params$: Observable<{ listId: string, itemId: string }>) => {
         return params$.pipe(
-            tap(() => this.updateLoading(true)),
-            tap(value => this.updateListId(value.listId)),
-            switchMap(value => value ? this.dataService.getItem(value.listId, value.itemId) : of(null)),
-            tap(value => this.updateItem(value)),
-            tap(() => this.updateLoading(false))
+            tap(value => this.updateStore({ loading: true, listId: value.listId, error: null })),
+            switchMap(value => ((value?.listId && value?.itemId) ? this.dataService.getItem(value.listId, value.itemId) : of<ListItem>(null)).pipe(
+                tapResponse(
+                    value => this.updateStore({ loading: false, item: value }),
+                    error => this.updateStore({ loading: false, error })
+                )
+            ))
         );
-        /*return movieId$.pipe(
-          // 👇 Handle race condition with the proper choice of the flattening operator.
-          switchMap((id) => this.moviesService.fetchMovie(id).pipe(
-            //👇 Act on the result within inner pipe.
-            tap({
-              next: (movie) => this.addMovie(movie),
-              error: (e) => this.logError(e),
-            }),
-            // 👇 Handle potential error within inner pipe.
-            catchError(() => EMPTY),
-          )),
-        );*/
     });
 
     readonly saveItem = this.effect((params$: Observable<{ listId: string, item: ListItem }>) => {
         return params$.pipe(
-            tap(() => this.updateLoading(true)),
-            switchMap(value => value.item.id ? this.dataService.updateItem(value.listId, value.item) : this.dataService.addItem(value.listId, value.item)),
-            tap(() => this.updateSaved(true)),
-            tap(() => this.updateLoading(false)),
+            tap(() => this.updateStore({ loading: true, error: null })),
+            switchMap(value => (value.item.id ? this.dataService.updateItem(value.listId, value.item) : this.dataService.addItem(value.listId, value.item)).pipe(
+                tapResponse(
+                    () => this.updateStore({ loading: false, saved: true }),
+                    error => this.updateStore({ loading: false, error })
+                )
+            ))
         )
-    })
-
-    readonly updateLoading = this.updater((state, loading: boolean) => ({
-        ...state,
-        loading
-    }));
+    });
 
     readonly updateSaved = this.updater((state, saved: boolean) => ({
         ...state,
         saved
     }));
-
-    readonly updateItem = this.updater((state, item: ListItem) => ({
-        ...state,
-        item
-    }));
-
-    readonly updateListId = this.updater((state, listId: string) => ({
-        ...state,
-        listId
-    }))
-  }
+}

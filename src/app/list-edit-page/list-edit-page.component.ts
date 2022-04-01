@@ -1,13 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, concat, map, of, switchMap, tap } from 'rxjs';
+import { map, Observable, take } from 'rxjs';
 import { rotateInOutAnimation, showHideBottomAnimation } from '../animations';
 import { ScrollDirection } from '../common/scroll-direction';
 import { icon_arrow_left, icon_check, icon_clipboard_check, icon_plus, icon_reply, icon_trash, icon_x } from '../icon/icon-set';
-import { GenericPageStateObservables } from '../_models/generic-page-state-observables';
-import { List } from '../_models/list';
 import { ListItem } from '../_models/list-item';
-import { MainDataService } from '../_services/main-data.service';
+import { ListEditState, ListEditStore } from './list-edit.store';
 
 @Component({
     selector: 'app-list-edit-page',
@@ -15,15 +13,16 @@ import { MainDataService } from '../_services/main-data.service';
     styleUrls: [ 'list-edit-page.component.css' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {'class': 'fixed top-0 left-0 h-full w-screen z-30'},
+    providers: [
+        ListEditStore
+    ],
     animations: [
         showHideBottomAnimation,
         rotateInOutAnimation
     ]
 })
-
 export class ListEditPageComponent implements OnInit {
-    stateObservables: GenericPageStateObservables<List>;
-    selectedItems: any[] = [];
+    state$: Observable<ListEditState>;
     actualScrollDirection: ScrollDirection;
     ScrollDirection = ScrollDirection;
     icons = {
@@ -37,48 +36,40 @@ export class ListEditPageComponent implements OnInit {
     };
 
     constructor(
-        private cd: ChangeDetectorRef,
-        private mainData: MainDataService,
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private pageStore: ListEditStore
     ) {
-        this.initState();
+        this.state$ = this.pageStore.state$;
     }
 
     ngOnInit(): void {
-        
-    }
-
-    initState() {
-        this.stateObservables = new GenericPageStateObservables<List>(
-            new BehaviorSubject<boolean>(false), 
+        this.pageStore.getList(
             this.route.paramMap.pipe(
-                map(values => values.get('listId')),
-                tap(value => this.stateObservables.loading$.next(true)),
-                switchMap(value => this.mainData.getList(value)),
-                tap(value => value ? this.stateObservables.loading$.next(false) : null)
+                take(1),
+                map(values => values.get('listId'))
             )
         );
     }
 
     markItem(listId: string, item: ListItem) {
-        this.mainData.updateItem(listId, item.patch({ marked: item.marked ? false : true })).subscribe();
+        this.pageStore.updateItems({ listId, items: [item.patch({ marked: item.marked ? false : true })] });
     }
 
-    onItemTap(itemId: string) {
-        if (this.selectedItems.length === 0) {
+    onItemTap(itemId: string, selectedItemsCount: number) {
+        if (selectedItemsCount === 0) {
             this.router.navigate(['item', itemId], { relativeTo: this.route });
         } else {
-            this.selectedItems.indexOf(itemId) === -1 ? this.selectedItems.push(itemId) : this.selectedItems.splice(this.selectedItems.indexOf(itemId), 1);
+            this.pageStore.toggleListSelection(itemId);
         }
     }
 
     onItemPress(itemId: string) {
-        this.selectedItems.indexOf(itemId) === -1 ? this.selectedItems.push(itemId) : this.selectedItems.splice(this.selectedItems.indexOf(itemId), 1);
+        this.pageStore.toggleListSelection(itemId);
     }
 
     unselectAll() {
-        this.selectedItems = [];
+        this.pageStore.unselectAll();
     }
 
     canMarkSelected(selectedItems: string[], items: ReadonlyArray<ListItem>) {
@@ -86,19 +77,10 @@ export class ListEditPageComponent implements OnInit {
     }
 
     deleteSelected(listId: string, selectedItems: string[], items: ReadonlyArray<ListItem>) {
-        this.stateObservables.loading$.next(true);
-        this.mainData.deleteItems(listId, items.filter(i => selectedItems.indexOf(i.id) > -1)).subscribe({ complete: () => {
-            this.unselectAll();
-            this.stateObservables.loading$.next(false);
-        }});
+        this.pageStore.deleteItems({listId, items: items.filter(i => selectedItems.indexOf(i.id) > -1)});
     }
 
     markSelected(listId: string, selectedItems: string[], items: ReadonlyArray<ListItem>) {
-        this.stateObservables.loading$.next(true);
-        let itemsToUpdate = items.filter(i => selectedItems.indexOf(i.id) > -1).map(i => i.patch({ marked: true }));
-        this.mainData.updateItems(listId, itemsToUpdate).subscribe({ complete: () => {
-            this.unselectAll();
-            this.stateObservables.loading$.next(false);
-        }});
+        this.pageStore.updateItems({ listId, items: items.filter(i => selectedItems.indexOf(i.id) > -1).map(i => i.patch({ marked: true })) });
     }
 }

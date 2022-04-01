@@ -88,7 +88,7 @@ export class MainDataService {
 
     addItem(listId: string, item: any) {
         return new Observable<void>(subscriber => {
-            addDoc(collection(this.firestore, `ylists/${listId}/items`), item).then(resp => {
+            addDoc(collection(this.firestore, `ylists/${listId}/items`), item.toObject()).then(resp => {
                 subscriber.next();
                 subscriber.complete();
             }).catch(e => {

@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { combineLatest, map, Observable, take, tap } from 'rxjs';
 import { icon_arrow_left, icon_plus, icon_save } from '../icon/icon-set';
 import { ListItem } from '../_models/list-item';
-import { MainDataService } from '../_services/main-data.service';
 import { ItemEditState, ItemEditStore } from './item-edit.store';
 
 @Component({
@@ -14,7 +13,7 @@ import { ItemEditState, ItemEditStore } from './item-edit.store';
     host: {'class': 'fixed top-0 left-0 h-full w-screen z-30'},
     providers: [
         ItemEditStore
-    ],
+    ]
 })
 
 export class ItemEditPageComponent implements OnInit {
@@ -26,7 +25,6 @@ export class ItemEditPageComponent implements OnInit {
         um: new FormControl(''),
         notes: new FormControl('',[ Validators.maxLength(100) ])
     });
-    loading$ = new BehaviorSubject<boolean>(false);
     private readonly errorConfig: {[key:string]: {[key:string]: string}} = {
         name: {
             required: 'Informazione obbligatoria',
@@ -39,7 +37,7 @@ export class ItemEditPageComponent implements OnInit {
             maxlength: 'Lunghezza massima 100 caratteri'
         }
     };
-    icons = {
+    readonly icons = {
         arrowLeft: icon_arrow_left,
         plus: icon_plus,
         save: icon_save
@@ -49,27 +47,16 @@ export class ItemEditPageComponent implements OnInit {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private dataService: MainDataService,
-        private cd: ChangeDetectorRef,
         private pageStore: ItemEditStore
     ) { }
 
     ngOnInit() {
         this.state$ = this.pageStore.state$.pipe(tap(value => {
             if (value?.item && this.dataGroup.get('id').value === null) {
-                this.dataGroup.patchValue({
-                    id: value.item.id,
-                    name: value.item.name,
-                    category: value.item.category,
-                    qty: value.item.qty,
-                    um: value.item.um,
-                    notes: value.item.notes
-                });
+                this.dataGroup.patchValue(value.item.toObject());
             }
 
             if (value?.saved) {
-                this.dataGroup.reset();
-                this.pageStore.updateSaved(false);
                 this.router.navigate([value?.item ? '../..' : '..'], { relativeTo: this.route });
             }
         }));
