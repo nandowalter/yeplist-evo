@@ -8,7 +8,7 @@
                 [mode]="state.selectedLists?.length > 0 ? ListEntryMode.Selection : ListEntryMode.Normal"
                 [selected]="state.selectedLists?.indexOf(list.id) > -1"
                 (entryTap)="onItemTap($event, state.selectedLists.length)"
-                (entryPress)="processItemSelection($event)"
+                (entryPress)="onItemPress($event)"
             ></app-list-entry>
         </div>
     </div>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -9,7 +9,6 @@ import { icon_check_circle, icon_chevron_right, icon_plus, icon_trash } from 'sr
 import { List } from 'src/app/_models/list';
 import { NavbarCommand } from 'src/app/_models/navbar-command';
 import { NavbarMode } from 'src/app/_models/navbar-mode';
-import { MainDataService } from 'src/app/_services/main-data.service';
 import { NavbarModeService } from 'src/app/_services/navbar-mode.service';
 import { ListsSectionState, ListsSectionStore } from './lists-section.store';
 
@@ -41,12 +40,10 @@ export class ListsSectionComponent implements OnInit, OnDestroy {
     state$: Observable<ListsSectionState>;
     
     constructor(
-        private mainData: MainDataService,
         private navbarModeService: NavbarModeService,
         private router: Router,
         private route: ActivatedRoute,
-        private store: ListsSectionStore,
-        private cd: ChangeDetectorRef
+        private store: ListsSectionStore
     ) {
         
     }
@@ -59,7 +56,7 @@ export class ListsSectionComponent implements OnInit, OnDestroy {
         return item.id;
     }
 
-    processItemSelection(id: string) {
+    onItemPress(id: string) {
         this.store.toggleListSelection(id);
     }
 
