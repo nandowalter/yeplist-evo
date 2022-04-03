@@ -48,12 +48,19 @@ export class MainDataService {
         await deleteDoc(doc(this.firestore, `ylists/${id}`));
     }
 
-    async deleteLists(ids: string[]) {
-        if (!ids || ids.length === 0)
-            return new Promise(() => null);
-        let batch = writeBatch(this.firestore);
-        ids.forEach(id => batch.delete(doc(this.firestore, `ylists/${id}`)));
-        return batch.commit();
+    deleteLists(ids: string[]) {
+        return new Observable<void>(subscriber => {
+            if (!ids || ids.length === 0)
+                return subscriber.complete();
+            let batch = writeBatch(this.firestore);
+            ids.forEach(id => batch.delete(doc(this.firestore, `ylists/${id}`)));
+            batch.commit().then(() => {
+                subscriber.complete();
+            })
+            .catch(e => {
+                subscriber.error(e);
+            });
+        });
     }
 
     async addList(list: List) {

@@ -3,12 +3,12 @@
         <div @list class="grid grid-cols-1 pb-12">
             <app-list-entry
                 @items
-                *ngFor="let list of state.data; index as i; trackBy: trackById" 
+                *ngFor="let list of state.lists; index as i; trackBy: trackById" 
                 [list]="list"
-                [mode]="selectedItems?.length > 0 ? ListEntryMode.Selection : ListEntryMode.Normal"
-                [selected]="selectedItems?.indexOf(list.id) > -1"
-                (entryTap)="onItemTap(i, $event)"
-                (entryPress)="processItemSelection(i,$event)"
+                [mode]="state.selectedLists?.length > 0 ? ListEntryMode.Selection : ListEntryMode.Normal"
+                [selected]="state.selectedLists?.indexOf(list.id) > -1"
+                (entryTap)="onItemTap($event, state.selectedLists.length)"
+                (entryPress)="processItemSelection($event)"
             ></app-list-entry>
         </div>
     </div>
@@ -16,7 +16,7 @@
     <div class="absolute bottom-0 mb-2 m-auto w-full flex justify-center items-center" style="bottom:0;">
         <a 
             class="btn btn-wide btn-primary"
-            [@showHideBottom]="!state.loading && (selectedItems?.length === 0) && (actualScrollDirection != ScrollDirection.down)"
+            [@showHideBottom]="!state.loading && (state.selectedLists?.length === 0) && (actualScrollDirection != ScrollDirection.down)"
             (click)="goToAddList()"
         >
             <app-icon [iconSvg]="icons.plus"></app-icon>

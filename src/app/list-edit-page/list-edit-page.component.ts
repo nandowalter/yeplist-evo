@@ -60,12 +60,12 @@ export class ListEditPageComponent implements OnInit {
         if (selectedItemsCount === 0) {
             this.router.navigate(['item', itemId], { relativeTo: this.route });
         } else {
-            this.pageStore.toggleListSelection(itemId);
+            this.pageStore.toggleItemSelection(itemId);
         }
     }
 
     onItemPress(itemId: string) {
-        this.pageStore.toggleListSelection(itemId);
+        this.pageStore.toggleItemSelection(itemId);
     }
 
     unselectAll() {

@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
-import { combineLatestWith, map, mergeWith, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { listAnimations, listItemsAnimations, secondaryPageAnimations, showHideBottomAnimation } from 'src/app/animations';
 import { ListEntryMode } from 'src/app/common/list-entry-mode';
 import { ScrollDirection } from 'src/app/common/scroll-direction';
@@ -11,11 +11,15 @@ import { NavbarCommand } from 'src/app/_models/navbar-command';
 import { NavbarMode } from 'src/app/_models/navbar-mode';
 import { MainDataService } from 'src/app/_services/main-data.service';
 import { NavbarModeService } from 'src/app/_services/navbar-mode.service';
+import { ListsSectionState, ListsSectionStore } from './lists-section.store';
 
 @Component({
     selector: 'app-lists-section',
     templateUrl: 'lists-section.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        ListsSectionStore
+    ],
     animations: [
         secondaryPageAnimations,
         listAnimations,
@@ -30,110 +34,59 @@ export class ListsSectionComponent implements OnInit, OnDestroy {
         chevron_right: icon_chevron_right,
         check_circle: icon_check_circle
     };
-    loading$ = new BehaviorSubject<boolean>(false);
-    data$: Observable<List[] | null>;
-    state$: Observable<{ loading: boolean, data: List[] | null }>;
-    selectedItems: string[] = [];
     navbarCommand$$: Subscription;
     actualScrollDirection: ScrollDirection;
     ScrollDirection = ScrollDirection;
     ListEntryMode = ListEntryMode;
+    state$: Observable<ListsSectionState>;
     
     constructor(
         private mainData: MainDataService,
         private navbarModeService: NavbarModeService,
         private router: Router,
         private route: ActivatedRoute,
+        private store: ListsSectionStore,
         private cd: ChangeDetectorRef
     ) {
         
     }
 
-    initState() {
-        this.data$ = of(null).pipe(
-            tap(value => this.loading$.next(true)),
-            mergeWith(this.mainData.data),
-            tap(value => value ? this.loading$.next(false) : null)
-        );
-        this.state$ = this.loading$.pipe(
-            combineLatestWith(this.data$),
-            map(value => {
-                return ({ loading: value[0], data: value[1] });
-            })
-        );
-    }
-
-    deleteSelectedItems() {
-        this.deleteLists(this.selectedItems).subscribe({
-            complete: () => this.clearSelection()
-        });
-    }
-
     deleteLists(ids: string[]) {
-        if (!ids)
-            return of(null);
-
-        return of(ids).pipe(
-            tap(value => this.loading$.next(true)),
-            switchMap(value => this.mainData.deleteLists(ids)),
-            tap(value => this.loading$.next(false)),
-            take(1)
-        );
+        this.store.deleteLists(ids);
     }
 
     trackById(index: number, item: List) {
         return item.id;
     }
 
-    processItemSelection(index: number, id: string) {
-        let selectedItemsIndex = this.selectedItems.indexOf(id);
-
-        if (selectedItemsIndex === -1) {
-            this.selectedItems.push(id);
-        } else {
-            this.selectedItems.splice(selectedItemsIndex, 1);
-        }
-
-        if (this.selectedItems.length === 0) {
-            this.clearSelection();
-        } else if (!this.navbarCommand$$) {
-            this.navbarCommand$$ = this.navbarModeService.command.subscribe(value => this.onNavbarCommand(value));
-        }
-
-        this.navbarModeService.setLabel((this.selectedItems.length === 0) ? null : `${this.selectedItems.length}`);
-        this.navbarModeService.setMode((this.selectedItems.length === 0) ? NavbarMode.Normal : NavbarMode.Selection);
+    processItemSelection(id: string) {
+        this.store.toggleListSelection(id);
     }
 
     clearSelection() {
-        this.selectedItems = [];
-        if (this.navbarCommand$$)
-            this.navbarCommand$$.unsubscribe();
-
-        this.navbarCommand$$ = null;
-        this.navbarModeService.setLabel(null);
-        this.navbarModeService.setMode(NavbarMode.Normal);
-        this.actualScrollDirection = null;
-        this.cd.markForCheck();
+        this.store.unselectAll();
     }
 
-    onItemTap(index: number, id: string) {
-        if (this.selectedItems.length > 0) {
-            this.processItemSelection(index, id);
-        } else {
+    onItemTap(id: string, selectedListsCount: number) {
+        if (selectedListsCount === 0) {
             this.router.navigate([{outlets: { 'secondaryPage': ['list', 'edit', id]}} ], { relativeTo: this.route.parent });
+        } else {
+            this.store.toggleListSelection(id);
         }
     }
 
-    onNavbarCommand(command: NavbarCommand) {
-        switch (command) {
-            case NavbarCommand.Unselect:
-                this.clearSelection();
-                break;
-            case NavbarCommand.Delete:
-                this.deleteSelectedItems();
-                break;
-            default:
-                break;
+    onNavbarCommandTriggerFactory(selectedLists?: string[]) {
+        return (command: NavbarCommand) => {
+            switch (command) {
+                case NavbarCommand.Unselect:
+                    this.clearSelection();
+                    break;
+                case NavbarCommand.Delete:
+                    this.deleteLists(selectedLists);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -142,7 +95,24 @@ export class ListsSectionComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.initState();
+        this.state$ = this.store.state$.pipe(
+            tap(state => {
+                if (this.navbarCommand$$) {
+                    this.navbarCommand$$.unsubscribe();
+                    this.navbarCommand$$ = null;
+                }
+
+                if (state.selectedLists.length === 0) {
+                    this.navbarModeService.setLabel(null);
+                    this.navbarModeService.setMode(NavbarMode.Normal);
+                    this.actualScrollDirection = null;
+                } else {   
+                    this.navbarCommand$$ = this.navbarModeService.command.subscribe(this.onNavbarCommandTriggerFactory(state.selectedLists));
+                    this.navbarModeService.setLabel(`${state.selectedLists.length}`);
+                    this.navbarModeService.setMode(NavbarMode.Selection);
+                }
+            })
+        );
     }
 
     ngOnDestroy(): void {

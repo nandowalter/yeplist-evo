@@ -8,9 +8,8 @@ import { BaseState, BaseStore } from "../_store/base-store";
 
 export interface ListEditState extends BaseState {
     listId: string;
-    loading: boolean;
     list: List;
-    selectedLists: string[];
+    selectedItems: string[];
 }
 
 @Injectable()
@@ -18,7 +17,7 @@ export class ListEditStore extends BaseStore<ListEditState> {
     constructor(
         private dataService: MainDataService
     ) {
-      super({ listId: null, loading: false, list: null, selectedLists: [], error: null });
+      super({ listId: null, loading: false, list: null, selectedItems: [], error: null });
     }
 
     readonly getList = this.effect((listId$: Observable<string>) => {
@@ -38,7 +37,7 @@ export class ListEditStore extends BaseStore<ListEditState> {
             tap(params => this.updateStore({ loading: true, error: null })),
             switchMap(params => this.dataService.updateItems(params.listId, params.items).pipe(
                 tapResponse(
-                    value => this.updateStore({ loading: false, selectedLists: [] }),
+                    value => this.updateStore({ loading: false, selectedItems: [] }),
                     error => this.updateStore({ loading: false, error })
                 )
             ))
@@ -50,7 +49,7 @@ export class ListEditStore extends BaseStore<ListEditState> {
             tap(params => this.updateStore({ loading: true, error: null })),
             switchMap(params => this.dataService.deleteItems(params.listId, params.items).pipe(
                 tapResponse(
-                    value => this.updateStore({ loading: false, selectedLists: [] }),
+                    value => this.updateStore({ loading: false, selectedItems: [] }),
                     error => this.updateStore({ loading: false, error })
                 )
             ))
@@ -59,12 +58,12 @@ export class ListEditStore extends BaseStore<ListEditState> {
 
     readonly unselectAll = this.updater((state: ListEditState) => ({
         ...state,
-        ...{ selectedLists: [] }
+        ...{ selectedItems: [] }
     }));
 
-    readonly toggleListSelection = this.updater((state: ListEditState, listId: string) => ({
+    readonly toggleItemSelection = this.updater((state: ListEditState, itemId: string) => ({
         ...state,
-        ...{ selectedLists: state.selectedLists.find(i => i === listId) ? [...state.selectedLists.filter(i => i != listId)] : [...state.selectedLists, listId] }
+        ...{ selectedItems: state.selectedItems.find(i => i === itemId) ? [...state.selectedItems.filter(i => i != itemId)] : [...state.selectedItems, itemId] }
     }));
 
 
