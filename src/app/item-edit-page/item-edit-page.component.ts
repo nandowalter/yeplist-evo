@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, map, Observable, take, tap } from 'rxjs';
+import { combineLatest, debounceTime, filter, map, Observable, take, tap } from 'rxjs';
 import { icon_arrow_left, icon_plus, icon_save } from '../icon/icon-set';
 import { ListItem } from '../_models/list-item';
 import { ItemEditState, ItemEditStore } from './item-edit.store';
@@ -43,6 +43,7 @@ export class ItemEditPageComponent implements OnInit {
         save: icon_save
     };
     state$: Observable<ItemEditState>;
+    nameTextBoxFocus: boolean;
 
     constructor(
         private router: Router,
@@ -51,6 +52,8 @@ export class ItemEditPageComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        this.dataGroup.get('name').valueChanges.pipe(filter(value => value.length >= 4), debounceTime(250)).subscribe(value => this.nameTextBoxFocus ? this.pageStore.getNameSuggestions(value) : null);
+
         this.state$ = this.pageStore.state$.pipe(tap(value => {
             if (value?.item && this.dataGroup.get('id').value === null) {
                 this.dataGroup.patchValue(value.item.toObject());

@@ -1,6 +1,6 @@
 <section class="drawer" *ngIf="state$ | async as state">
     <input id="my-drawer" type="checkbox" class="drawer-toggle">
-    <div class="h-screen drawer-content flex flex-col">
+    <div class="h-full drawer-content flex flex-col">
         <div class="flex-none w-screen navbar shadow-lg bg-primary text-neutral-content">
             <div class="flex-none relative"> 
                 <div class="inline-block w-8 mx-2">&nbsp;</div>
@@ -16,12 +16,7 @@
                 <button class="btn btn-square btn-ghost" *ngIf="state.navbar.mode === NavbarMode.Selection" [app-icon]="icons.trash" (click)="onNavbarCommand(NavbarCommand.Delete)"></button>
             </div>
         </div>
-        <div class="grow relative overflow-auto">
-            <router-outlet></router-outlet>
-        </div>
-        <div class="w-0 h-0 overflow-hidden" [@secondaryPage]="outlet?.isActivated">
-            <router-outlet #outlet="outlet" name="secondaryPage"></router-outlet>
-        </div>
+        
         <div class="flex-none bg-base-200">
             <ul class="menu shadow-lg horizontal w-screen flex flex-row">
                 <li class="flex-1" [ngClass]="{'bordered': router.url === '/', 'text-primary': router.url === '/', 'text-base-300': router.url != '/'}">
@@ -43,7 +38,14 @@
                     </a>
                 </li> 
             </ul>
-        </div>          
+        </div>
+        
+        <div class="grow relative overflow-auto">
+            <router-outlet></router-outlet>
+        </div>
+        <div class="w-0 h-0 overflow-hidden" [@secondaryPage]="outlet?.isActivated">
+            <router-outlet #outlet="outlet" name="secondaryPage"></router-outlet>
+        </div>
     </div>
     <div class="drawer-side">
         <label for="my-drawer" class="drawer-overlay"></label> 

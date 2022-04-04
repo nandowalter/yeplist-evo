@@ -1,6 +1,7 @@
 import { Injectable, Optional } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, query, QueryConstraint, updateDoc, where, writeBatch } from '@angular/fire/firestore';
+import { setDoc } from 'firebase/firestore';
 import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
 import { List } from '../_models/list';
 import { ListItem } from '../_models/list-item';
@@ -105,7 +106,7 @@ export class MainDataService {
     }
 
     getItem(listId: string, itemId: string) {
-        return docData(doc(this.firestore, `ylists/${listId}/items/${itemId}`)).pipe(
+        return docData(doc(this.firestore, `ylists/${listId}/items/${itemId}`), { idField: 'id' }).pipe(
             map(value => new ListItem(value))
         );
     }
@@ -145,6 +146,37 @@ export class MainDataService {
                 subscriber.error(e);
             });
         });
+    }
+
+    addKnownItem(name: string, category: string, um: string) {
+        const MIN = 4;
+        let letters = [];
+        if (name.length >= MIN) {
+            let splitted = name.split('');
+            splitted.forEach((s, index) => {
+                if (index <= splitted.length - MIN) {
+                    for (let i = MIN; (index + i) <= splitted.length; i++) {
+                        letters.push(name.slice(index, index + i));
+                    }
+                }
+            });
+        }
+
+        return new Observable<void>(subscriber => {
+            setDoc(doc(this.firestore, `users/${this.auth.currentUser?.uid}/knownitems/${name}`), { name, category, um, letters }).then(resp => {
+                subscriber.next();
+                subscriber.complete();
+            }).catch(e => {
+                subscriber.error(e);
+            });
+        });
+    }
+
+    findKnownItemByName(name: string) {
+        return collectionData(query(
+            collection(this.firestore, `users/${this.auth.currentUser?.uid}/knownitems`),
+            where('letters', 'array-contains', name.toLowerCase())
+        ));
     }
 
     private getYListsQuery(...constraints: QueryConstraint[]) {

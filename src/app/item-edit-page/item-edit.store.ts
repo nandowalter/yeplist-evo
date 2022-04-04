@@ -9,6 +9,7 @@ export interface ItemEditState extends BaseState {
     listId: string;
     item: ListItem;
     saved: boolean;
+    nameSuggestions: { existing: string[], known: string[] }
 }
   
 @Injectable()
@@ -16,7 +17,7 @@ export class ItemEditStore extends BaseStore<ItemEditState> {
     constructor(
         private dataService: MainDataService
     ) {
-      super({ listId: null, item: null, saved: false, loading: false, error: null });
+      super({ listId: null, item: null, saved: false, loading: false, error: null, nameSuggestions: null });
     }
 
     readonly getItem = this.effect((params$: Observable<{ listId: string, itemId: string }>) => {
@@ -34,13 +35,33 @@ export class ItemEditStore extends BaseStore<ItemEditState> {
     readonly saveItem = this.effect((params$: Observable<{ listId: string, item: ListItem }>) => {
         return params$.pipe(
             tap(() => this.updateStore({ loading: true, error: null })),
-            switchMap(value => (value.item.id ? this.dataService.updateItem(value.listId, value.item) : this.dataService.addItem(value.listId, value.item)).pipe(
+            switchMap(value => (
+                value.item.id ? 
+                this.dataService.updateItem(value.listId, value.item) 
+                : 
+                this.dataService.addItem(value.listId, value.item)
+            ).pipe(
+                switchMap(() => this.dataService.addKnownItem(value.item.name, value.item.category, value.item.um).pipe(
+                    tapResponse(
+                        () => this.updateStore({ loading: false, saved: true }),
+                        error => this.updateStore({ loading: false, error })
+                    )
+                ))
+            ))
+        );
+    });
+
+    readonly getNameSuggestions = this.effect((value$: Observable<string>) => {
+        return value$.pipe(
+            switchMap(value => this.dataService.findKnownItemByName(value).pipe(
                 tapResponse(
-                    () => this.updateStore({ loading: false, saved: true }),
-                    error => this.updateStore({ loading: false, error })
+                    resp => {
+                        console.log(resp);
+                    },
+                    error => {}
                 )
             ))
-        )
+        );
     });
 
     readonly updateSaved = this.updater((state, saved: boolean) => ({
