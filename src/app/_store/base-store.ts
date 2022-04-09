@@ -7,22 +7,27 @@ export interface BaseState {
 }
 
 export class BaseStore<T extends object> extends ComponentStore<T> {
-    constructor(initObj: T) {
-      super(initObj);
-    }
+  private initialState;
 
-    readonly updateStore = this.updater((state, value: Partial<T>) => ({
-        ...state,
-        ...value
-    }));
+  constructor(initObj: T) {
+    super(initObj);
+    this.initialState = initObj;
+  }
 
-    readonly setLoading = this.updater((state, loading: boolean) => ({
+  readonly updateStore = this.updater((state, value: Partial<T>) => ({
       ...state,
-      ...{ loading }
-    }));
+      ...value
+  }));
 
-    readonly setError = this.updater((state, error: any) => ({
-      ...state,
-      ...{ error }
-    }));
+  readonly setLoading = this.updater((state, loading: boolean) => ({
+    ...state,
+    ...{ loading }
+  }));
+
+  readonly setError = this.updater((state, error: any) => ({
+    ...state,
+    ...{ error }
+  }));
+
+  readonly clearState = this.updater(state => this.initialState);
 }

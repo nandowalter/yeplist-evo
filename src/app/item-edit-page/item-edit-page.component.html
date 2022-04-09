@@ -28,64 +28,58 @@
                     </div>
                 </ng-container> -->
             </div>
-            <ul *ngIf="false" class="menu bg-base-100 h-full w-full">
-                <li><a>Item 1</a></li>
-                <li><a>Item 2</a></li>
-                <li><a>Item 3</a></li>
-            </ul>
-            <ng-container *ngIf="true">
-                <div class="form-control">
-                    <label class="label">
-                    <span class="label-text">Categoria</span>
-                    </label>
-                    <select class="select select-bordered" formControlName="category" [ngClass]="{ 'select-error': dataGroup.get('category')?.touched && dataGroup.get('category')?.invalid}">
-                        <option>generico</option>
-                        <option>frutta</option>
-                        <option>verdura</option>
-                        <option>ortofrutta</option>
-                        <option>banco frigo</option>
-                        <option>gastronomia</option>
-                    </select>
-                    <ng-container *ngIf="dataGroup.get('category')?.touched && dataGroup.get('category')?.invalid">    
-                        <div [attr.data-tip]="getErrorMessage('category', dataGroup.get('category')?.errors)" class="tooltip tooltip-open tooltip-error tooltip-bottom">
-                            <label></label>
-                        </div>
-                    </ng-container>
-                </div>
-                <div class="form-control">
-                    <label class="label">
-                    <span class="label-text">Quantità</span>
-                    </label>
-                    <input formControlName="qty" type="number" placeholder="quantità" min="1" max="999" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid}">
-                    <ng-container *ngIf="dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid">    
-                        <div [attr.data-tip]="getErrorMessage('qty', dataGroup.get('qty')?.errors)" class="tooltip tooltip-open tooltip-error tooltip-bottom">
-                            <label></label>
-                        </div>
-                    </ng-container>
-                </div>
-                <div class="form-control">
-                    <label class="label">
-                    <span class="label-text">Note</span>
-                    </label>
-                    <textarea formControlName="notes" placeholder="note" maxlength="100" rows="4" class="textarea textarea-bordered" [ngClass]="{ 'textarea-error': dataGroup.get('notes')?.touched && dataGroup.get('notes')?.invalid}"></textarea>
-                </div>
-            </ng-container>
-        </div>
-        <!-- <ul class="grow menu bg-base-100 w-full left-0">
-            <li><a>Item 1</a></li>
-            <li><a>Item 2</a></li>
-            <li><a>Item 3</a></li>
-        </ul> -->
-
-        <!-- <div class="grow card w-full bg-base-300 text-primary-content overflow-auto">
-            <div class="card-body">
-              <h2 class="card-title">Suggerimenti...</h2>
-              <p>If a dog chews shoes whose shoes does he choose?</p>
-              <div class="card-actions justify-end">
-                <button class="btn">Buy Now</button>
-              </div>
+            <div class="form-control">
+                <label class="label">
+                <span class="label-text">Categoria</span>
+                </label>
+                <select class="select select-bordered" formControlName="category" [ngClass]="{ 'select-error': dataGroup.get('category')?.touched && dataGroup.get('category')?.invalid}">
+                    <option>generico</option>
+                    <option>frutta</option>
+                    <option>verdura</option>
+                    <option>ortofrutta</option>
+                    <option>banco frigo</option>
+                    <option>gastronomia</option>
+                </select>
+                <ng-container *ngIf="dataGroup.get('category')?.touched && dataGroup.get('category')?.invalid">    
+                    <div [attr.data-tip]="getErrorMessage('category', dataGroup.get('category')?.errors)" class="tooltip tooltip-open tooltip-error tooltip-bottom">
+                        <label></label>
+                    </div>
+                </ng-container>
             </div>
-        </div> -->
+            <div class="form-control">
+                <label class="label">
+                <span class="label-text">Quantità</span>
+                </label>
+                <input formControlName="qty" type="number" placeholder="quantità" min="1" max="999" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid}">
+                <ng-container *ngIf="dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid">    
+                    <div [attr.data-tip]="getErrorMessage('qty', dataGroup.get('qty')?.errors)" class="tooltip tooltip-open tooltip-error tooltip-bottom">
+                        <label></label>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="form-control">
+                <label class="label">
+                <span class="label-text">Note</span>
+                </label>
+                <textarea formControlName="notes" placeholder="note" maxlength="100" rows="4" class="textarea textarea-bordered" [ngClass]="{ 'textarea-error': dataGroup.get('notes')?.touched && dataGroup.get('notes')?.invalid}"></textarea>
+            </div>
+        </div>
+
+        <div class="absolute bottom-0 w-full z-20 bg-base-100 shadow-topxl" [ngClass]="{'h-40': !suggestionsExpanded, 'h-4/5': suggestionsExpanded }" *ngIf="state.nameSuggestions?.known.length > 0 || state.nameSuggestions?.existing.length > 0">
+            <div class="p-4 h-14 bg-primary text-primary-content flex gap-2" (click)="toggleSuggestionsExpand()">
+                <i [app-icon]="icons.lightBulb"></i><span>Suggerimenti</span>
+            </div>
+            <ul class="menu divide-y divide-dashed">
+                <li *ngFor="let item of state.nameSuggestions.existing"><a (click)="onSuggestionExistingClick(item)">{{item.name}}&nbsp;<i [app-icon]="icons.pencil"></i></a></li>
+                <li *ngFor="let item of state.nameSuggestions.known"><a (click)="onSuggestionKnownClick(item)">{{item.name}}</a></li>
+            </ul>
+        </div>
+
+        <div class="absolute top-0 left-0 h-full w-full z-10 backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" 
+            *ngIf="suggestionsExpanded"
+            (click)="toggleSuggestionsExpand()"
+        >
+        </div>
 
         <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="state.loading">
             <button class="btn btn-ghost btn-lg btn-circle loading"></button> 

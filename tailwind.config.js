@@ -9,6 +9,9 @@ module.exports = {
     extend: {
       scale: {
         '175': '1.75',
+      },
+      boxShadow: {
+        'topxl': '0 -5px 5px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);',
       }
     }
   },

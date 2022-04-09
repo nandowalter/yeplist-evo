@@ -3,6 +3,7 @@ import { Auth } from '@angular/fire/auth';
 import { addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, query, QueryConstraint, updateDoc, where, writeBatch } from '@angular/fire/firestore';
 import { setDoc } from 'firebase/firestore';
 import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
+import { KnownItem } from '../_models/known-item';
 import { List } from '../_models/list';
 import { ListItem } from '../_models/list-item';
 
@@ -152,6 +153,7 @@ export class MainDataService {
         const MIN = 4;
         let letters = [];
         if (name.length >= MIN) {
+            name = name.toLowerCase();
             let splitted = name.split('');
             splitted.forEach((s, index) => {
                 if (index <= splitted.length - MIN) {
@@ -176,7 +178,9 @@ export class MainDataService {
         return collectionData(query(
             collection(this.firestore, `users/${this.auth.currentUser?.uid}/knownitems`),
             where('letters', 'array-contains', name.toLowerCase())
-        ));
+        )).pipe(
+            map(values => values ? values.map(i => new KnownItem(i)) : [])
+        );
     }
 
     private getYListsQuery(...constraints: QueryConstraint[]) {
