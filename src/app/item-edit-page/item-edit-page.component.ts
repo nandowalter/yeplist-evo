@@ -22,7 +22,8 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
     private readonly errorConfig: {[key:string]: {[key:string]: string}} = {
         name: {
             required: 'Informazione obbligatoria',
-            maxlength: 'Lunghezza massima 25 caratteri'
+            maxlength: 'Lunghezza massima 25 caratteri',
+            notUnique: 'Nome già esistente in lista'
         },
         qty: {
             max: 'Numero massimo 999'
@@ -60,6 +61,12 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
             
             if (value.listId) {
                 this.dataGroup.patchValue({ listId: value.listId });
+            }
+
+            if (value?.error?.field && value.error.validationError) {
+                this.dataGroup.controls['name'].setErrors({
+                    notUnique: true
+                });
             }
 
             if (value?.saved) {

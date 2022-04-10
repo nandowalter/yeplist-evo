@@ -33,14 +33,27 @@ export class MainDataService {
         return this.data$;
     }
 
-    getList(id: string) {
-        return docData(doc(this.firestore, `ylists/${id}`), { idField: 'id' }).pipe(
-            map(value => this.mapObjectToList(value)),
+    getList(listId: string) {
+        return docData(doc(this.firestore, `ylists/${listId}`), { idField: 'id' }).pipe(
+            map(value => new List(value)),
             switchMap((item: List) => {
                 if (!item)
                     return of(item);
                 return collectionData(query(collection(this.firestore, `ylists/${item.id}/items`)), { idField: 'id' }).pipe(
                     map(subColl => item.patch({ items: Object.freeze(subColl.map(s => new ListItem(s))) }))
+                );
+            })
+        );
+    }
+
+    findItemInListByName(listId: string, name: string, exactMatch: boolean = true) {
+        return docData(doc(this.firestore, `ylists/${listId}`), { idField: 'id' }).pipe(
+            map(value => new List(value)),
+            switchMap((item: List) => {
+                if (!item?.id)
+                    return of(undefined);
+                return collectionData(query(collection(this.firestore, `ylists/${item.id}/items`)), { idField: 'id' }).pipe(
+                    map(subColl => subColl.map(s => new ListItem(s)).filter(li => exactMatch ? (li.name === name) : (li.name.indexOf(name) > -1)))
                 );
             })
         );
@@ -191,10 +204,5 @@ export class MainDataService {
                 ...constraints
             ]
         );
-    }
-
-    mapObjectToList(obj: any) {
-        let newList = new List(obj);
-        return newList;
     }
 }

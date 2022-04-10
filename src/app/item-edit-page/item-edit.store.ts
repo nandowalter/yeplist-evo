@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { tapResponse } from "@ngrx/component-store";
-import { combineLatest, map, Observable, of, switchMap, tap } from "rxjs";
+import { catchError, combineLatest, map, Observable, of, switchMap, tap, throwError } from "rxjs";
 import { KnownItem } from "../_models/known-item";
 import { ListItem } from "../_models/list-item";
 import { MainDataService } from "../_services/main-data.service";
@@ -35,7 +35,10 @@ export class ItemEditStore extends BaseStore<ItemEditState> {
 
     readonly saveItem = this.effect((params$: Observable<{ listId: string, item: ListItem }>) => {
         return params$.pipe(
-            tap(() => this.updateStore({ loading: true, error: null })),
+            tap(() => this.updateStore({ loading: true, error: null, nameSuggestions: null })),
+            switchMap(value => this.dataService.findItemInListByName(value.listId, value.item.name).pipe(
+                switchMap(itemsFound => itemsFound?.length > 0 ? throwError(() => ({ field: 'name', validationError: 'notUnique' })) : of(value))
+            )),
             switchMap(value => (
                 value.item.id ? 
                 this.dataService.updateItem(value.listId, value.item) 
@@ -48,15 +51,20 @@ export class ItemEditStore extends BaseStore<ItemEditState> {
                         error => this.updateStore({ loading: false, error })
                     )
                 ))
-            ))
+            )),
+            catchError(error => {
+                this.updateStore({ loading: false, error });
+                return of(null);
+            })
         );
     });
 
     readonly getNameSuggestions = this.effect((value$: Observable<{ listId: string, searchText: string, currentItemId: string }>) => {
         return value$.pipe(
+            tap(() => this.updateStore({ error: null })),
             switchMap(value => combineLatest([
                 this.dataService.findKnownItemByName(value.searchText),
-                value.listId ? this.dataService.getList(value.listId).pipe(map(l => l?.items?.length > 0 ? l.items.filter(i => i.name.toLowerCase().indexOf(value.searchText) > -1) : null)) : of(null),
+                value.listId ? this.dataService.findItemInListByName(value.listId, value.searchText, false) : of(null),
                 of({ currentItemId: value.currentItemId, searchText: value.searchText })
             ]).pipe(
                 map(values => ({ knownItems: values[0], existingItems: values[1], params: values[2] })),

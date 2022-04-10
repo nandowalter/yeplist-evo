@@ -28,7 +28,7 @@ const routes: Routes = [
     component: MainPageComponent,
     canActivate: [ AuthenticationGuard ],
     children: [
-      { path: '', component: HomeSectionComponent, canActivate: [ AuthenticationGuard ] },
+      { path: '', redirectTo: '/lists', pathMatch: 'full' /* component: HomeSectionComponent, canActivate: [ AuthenticationGuard ] */ },
       { path: 'lists', component: ListsSectionComponent, canActivate: [ AuthenticationGuard ]},
       {
         path: 'list',
