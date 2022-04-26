@@ -108,7 +108,11 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
     }
 
     save(listId: string) {
-        this.pageStore.saveItem({ listId, item: new ListItem(this.dataGroup.value) });
+        if (this.dataGroup.get('id').value != null) {
+            this.pageStore.updateItem({ listId, item: new ListItem(this.dataGroup.value) });
+        } else {
+            this.pageStore.addItem({ listId, item: new ListItem(this.dataGroup.value) });
+        }
     }
 
     getErrorMessage(fieldName: string, errors: any) {

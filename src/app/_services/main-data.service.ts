@@ -2,7 +2,7 @@ import { Injectable, Optional } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, query, QueryConstraint, updateDoc, where, writeBatch } from '@angular/fire/firestore';
 import { setDoc } from 'firebase/firestore';
-import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
+import { combineLatest, firstValueFrom, map, Observable, of, switchMap, take } from 'rxjs';
 import { KnownItem } from '../_models/known-item';
 import { List } from '../_models/list';
 import { ListItem } from '../_models/list-item';
@@ -53,9 +53,10 @@ export class MainDataService {
                 if (!item?.id)
                     return of(undefined);
                 return collectionData(query(collection(this.firestore, `ylists/${item.id}/items`)), { idField: 'id' }).pipe(
-                    map(subColl => subColl.map(s => new ListItem(s)).filter(li => exactMatch ? (li.name === name) : (li.name.indexOf(name) > -1)))
+                    map(subColl => subColl.map(s => new ListItem(s)).filter(li => exactMatch ? (li.name.toLowerCase() === name.toLowerCase()) : (li.name.toLowerCase().indexOf(name.toLowerCase()) > -1)))
                 );
-            })
+            }),
+            take(1)
         );
     }
 

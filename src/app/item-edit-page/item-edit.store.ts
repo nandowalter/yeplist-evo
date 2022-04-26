@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { tapResponse } from "@ngrx/component-store";
-import { catchError, combineLatest, map, Observable, of, switchMap, tap, throwError } from "rxjs";
+import { combineLatest, concatMap, map, Observable, of, switchMap, tap } from "rxjs";
 import { KnownItem } from "../_models/known-item";
 import { ListItem } from "../_models/list-item";
 import { MainDataService } from "../_services/main-data.service";
@@ -33,31 +33,46 @@ export class ItemEditStore extends BaseStore<ItemEditState> {
         );
     });
 
-    readonly saveItem = this.effect((params$: Observable<{ listId: string, item: ListItem }>) => {
+    readonly updateItem = this.effect((params$: Observable<{ listId: string, item: ListItem }>) => {
         return params$.pipe(
             tap(() => this.updateStore({ loading: true, error: null, nameSuggestions: null })),
-            switchMap(value => this.dataService.findItemInListByName(value.listId, value.item.name).pipe(
-                switchMap(itemsFound => itemsFound?.length > 0 ? throwError(() => ({ field: 'name', validationError: 'notUnique' })) : of(value))
-            )),
-            switchMap(value => (
-                value.item.id ? 
-                this.dataService.updateItem(value.listId, value.item) 
-                : 
-                this.dataService.addItem(value.listId, value.item)
-            ).pipe(
-                switchMap(() => this.dataService.addKnownItem(value.item.name, value.item.category, value.item.um).pipe(
-                    tapResponse(
-                        () => this.updateStore({ loading: false, saved: true }),
-                        error => this.updateStore({ loading: false, error })
-                    )
-                ))
-            )),
-            catchError(error => {
-                this.updateStore({ loading: false, error });
-                return of(null);
-            })
+            concatMap(value => this.dataService.findItemInListByName(value.listId, value.item.name, true).pipe(
+                map(itemsFound => {
+                    if (itemsFound?.length > 0 && itemsFound.findIndex(i => i.id != value.item.id) > -1)
+                        throw { field: 'name', validationError: 'notUnique' };
+                    return value;
+                }),
+                concatMap(value => this.dataService.updateItem(value.listId, value.item).pipe(
+                    concatMap(() => this.dataService.addKnownItem(value.item.name, value.item.category, value.item.um))
+                )),
+                tapResponse(
+                    () => this.updateStore({ loading: false, saved: true }),
+                    error => this.updateStore({ loading: false, error })
+                )
+            ))
         );
     });
+
+    readonly addItem = this.effect((params$: Observable<{ listId: string, item: ListItem }>) => {
+        return params$.pipe(
+            tap(() => this.updateStore({ loading: true, error: null, nameSuggestions: null })),
+            concatMap(value => this.dataService.findItemInListByName(value.listId, value.item.name, true).pipe(
+                map(itemsFound => {
+                    if (itemsFound?.length > 0)
+                        throw { field: 'name', validationError: 'notUnique' };
+                    return value;
+                }),
+                concatMap(value => this.dataService.addItem(value.listId, value.item).pipe(
+                    concatMap(() => this.dataService.addKnownItem(value.item.name, value.item.category, value.item.um))
+                )),
+                tapResponse(
+                    () => this.updateStore({ loading: false, saved: true }),
+                    error => this.updateStore({ loading: false, error })
+                )
+            ))
+        );
+    });
+
 
     readonly getNameSuggestions = this.effect((value$: Observable<{ listId: string, searchText: string, currentItemId: string }>) => {
         return value$.pipe(
@@ -89,6 +104,7 @@ export class ItemEditStore extends BaseStore<ItemEditState> {
 
     readonly clearSuggestions = this.updater((state) => ({
         ...state,
-        nameSuggestions: null
+        nameSuggestions: null,
+        error: null
     }));
 }
