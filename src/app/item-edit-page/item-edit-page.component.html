@@ -23,6 +23,15 @@
                     <span class="label-text-alt text-error" *ngIf="dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid">{{getErrorMessage('name', dataGroup.get('name')?.errors)}}</span>
                   </label>
                 <input autofocus formControlName="name" (focus)="nameTextBoxFocus=true" (blur)="nameTextBoxFocus=false" type="text" placeholder="nome" maxlength="25" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid}">
+                <div class="z-20 bg-base-100 shadow-topxl flex flex-col" [ngClass]="{'h-32': !suggestionsExpanded, 'h-4/5': suggestionsExpanded }" *ngIf="state.nameSuggestions?.known.length > 0 || state.nameSuggestions?.existing.length > 0">
+                    <div class="p-0.5 h-7 bg-primary text-primary-content text-xs flex gap-2 items-center justify-center" (click)="toggleSuggestionsExpand()">
+                        <i iconClass="w-4 h-4" [app-icon]="icons.lightBulb"></i><span>Suggerimenti</span>
+                    </div>
+                    <ul class="menu divide-y divide-dashed block overflow-scroll grow">
+                        <li *ngFor="let item of state.nameSuggestions.existing"><a (click)="onSuggestionExistingClick(item)">{{item.name}}&nbsp;<i [app-icon]="icons.pencil"></i></a></li>
+                        <li *ngFor="let item of state.nameSuggestions.known"><a (click)="onSuggestionKnownClick(item)">{{item.name}}</a></li>
+                    </ul>
+                </div>
             </div>
             <div class="form-control">
                 <label class="label">
@@ -59,16 +68,6 @@
                 </label>
                 <textarea formControlName="notes" placeholder="note" maxlength="100" rows="4" class="textarea textarea-bordered" [ngClass]="{ 'textarea-error': dataGroup.get('notes')?.touched && dataGroup.get('notes')?.invalid}"></textarea>
             </div>
-        </div>
-
-        <div class="absolute bottom-0 w-full z-20 bg-base-100 shadow-topxl" [ngClass]="{'h-40': !suggestionsExpanded, 'h-4/5': suggestionsExpanded }" *ngIf="state.nameSuggestions?.known.length > 0 || state.nameSuggestions?.existing.length > 0">
-            <div class="p-4 h-14 bg-primary text-primary-content flex gap-2" (click)="toggleSuggestionsExpand()">
-                <i [app-icon]="icons.lightBulb"></i><span>Suggerimenti</span>
-            </div>
-            <ul class="menu divide-y divide-dashed">
-                <li *ngFor="let item of state.nameSuggestions.existing"><a (click)="onSuggestionExistingClick(item)">{{item.name}}&nbsp;<i [app-icon]="icons.pencil"></i></a></li>
-                <li *ngFor="let item of state.nameSuggestions.known"><a (click)="onSuggestionKnownClick(item)">{{item.name}}</a></li>
-            </ul>
         </div>
 
         <div class="absolute top-0 left-0 h-full w-full z-10 backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" 

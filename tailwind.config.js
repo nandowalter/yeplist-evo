@@ -2,6 +2,11 @@ module.exports = {
   content: [
     './src/app/**/*.{html,ts}',
   ],
+  safelist: [
+    {
+      pattern: /./ 
+    }
+  ],
   plugins: [
     require('daisyui'),
   ],

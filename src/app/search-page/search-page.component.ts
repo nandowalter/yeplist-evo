@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject } from 'rxjs';
 import { ListEntryMode } from '../common/list-entry-mode';
 import { icon_arrow_left } from '../icon/icon-set';
@@ -27,7 +28,9 @@ export class SearchPageComponent implements OnInit, AfterViewInit {
     };
 
     constructor(
-        private mainData: MainDataService
+        private mainData: MainDataService,
+        private router: Router,
+        private route: ActivatedRoute
     ) {
         this.state$ = combineLatest([
             this.lists$
@@ -49,7 +52,7 @@ export class SearchPageComponent implements OnInit, AfterViewInit {
     }
 
     onListItemTap(index: number, listId: string) {
-
+        this.router.navigate(['..', 'list', 'edit', listId], { relativeTo: this.route });
     }
 
     private initForm() {

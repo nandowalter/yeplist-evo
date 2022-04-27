@@ -96,7 +96,7 @@ export class MainDataService {
     async findLists(searchText: string) {
         const normalizedSearchText = searchText.toLowerCase();
         return await firstValueFrom(collectionData(this.getYListsQuery(), { idField: 'id' }).pipe(
-            map(value => (value && value.length > 0) ? value.filter(i => i['name'].toLowerCase().indexOf(normalizedSearchText) > -1) : null),
+            map(value => (value && value.length > 0) ? value.filter(i => i['name'].toLowerCase().indexOf(normalizedSearchText) > -1).map(i => new List(i)) : null),
             switchMap((items: List[]) => {
                 if (items.length === 0)
                     return of(items);
