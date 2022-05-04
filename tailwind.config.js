@@ -2,11 +2,7 @@ module.exports = {
   content: [
     './src/app/**/*.{html,ts}',
   ],
-  safelist: [
-    {
-      pattern: /./ 
-    }
-  ],
+  safelist: process?.argv?.some(arg => arg.includes('deploy')) ? undefined : [{ pattern: /./ }],
   plugins: [
     require('daisyui'),
   ],
@@ -24,9 +20,9 @@ module.exports = {
     themes: [{
       lightOne: {
         "primary": "#673BB7",
-        "primary-content": "#ffffff",
+        // "primary-content": "#ffffff",
         secondary: "#FEF08A",
-        "secondary-content": "#ffffff",
+        /*"secondary-content": "#ffffff",
         accent: "#37cdbe",
         "accent-content": "#ffffff",
         neutral: "#3d4451",
@@ -34,8 +30,12 @@ module.exports = {
         "base-100": "#ffffff",
         "base-200": "#f9fafb",
         "base-300": "#d1d5db",
-        "base-content": "#1f2937"
+        "base-content": "#1f2937"*/
       },
+      light: {
+        ...require("daisyui/src/colors/themes")["[data-theme=light]"],
+        primary: "#673BB7"
+      }
     }, "dark"]
   }
 

@@ -9,7 +9,7 @@ export class BaseImmutable<T> {
         return this._fieldDefs;
     }
 
-    constructor(obj?: any) {
+    constructor(obj?: Partial<T>) {
         if (obj && this._fieldDefs) {
             Object.keys(this._fieldDefs).forEach(m => {
                 if (obj.hasOwnProperty(m)) {
@@ -36,7 +36,7 @@ export class BaseImmutable<T> {
         return new currentProto.constructor(this);
     }
 
-    patch(obj: any): T {
+    patch(obj: Partial<T>): T {
         let currentProto = Object.getPrototypeOf(this);
         return new currentProto.constructor({ ...this, ...obj });
     }

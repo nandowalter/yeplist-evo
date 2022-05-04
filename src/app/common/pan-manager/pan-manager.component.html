@@ -3,6 +3,13 @@
     <div class="grow"></div>
     <app-icon class="flex-none self-center mx-4 transition-transform" [ngClass]="{ 'scale-175': actionRightActive }" [iconSvg]="iconSvg"></app-icon>
 </div>
-<div class="relative" [@panXReset]="currentState" #container (panMove)="onPanMove($event, container)" (panEnd)="onPanEnd($event, container)">
+<div style="touch-action: pan-x;"
+    #container
+    class="relative"
+    [@panXReset]="currentState"
+    (panMove)="onPanMove($event, container)" 
+    (panEnd)="onPanEnd($event, container)"
+    (panCancel)="onPanEnd($event, container)"
+>
     <ng-content></ng-content>
 </div>

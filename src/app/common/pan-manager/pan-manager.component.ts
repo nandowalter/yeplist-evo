@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { panXReset } from 'src/app/animations';
 
 @Component({
     selector: 'app-pan-manager',
     templateUrl: 'pan-manager.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     animations: [
         panXReset
     ]
@@ -15,6 +16,8 @@ export class PanManagerComponent implements OnInit {
     @Input() iconColor: string = "base-100";
     @Input() disabled: boolean;
     @Output() action = new EventEmitter<void>();
+    @Output() panStarted = new EventEmitter();
+    @Output() panEnded = new EventEmitter();
     currentState: string;
     actionLeftActive: boolean;
     actionRightActive: boolean;
@@ -27,8 +30,10 @@ export class PanManagerComponent implements OnInit {
 
     onPanMove(e: any, element: HTMLElement) {
         if (!this.disabled && (e.deltaX >= this.PAN_OFFSET || e.deltaX <= (this.PAN_OFFSET * -1) || this.currentState === 'panning')) {
-            if (this.currentState != 'panning')
+            if (this.currentState != 'panning') {
+                this.panStarted.emit();
                 this.currentState='panning';
+            }
             element.style.transform = `translateX(${e.deltaX}px)`;
             this.actionLeftActive = (e.deltaX >= this.DELTA_ACTION_ACTIVE) ? true : false;
             this.actionRightActive = (e.deltaX <= (this.DELTA_ACTION_ACTIVE * -1)) ? true : false;
@@ -36,6 +41,7 @@ export class PanManagerComponent implements OnInit {
     }
 
     onPanEnd(e: any, element: HTMLElement) {
+        this.panEnded.emit();
         this.currentState='normal';
         if (this.actionLeftActive || this.actionRightActive)
             setTimeout(() => {

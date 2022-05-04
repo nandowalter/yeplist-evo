@@ -167,19 +167,19 @@ export class MainDataService {
         const MIN = 4;
         let letters = [];
         if (name.length >= MIN) {
-            name = name.toLowerCase();
-            let splitted = name.split('');
+            let normName = name.toLowerCase();
+            let splitted = normName.split('');
             splitted.forEach((s, index) => {
                 if (index <= splitted.length - MIN) {
                     for (let i = MIN; (index + i) <= splitted.length; i++) {
-                        letters.push(name.slice(index, index + i));
+                        letters.push(normName.slice(index, index + i));
                     }
                 }
             });
         }
 
         return new Observable<void>(subscriber => {
-            setDoc(doc(this.firestore, `users/${this.auth.currentUser?.uid}/knownitems/${name}`), { name, category, um, letters }).then(resp => {
+            setDoc(doc(this.firestore, `users/${this.auth.currentUser?.uid}/knownitems/${name.toLowerCase()}`), { name, category, um, letters }).then(resp => {
                 subscriber.next();
                 subscriber.complete();
             }).catch(e => {

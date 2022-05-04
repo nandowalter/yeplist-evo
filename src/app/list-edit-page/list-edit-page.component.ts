@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map, Observable, take } from 'rxjs';
 import { rotateInOutAnimation, showHideBottomAnimation } from '../animations';
 import { ScrollDirection } from '../common/scroll-direction';
-import { icon_arrow_left, icon_check, icon_clipboard_check, icon_plus, icon_reply, icon_trash, icon_x } from '../icon/icon-set';
+import { icon_arrow_left, icon_check, icon_clipboard_check, icon_dots_vertical, icon_plus, icon_reply, icon_trash, icon_x } from '../icon/icon-set';
 import { ListItem } from '../_models/list-item';
 import { ListEditState, ListEditStore } from './list-edit.store';
 
@@ -32,8 +32,10 @@ export class ListEditPageComponent implements OnInit {
         reply: icon_reply,
         x: icon_x,
         trash: icon_trash,
-        clipboardCheck: icon_clipboard_check
+        clipboardCheck: icon_clipboard_check,
+        dots_vertical: icon_dots_vertical
     };
+    itemPanning: boolean;
 
     constructor(
         private route: ActivatedRoute,
@@ -82,5 +84,21 @@ export class ListEditPageComponent implements OnInit {
 
     markSelected(listId: string, selectedItems: string[], items: ReadonlyArray<ListItem>) {
         this.pageStore.updateItems({ listId, items: items.filter(i => selectedItems.indexOf(i.id) > -1).map(i => i.patch({ marked: true })) });
+    }
+
+    openOptionsPanel() {
+
+    }
+
+    markAll(listId: string, items: ReadonlyArray<ListItem>) {
+        this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: true })) });
+    }
+
+    restoreAll(listId: string, items: ReadonlyArray<ListItem>) {
+        this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: true })) });
+    }
+
+    removeAll(listId: string, items: ReadonlyArray<ListItem>) {
+        this.pageStore.deleteItems({listId, items: items.map(i => i.clone()) });
     }
 }
