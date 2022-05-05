@@ -1,0 +1,13 @@
+<label [attr.for]="dropdownMenuId">
+    <ng-content select="[dropdownMenuButton]"></ng-content>
+</label>
+
+<input type="checkbox" [attr.id]="dropdownMenuId" class="modal-toggle">
+<label [attr.for]="dropdownMenuId" class="modal modal-bottom">
+    <label for="" class="modal-box max-w-2xl">
+        <label #modalTrigger [attr.for]="dropdownMenuId"></label>
+        <ul class="menu bg-base-100 text-base-content w-full" (click)="modalTrigger.click()">
+            <ng-content select="[dropdownMenuItems]"></ng-content>
+        </ul>
+    </label>
+</label>

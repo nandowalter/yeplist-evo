@@ -21,6 +21,8 @@ import { ListEditPageComponent } from './list-edit-page/list-edit-page.component
 import { ItemEditPageComponent } from './item-edit-page/item-edit-page.component';
 import { ItemElementComponent } from './common/item-element/item-element.component';
 import { PanManagerComponent } from './common/pan-manager/pan-manager.component';
+import { ModalDialogComponent } from './common/modal-dialog/modal-dialog.component';
+import { DropdownMenuComponent } from './common/dropdown-menu/dropdown-menu.component';
 
 const routes: Routes = [
   {
@@ -87,7 +89,9 @@ const routes: Routes = [
     SearchPageComponent,
     ItemEditPageComponent,
     ItemElementComponent,
-    PanManagerComponent
+    PanManagerComponent,
+    ModalDialogComponent,
+    DropdownMenuComponent
   ],
   imports: [
     CommonModule,

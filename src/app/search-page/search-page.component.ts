@@ -24,7 +24,7 @@ export class SearchPageComponent implements OnInit, AfterViewInit {
     ListEntryMode = ListEntryMode;
 
     icons = {
-        arrowLeft: icon_arrow_left
+        arrow_left: icon_arrow_left
     };
 
     constructor(

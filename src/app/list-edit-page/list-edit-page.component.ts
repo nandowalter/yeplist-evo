@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, Observable, take } from 'rxjs';
 import { rotateInOutAnimation, showHideBottomAnimation } from '../animations';
 import { ScrollDirection } from '../common/scroll-direction';
-import { icon_arrow_left, icon_check, icon_clipboard_check, icon_dots_vertical, icon_plus, icon_reply, icon_trash, icon_x } from '../icon/icon-set';
+import { icon_arrow_left, icon_check, icon_clipboard_check, icon_cog, icon_dots_horizontal, icon_dots_vertical, icon_plus, icon_reply, icon_trash, icon_x } from '../icon/icon-set';
 import { ListItem } from '../_models/list-item';
 import { ListEditState, ListEditStore } from './list-edit.store';
 
@@ -26,14 +26,16 @@ export class ListEditPageComponent implements OnInit {
     actualScrollDirection: ScrollDirection;
     ScrollDirection = ScrollDirection;
     icons = {
-        arrowLeft: icon_arrow_left,
+        arrow_left: icon_arrow_left,
         plus: icon_plus,
         check: icon_check,
         reply: icon_reply,
         x: icon_x,
         trash: icon_trash,
-        clipboardCheck: icon_clipboard_check,
-        dots_vertical: icon_dots_vertical
+        clipboard_check: icon_clipboard_check,
+        dots_vertical: icon_dots_vertical,
+        dots_horizontal: icon_dots_horizontal,
+        cog: icon_cog
     };
     itemPanning: boolean;
 
@@ -95,7 +97,7 @@ export class ListEditPageComponent implements OnInit {
     }
 
     restoreAll(listId: string, items: ReadonlyArray<ListItem>) {
-        this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: true })) });
+        this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: false })) });
     }
 
     removeAll(listId: string, items: ReadonlyArray<ListItem>) {

@@ -33,7 +33,7 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
         }
     };
     readonly icons = {
-        arrowLeft: icon_arrow_left,
+        arrow_left: icon_arrow_left,
         plus: icon_plus,
         save: icon_save,
         x: icon_x,

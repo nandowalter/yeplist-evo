@@ -16,7 +16,7 @@ export class ListCreatePageComponent {
     @ViewChild('nameInput') nameInput: ElementRef;
     icons = {
         save: icon_save,
-        arrowLeft: icon_arrow_left
+        arrow_left: icon_arrow_left
     };
     dataGroup: FormGroup = new FormGroup({
         name: new FormControl('', [ Validators.required, Validators.maxLength(25) ])
