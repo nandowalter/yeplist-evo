@@ -9,6 +9,7 @@ export class List extends BaseImmutable<List> {
     @Field({ typeDef: ListItem }) items?: readonly ListItem[];
     @Field() itemsCount?: number;
     @Field() userIds?: string[];
+    @Field() orderBy: string;
 
     get unmarkedItems() {
         return this.items?.filter(i => !i.marked);

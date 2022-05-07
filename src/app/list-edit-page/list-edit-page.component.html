@@ -32,7 +32,7 @@
                 <app-dropdown-menu dropdownMenuId="listMenu">
                     <i dropdownMenuButton class="btn btn-square btn-ghost" [app-icon]="icons.dots_horizontal"></i>
                     <ng-container dropdownMenuItems>
-                        <li><a (click)="openOptionsPanel()"><i [app-icon]="icons.cog"></i>Opzioni</a></li>
+                        <li><label for="list-options"><i [app-icon]="icons.cog"></i>Impostazioni lista</label></li>
                         <li><a (click)="markAll(state.list?.id, state.list?.items)"><i [app-icon]="icons.clipboard_check"></i>Spunta tutti</a></li>
                         <li><a (click)="restoreAll(state.list?.id, state.list?.items)"><i [app-icon]="icons.reply"></i>Ripristina tutti</a></li>
                         <li><label for="delete-all-modal"><i [app-icon]="icons.trash"></i>Elimina tutti</label></li>
@@ -85,21 +85,18 @@
         </app-modal-dialog>
 
         <app-modal-dialog modalId="list-options">
-            <h3 class="font-bold text-lg">Elimina tutti gli elementi</h3>
-            <p class="py-4">Vuoi eliminare tutti gli elementi della lista?</p>
+            <!-- <h4 class="font-bold text-lg">Impostazioni lista</h4> -->
+            <div class="text-base-300 text-sm mt-2 mb-2">Impostazioni</div>
+            <div class="flex flex-row">
+                <span class="grow self-center">Ordinamento</span>
+                <span>
+                    <select class="select select-bordered w-full max-w-xs" [ngModel]="state.list?.orderBy">
+                        <option value="itemName">Nome elemento</option>
+                        <option value="category">Categoria</option>
+                    </select>
+                </span>
+            </div>
         </app-modal-dialog>
-        <!-- <input type="checkbox" id="delete-all-modal" class="modal-toggle">
-        <label for="delete-all-modal" class="modal modal-bottom sm:modal-middle">
-            <label for="" class="modal-box">
-                <h3 class="font-bold text-lg">Elimina tutti gli elementi</h3>
-                <p class="py-4">Vuoi eliminare tutti gli elementi della lista?</p>
-                <div class="modal-action">
-                <label for="delete-all-modal" class="btn">No</label>
-                <label for="delete-all-modal" (click)="removeAll(state.list?.id, state.list?.items)" class="btn btn-primary">Sì</label>
-                </div>
-            </label>
-        </label> -->
-
 
     </ng-container>
 </div>

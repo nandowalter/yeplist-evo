@@ -88,10 +88,6 @@ export class ListEditPageComponent implements OnInit {
         this.pageStore.updateItems({ listId, items: items.filter(i => selectedItems.indexOf(i.id) > -1).map(i => i.patch({ marked: true })) });
     }
 
-    openOptionsPanel() {
-
-    }
-
     markAll(listId: string, items: ReadonlyArray<ListItem>) {
         this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: true })) });
     }

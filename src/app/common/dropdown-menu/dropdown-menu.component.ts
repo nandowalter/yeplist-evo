@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
     selector: 'app-dropdown-menu',
@@ -6,10 +6,8 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class DropdownMenuComponent implements OnInit {
+export class DropdownMenuComponent {
     @Input() dropdownMenuId: string;
 
     constructor() { }
-
-    ngOnInit() { }
 }

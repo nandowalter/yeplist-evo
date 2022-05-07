@@ -9,7 +9,7 @@ import { AuthenticationGuard } from './_services/authentication.guard';
 import { HomeSectionComponent } from './main-page/home-section/home-section.component';
 import { ListsSectionComponent } from './main-page/lists-section/lists-section.component';
 import { ListCreatePageComponent } from './list-create-page/list-create-page.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NoAuthenticationGuard } from './_services/no-authentication.guard';
 import { AlertComponent } from './alert/alert.component';
 import { IconComponent } from './icon/icon.component';
@@ -99,7 +99,8 @@ const routes: Routes = [
       initialNavigation: 'enabledBlocking',
       enableTracing: false
     }),
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ],
   exports: [
     AppComponent,
