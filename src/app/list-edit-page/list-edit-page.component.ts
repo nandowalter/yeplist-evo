@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map, Observable, take } from 'rxjs';
 import { rotateInOutAnimation, showHideBottomAnimation } from '../animations';
 import { ScrollDirection } from '../common/scroll-direction';
-import { icon_arrow_left, icon_check, icon_clipboard_check, icon_cog, icon_dots_horizontal, icon_dots_vertical, icon_plus, icon_reply, icon_trash, icon_x } from '../icon/icon-set';
+import { icon_arrow_left, icon_check, icon_clipboard_check, icon_cog, icon_dots_horizontal, icon_dots_vertical, icon_plus, icon_reply, icon_share, icon_trash, icon_x } from '../icon/icon-set';
 import { List } from '../_models/list';
 import { ListItem } from '../_models/list-item';
 import { ListEditState, ListEditStore } from './list-edit.store';
@@ -36,7 +36,8 @@ export class ListEditPageComponent implements OnInit {
         clipboard_check: icon_clipboard_check,
         dots_vertical: icon_dots_vertical,
         dots_horizontal: icon_dots_horizontal,
-        cog: icon_cog
+        cog: icon_cog,
+        share: icon_share
     };
     itemPanning: boolean;
 
@@ -90,18 +91,29 @@ export class ListEditPageComponent implements OnInit {
     }
 
     markAll(listId: string, items: ReadonlyArray<ListItem>) {
-        if (items?.length > 0)
-            this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: true })) });
+        if (!items?.length)
+            return false;
+        this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: true })) });
+        return true;
     }
 
     restoreAll(listId: string, items: ReadonlyArray<ListItem>) {
-        if (items?.length > 0)
-            this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: false })) });
+        if (!items?.length)
+            return false;
+        this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: false })) });
+        return true;
     }
 
     removeAll(listId: string, items: ReadonlyArray<ListItem>) {
-        if (items?.length > 0)
-            this.pageStore.deleteItems({listId, items: items.map(i => i.clone()) });
+        if (!items?.length)
+            return false;
+        this.pageStore.deleteItems({listId, items: items.map(i => i.clone()) });
+        return true;
+    }
+
+    shareList(listId: string, updateToken: string) {
+        navigator?.clipboard?.writeText(btoa(`${listId}_$_${updateToken}`));
+        return true;
     }
 
     onViewTypeChange(list: List, viewType: string) {

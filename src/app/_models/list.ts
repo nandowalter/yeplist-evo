@@ -8,7 +8,9 @@ export class List extends BaseImmutable<List> {
     @Field() name?: string;
     @Field({ typeDef: ListItem }) items?: readonly ListItem[];
     @Field() userIds?: string[];
+    @Field() ownerId: string;
     @Field() viewType: string;
+    @Field() updateToken: string;
 
     private _itemsByCategory: { [key: string]: ListItem[] };
     get itemsByCategory() {

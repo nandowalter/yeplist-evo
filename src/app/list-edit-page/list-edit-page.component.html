@@ -77,14 +77,14 @@
         
         <app-modal-dialog modalId="list-options">
             <!-- <h4 class="font-bold text-lg">Impostazioni lista</h4> -->
-            <label #listOptionsModalTrigger for="list-options">
-                <ul class="menu bg-base-100 text-base-content w-full">
-                    <li [ngClass]="{'text-base-300': !state.list?.items?.length}"><a (click)="markAll(state.list?.id, state.list?.items)"><i [app-icon]="icons.clipboard_check"></i>Spunta tutti</a></li>
-                    <li [ngClass]="{'text-base-300': !state.list?.items?.length}"><a (click)="restoreAll(state.list?.id, state.list?.items)"><i [app-icon]="icons.reply"></i>Ripristina tutti</a></li>
-                    <li *ngIf="state.list?.items?.length > 0" (click)="listOptionsModalTrigger.click()"><label for="delete-all-modal"><i [app-icon]="icons.trash"></i>Elimina tutti</label></li>
-                    <li *ngIf="!state.list?.items?.length" class="text-base-300"><a><i [app-icon]="icons.trash"></i>Elimina tutti</a></li>
-                </ul>
-            </label>
+            <label #listOptionsModalTrigger for="list-options"></label>
+            <ul class="menu bg-base-100 w-full" [ngClass]="{'text-base-300': !state.list?.items?.length, 'text-base-content': state.list?.items?.length > 0}">
+                <li><a (click)="markAll(state.list?.id, state.list?.items) && listOptionsModalTrigger.click()"><i [app-icon]="icons.clipboard_check"></i>Spunta tutti</a></li>
+                <li><a (click)="restoreAll(state.list?.id, state.list?.items) && listOptionsModalTrigger.click()"><i [app-icon]="icons.reply"></i>Ripristina tutti</a></li>
+                <li *ngIf="state.list?.items?.length > 0" class="text-red-600" (click)="listOptionsModalTrigger.click()"><label for="delete-all-modal"><i [app-icon]="icons.trash"></i>Elimina tutti</label></li>
+                <li *ngIf="!state.list?.items?.length"><a><i [app-icon]="icons.trash"></i>Elimina tutti</a></li>
+                <li class="text-base-content" (click)="listOptionsModalTrigger.click()"><label for="share-list-modal"><i [app-icon]="icons.share"></i>Condividi</label></li>
+            </ul>
             <div class="text-base-300 text-sm mt-2 mb-2">Impostazioni</div>
             <div class="flex flex-row">
                 <span class="grow self-center">Vista</span>
@@ -100,6 +100,11 @@
         <app-modal-dialog modalId="delete-all-modal" [cancelButton]="true" [confirmButton]="true" (confirm)="removeAll(state.list?.id, state.list?.items)">
             <h3 class="font-bold text-lg">Elimina tutti gli elementi</h3>
             <p class="py-4">Vuoi eliminare tutti gli elementi della lista?</p>
+        </app-modal-dialog>
+
+        <app-modal-dialog modalId="share-list-modal" [cancelButton]="true" [confirmButton]="true" (confirm)="shareList(state.list?.id, state.list?.updateToken)">
+            <h3 class="font-bold text-lg">Condividi la lista</h3>
+            <p class="py-4">Verrà copiato un token da inviare a chiunque tu voglia condividere la lista. Vuoi proseguire?</p>
         </app-modal-dialog>
 
     </ng-container>
