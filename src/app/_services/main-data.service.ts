@@ -84,7 +84,26 @@ export class MainDataService {
     }
 
     updateList(listId: string, list: Partial<List>) {
-        return from(updateDoc(doc(this.firestore, `ylists/${listId}`), list));
+        return from(updateDoc(doc(this.firestore, `ylists/${listId}`), list)).pipe(take(1));
+    }
+
+    multiBatch(updates: { listId: string, list: Partial<List> }[], deleteIds: string[] = []) {
+        return new Observable<void>(subscriber => {
+            let batch = writeBatch(this.firestore);
+
+            if (deleteIds?.length > 0)
+                deleteIds.forEach(id => batch.delete(doc(this.firestore, `ylists/${id}`)));
+
+            if (updates?.length > 0)
+                updates.forEach(update => batch.update(doc(this.firestore, `ylists/${update.listId}`), update.list));
+
+            batch.commit().then(() => {
+                subscriber.complete();
+            })
+            .catch(e => {
+                subscriber.error(e);
+            });
+        });
     }
 
     async findListByName(name: string) {

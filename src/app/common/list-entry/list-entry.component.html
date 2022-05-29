@@ -7,7 +7,7 @@
             <img src="/assets/icons/list.png" alt="">
         </div>
         <div class="grow p-4">
-            <h2 class="text-lg font-semibold">{{_list.name}}</h2> 
+            <h2 class="text-lg font-semibold">{{_list.name}}<app-icon class="relative inline-block ml-2 top-1" *ngIf="_list.userIds.length > 1" [iconSvg]="icons.users"></app-icon></h2> 
             <div class="flex flex-row gap-4">
                 <div class="grow text-sm text-slate-400" *ngIf="_list.items?.length > 0">elementi da spuntare: {{_list.unmarkedItems?.length}}&nbsp;su&nbsp;{{_list.items?.length}}</div>
                 <div class="grow text-sm text-slate-400" *ngIf="!_list.items?.length">elementi: 0</div>

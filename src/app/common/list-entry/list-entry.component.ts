@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { icon_check_circle, icon_chevron_right, icon_plus, icon_trash } from 'src/app/icon/icon-set';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { icon_check_circle, icon_chevron_right, icon_users } from 'src/app/icon/icon-set';
 import { List } from 'src/app/_models/list';
 import { ListEntryMode } from '../list-entry-mode';
 
@@ -22,7 +22,8 @@ export class ListEntryComponent {
     ListEntryMode = ListEntryMode;
     icons = {
         chevron_right: icon_chevron_right,
-        check_circle: icon_check_circle
+        check_circle: icon_check_circle,
+        users: icon_users
     };
 
     constructor(private cd: ChangeDetectorRef) { }

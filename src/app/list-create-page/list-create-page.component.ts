@@ -3,7 +3,7 @@ import { Auth } from '@angular/fire/auth';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { stringify } from 'querystring';
-import { concat, of, switchMap, tap } from 'rxjs';
+import { concat, of, switchMap, take, tap } from 'rxjs';
 import { icon_arrow_left, icon_save } from '../icon/icon-set';
 import { List } from '../_models/list';
 import { MainDataService } from '../_services/main-data.service';
@@ -49,29 +49,6 @@ export class ListCreatePageComponent {
 
         if (decodedValue?.indexOf('_$_') > -1) {
             this.importSharedList(...(decodedValue.split('_$_') as [string, string]))
-            
-            
-            // this.mainData.updateList(listId, { _token: splittedValues[1], tempAllowedUserId: this.auth.currentUser?.uid} as any).subscribe({
-            //     complete: () => {
-            //         this.mainData.getList(listId).subscribe({
-            //             next: list => {
-            //                 if (list.userIds.indexOf(this.auth.currentUser?.uid) === -1) {
-            //                     this.mainData.updateList(list.id, { userIds: [ ...list.userIds, this.auth.currentUser?.uid ], _token: null, tempAllowedUserId: null } as any).subscribe({
-            //                         complete: () => {
-            //                             this.dataGroup.reset();
-            //                             this.router.navigate(['..'], { relativeTo: this.route });
-            //                             this.cd.markForCheck();
-            //                         }
-            //                     });
-            //                 } else {
-            //                     this.dataGroup.reset();
-            //                     this.router.navigate(['..'], { relativeTo: this.route });
-            //                     this.cd.markForCheck();
-            //                 }
-            //             }
-            //         });
-            //     }
-            // });
         } else {
             this.saveNewList();
         }
@@ -81,6 +58,7 @@ export class ListCreatePageComponent {
         concat(
             this.mainData.updateList(listId, { updateToken, tempAllowedUserId: this.auth.currentUser?.uid} as any),
             this.mainData.getList(listId).pipe(
+                take(1),
                 switchMap(list => {
                     if (list.userIds.indexOf(this.auth.currentUser?.uid) === -1) {
                         return this.mainData.updateList(list.id, { userIds: [ ...list.userIds, this.auth.currentUser?.uid ], tempAllowedUserId: null } as any);
@@ -89,13 +67,13 @@ export class ListCreatePageComponent {
                     return of(list);
                 })
             )
-        ).pipe(
-            tap(() => {
+        ).subscribe({
+            complete: () => {
                 this.dataGroup.reset();
                 this.router.navigate(['..'], { relativeTo: this.route });
                 this.cd.markForCheck();
-            })
-        ).subscribe();
+            }
+        });
     }
 
     async saveNewList() {
