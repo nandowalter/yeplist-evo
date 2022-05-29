@@ -9,6 +9,8 @@ export class BaseImmutable<T> {
         return this._fieldDefs;
     }
 
+    beforeFreeze() {};
+
     constructor(obj?: Partial<T>) {
         if (obj && this._fieldDefs) {
             Object.keys(this._fieldDefs).forEach(m => {
@@ -27,6 +29,8 @@ export class BaseImmutable<T> {
                 }
             });
         }
+
+        this.beforeFreeze();
 
         Object.freeze(this);
     }

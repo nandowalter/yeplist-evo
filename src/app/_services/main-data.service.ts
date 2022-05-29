@@ -2,7 +2,7 @@ import { Injectable, Optional } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, query, QueryConstraint, updateDoc, where, writeBatch } from '@angular/fire/firestore';
 import { setDoc } from 'firebase/firestore';
-import { combineLatest, firstValueFrom, map, Observable, of, switchMap, take } from 'rxjs';
+import { combineLatest, firstValueFrom, from, map, Observable, of, switchMap, take } from 'rxjs';
 import { KnownItem } from '../_models/known-item';
 import { List } from '../_models/list';
 import { ListItem } from '../_models/list-item';
@@ -83,8 +83,8 @@ export class MainDataService {
         await addDoc(collection(this.firestore, 'ylists'), list.toObject());
     }
 
-    async updateList(list: List) {
-        await updateDoc(doc(this.firestore, `ylists/${list.id}`), list.toObject());
+    updateList(listId: string, list: Partial<List>) {
+        return from(updateDoc(doc(this.firestore, `ylists/${listId}`), list));
     }
 
     async findListByName(name: string) {

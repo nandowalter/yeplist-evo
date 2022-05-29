@@ -4,6 +4,7 @@ import { map, Observable, take } from 'rxjs';
 import { rotateInOutAnimation, showHideBottomAnimation } from '../animations';
 import { ScrollDirection } from '../common/scroll-direction';
 import { icon_arrow_left, icon_check, icon_clipboard_check, icon_cog, icon_dots_horizontal, icon_dots_vertical, icon_plus, icon_reply, icon_trash, icon_x } from '../icon/icon-set';
+import { List } from '../_models/list';
 import { ListItem } from '../_models/list-item';
 import { ListEditState, ListEditStore } from './list-edit.store';
 
@@ -89,14 +90,29 @@ export class ListEditPageComponent implements OnInit {
     }
 
     markAll(listId: string, items: ReadonlyArray<ListItem>) {
-        this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: true })) });
+        if (items?.length > 0)
+            this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: true })) });
     }
 
     restoreAll(listId: string, items: ReadonlyArray<ListItem>) {
-        this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: false })) });
+        if (items?.length > 0)
+            this.pageStore.updateItems({ listId, items: items.map(i => i.patch({ marked: false })) });
     }
 
     removeAll(listId: string, items: ReadonlyArray<ListItem>) {
-        this.pageStore.deleteItems({listId, items: items.map(i => i.clone()) });
+        if (items?.length > 0)
+            this.pageStore.deleteItems({listId, items: items.map(i => i.clone()) });
+    }
+
+    onViewTypeChange(list: List, viewType: string) {
+        if (viewType === 'category')
+            this.pageStore.updateCurrentShownCategory(list.categories?.[0]);
+        this.pageStore.updateList({ listId: list.id, patchObject: { viewType } });
+
+        return true;
+    }
+
+    onCurrentShowCategoryChange(currentShownCategory: string) {
+        this.pageStore.updateCurrentShownCategory(currentShownCategory);
     }
 }

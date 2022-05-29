@@ -10,6 +10,7 @@ export interface ListEditState extends BaseState {
     listId: string;
     list: List;
     selectedItems: string[];
+    currentShownCategory: string;
 }
 
 @Injectable()
@@ -17,7 +18,7 @@ export class ListEditStore extends BaseStore<ListEditState> {
     constructor(
         private dataService: MainDataService
     ) {
-      super({ listId: null, loading: false, list: null, selectedItems: [], error: null });
+      super({ listId: null, loading: false, list: null, selectedItems: [], currentShownCategory: null, error: null });
     }
 
     readonly getList = this.effect((listId$: Observable<string>) => {
@@ -25,7 +26,7 @@ export class ListEditStore extends BaseStore<ListEditState> {
             tap(listId => this.updateStore({ loading: true, listId: listId, error: null })),
             switchMap(listId => (listId ? this.dataService.getList(listId) : of<List>(null)).pipe(
                 tapResponse(
-                    value => this.updateStore({ loading: false, list: value }),
+                    value => this.updateStoreList(value), /*, currentShownCategory: value.viewType === 'category' ? value.categories?.[0] : null }),*/
                     error => this.updateStore({ loading: false, error })
                 )
             ))
@@ -56,6 +57,12 @@ export class ListEditStore extends BaseStore<ListEditState> {
         );
     });
 
+    readonly updateList = this.effect((params$: Observable<{ listId: string, patchObject: Partial<List> }>) => {
+        return params$.pipe(
+            switchMap(params => this.dataService.updateList(params.listId, params.patchObject))
+        );
+    });
+
     readonly unselectAll = this.updater((state: ListEditState) => ({
         ...state,
         ...{ selectedItems: [] }
@@ -66,5 +73,22 @@ export class ListEditStore extends BaseStore<ListEditState> {
         ...{ selectedItems: state.selectedItems.find(i => i === itemId) ? [...state.selectedItems.filter(i => i != itemId)] : [...state.selectedItems, itemId] }
     }));
 
+    readonly updateCurrentShownCategory = this.updater((state: ListEditState, currentShownCategory: string) => ({
+        ...state,
+        currentShownCategory
+    }));
 
+    private readonly updateStoreList = this.updater((state: ListEditState, list: List) => {
+        let currentShownCategory = state.currentShownCategory;
+        if (!currentShownCategory || !list.itemsByCategory[currentShownCategory]) {
+            currentShownCategory = list.categories?.[0];
+        }
+
+        return {
+            ...state,
+            loading: false,
+            list,
+            currentShownCategory
+        };
+    });
 }

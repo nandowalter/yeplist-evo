@@ -7,9 +7,13 @@ export class List extends BaseImmutable<List> {
     @Field() uids?: string[];
     @Field() name?: string;
     @Field({ typeDef: ListItem }) items?: readonly ListItem[];
-    @Field() itemsCount?: number;
     @Field() userIds?: string[];
-    @Field() orderBy: string;
+    @Field() viewType: string;
+
+    private _itemsByCategory: { [key: string]: ListItem[] };
+    get itemsByCategory() {
+        return this._itemsByCategory;
+    }
 
     get unmarkedItems() {
         return this.items?.filter(i => !i.marked);
@@ -18,4 +22,25 @@ export class List extends BaseImmutable<List> {
     get markedItems() {
         return this.items?.filter(i => i.marked);
     }
+
+    get categories() {
+        return this.items?.reduce((acc, curr, idx) => {
+            if (acc.indexOf(curr.category) === -1)
+                acc.push(curr.category);
+
+            return acc;
+        }, [] as string[]);
+    }
+
+    override beforeFreeze(): void {
+        this._itemsByCategory = this.items?.reduce((acc, curr, idx) => {
+            if (Object.keys(acc).indexOf(curr.category) === -1) {
+                acc[curr.category] = [];
+            }
+
+            acc[curr.category].push(curr.clone());
+            return acc;
+        }, {} as { [key: string]: ListItem[] });
+    }
+
 }

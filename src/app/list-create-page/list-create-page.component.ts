@@ -47,7 +47,7 @@ export class ListCreatePageComponent {
             this.cd.markForCheck();
             (this.nameInput.nativeElement as HTMLElement).focus();
         } else {
-            let newList = new List({ name, userIds: [this.auth.currentUser?.uid], orderBy: 'itemName' });
+            let newList = new List({ name, userIds: [this.auth.currentUser?.uid], viewType: 'itemList' });
             await this.mainData.addList(newList);
             this.dataGroup.reset();
             this.router.navigate(['..'], { relativeTo: this.route });

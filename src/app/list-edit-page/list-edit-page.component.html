@@ -27,18 +27,14 @@
                 <button class="btn btn-square btn-ghost" *ngIf="state.selectedItems.length > 0 && canMarkSelected(state.selectedItems, state.list.items)" [app-icon]="icons.clipboard_check" (click)="markSelected(state.list.id, state.selectedItems, state.list.items)"></button>
                 <button class="btn btn-square btn-ghost" *ngIf="state.selectedItems.length > 0" [app-icon]="icons.trash" (click)="deleteSelected(state.list.id, state.selectedItems, state.list.items)"></button>
                 <!-- <button class="btn btn-square btn-ghost" (click)="save()" *ngIf="dataGroup.valid" [app-icon]="icons.save"></button> -->
-                
-                
-                <app-dropdown-menu dropdownMenuId="listMenu">
-                    <i dropdownMenuButton class="btn btn-square btn-ghost" [app-icon]="icons.dots_horizontal"></i>
-                    <ng-container dropdownMenuItems>
-                        <li><label for="list-options"><i [app-icon]="icons.cog"></i>Impostazioni lista</label></li>
-                        <li><a (click)="markAll(state.list?.id, state.list?.items)"><i [app-icon]="icons.clipboard_check"></i>Spunta tutti</a></li>
-                        <li><a (click)="restoreAll(state.list?.id, state.list?.items)"><i [app-icon]="icons.reply"></i>Ripristina tutti</a></li>
-                        <li><label for="delete-all-modal"><i [app-icon]="icons.trash"></i>Elimina tutti</label></li>
-                    </ng-container>
-                </app-dropdown-menu>
+                <label for="list-options" class="btn btn-square btn-ghost" [app-icon]="icons.dots_horizontal"></label>  
             </div>
+        </div>
+        <div *ngIf="state.list?.items?.length > 0 && state.list?.viewType === 'category'" class="bg-primary w-full p-5">
+            <span class="text-base-300">categoria: </span>
+            <select class="select select-bordered select-sm" [ngModel]="state.currentShownCategory" (ngModelChange)="onCurrentShowCategoryChange($event)" [attr.disabled]="state.selectedItems.length > 0 ? 'true' : undefined">
+                <option [attr.value]="category" *ngFor="let category of state.list.categories">{{category}}</option>
+            </select>
         </div>
         <div class="grow {{itemPanning ? 'overflow-hidden' : 'overflow-auto'}} p-4 bg-custom-pattern" (appScroll)="actualScrollDirection=$event">
             <div class="h-full flex justify-center items-center" *ngIf="!state.list?.items || state.list.items.length === 0">
@@ -46,7 +42,7 @@
             </div>
 
             <div class="pb-12" *ngIf="state.list?.items?.length > 0">
-                <ng-container *ngFor="let item of state.list.items">
+                <ng-container *ngFor="let item of (state.list?.viewType === 'category' ? state.list.itemsByCategory[state.currentShownCategory] : state.list.items)">
                     <app-pan-manager 
                         class="block relative" 
                         [disabled]="state.selectedItems.length > 0" 
@@ -79,23 +75,31 @@
             <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
         </div> -->
         
-        <app-modal-dialog modalId="delete-all-modal" [cancelButton]="true" [confirmButton]="true" (confirm)="removeAll(state.list?.id, state.list?.items)">
-            <h3 class="font-bold text-lg">Elimina tutti gli elementi</h3>
-            <p class="py-4">Vuoi eliminare tutti gli elementi della lista?</p>
-        </app-modal-dialog>
-
         <app-modal-dialog modalId="list-options">
             <!-- <h4 class="font-bold text-lg">Impostazioni lista</h4> -->
+            <label #listOptionsModalTrigger for="list-options">
+                <ul class="menu bg-base-100 text-base-content w-full">
+                    <li [ngClass]="{'text-base-300': !state.list?.items?.length}"><a (click)="markAll(state.list?.id, state.list?.items)"><i [app-icon]="icons.clipboard_check"></i>Spunta tutti</a></li>
+                    <li [ngClass]="{'text-base-300': !state.list?.items?.length}"><a (click)="restoreAll(state.list?.id, state.list?.items)"><i [app-icon]="icons.reply"></i>Ripristina tutti</a></li>
+                    <li *ngIf="state.list?.items?.length > 0" (click)="listOptionsModalTrigger.click()"><label for="delete-all-modal"><i [app-icon]="icons.trash"></i>Elimina tutti</label></li>
+                    <li *ngIf="!state.list?.items?.length" class="text-base-300"><a><i [app-icon]="icons.trash"></i>Elimina tutti</a></li>
+                </ul>
+            </label>
             <div class="text-base-300 text-sm mt-2 mb-2">Impostazioni</div>
             <div class="flex flex-row">
-                <span class="grow self-center">Ordinamento</span>
+                <span class="grow self-center">Vista</span>
                 <span>
-                    <select class="select select-bordered w-full max-w-xs" [ngModel]="state.list?.orderBy">
-                        <option value="itemName">Nome elemento</option>
-                        <option value="category">Categoria</option>
+                    <select class="select select-bordered w-full max-w-xs" [ngModel]="state.list?.viewType" (ngModelChange)="onViewTypeChange(state.list, $event) && listOptionsModalTrigger.click()">
+                        <option value="itemList">Lista elementi</option>
+                        <option value="category">Categorie</option>
                     </select>
                 </span>
             </div>
+        </app-modal-dialog>
+
+        <app-modal-dialog modalId="delete-all-modal" [cancelButton]="true" [confirmButton]="true" (confirm)="removeAll(state.list?.id, state.list?.items)">
+            <h3 class="font-bold text-lg">Elimina tutti gli elementi</h3>
+            <p class="py-4">Vuoi eliminare tutti gli elementi della lista?</p>
         </app-modal-dialog>
 
     </ng-container>
