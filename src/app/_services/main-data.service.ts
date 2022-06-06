@@ -219,7 +219,7 @@ export class MainDataService {
 
     addShareToken(listId: string, updateToken: string) {
         let shareToken = Math.floor(Math.random() * 9999999).toString(16).toUpperCase();
-        return from(addDoc(collection(this.firestore, `shareTokens`), { shareToken, listId, updateToken })).pipe(mapTo(shareToken));
+        return from(addDoc(collection(this.firestore, `shareTokens`), { shareToken, listId, updateToken, timestamp: new Date() })).pipe(mapTo(shareToken));
     }
 
     getShareTokenData(shareToken: string): Observable<ShareTokenData> {
