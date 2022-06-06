@@ -3,8 +3,8 @@
     <label for="" class="modal-box">
         <ng-content></ng-content>
         <div class="modal-action" *ngIf="cancelButton || confirmButton">
-            <label *ngIf="cancelButton" [attr.for]="modalId" (click)="onCancel()" class="btn">No</label>
-            <label *ngIf="confirmButton" [attr.for]="modalId" (click)="onConfirm()" class="btn btn-primary">Sì</label>
+            <label *ngIf="cancelButton" [attr.for]="modalId" (click)="onCancel()" class="btn">{{cancelButtonText}}</label>
+            <label *ngIf="confirmButton" [attr.for]="modalId" (click)="onConfirm()" class="btn btn-primary">{{confirmButtonText}}</label>
         </div>
     </label>
 </label>

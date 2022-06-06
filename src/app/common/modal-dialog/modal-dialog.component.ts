@@ -8,7 +8,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 
 export class ModalDialogComponent implements OnInit {
     @Input() modalId: string;
+    @Input() cancelButtonText: string = "No";
     @Input() cancelButton: boolean;
+    @Input() confirmButtonText: string = "Sì";
     @Input() confirmButton: boolean;
 
     @Output() cancel = new EventEmitter<void>();

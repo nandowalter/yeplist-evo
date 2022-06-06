@@ -71,9 +71,10 @@
         <div class="w-0 h-0 overflow-hidden">
             <router-outlet #outlet="outlet"></router-outlet>
         </div>
-        <!-- <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="state.loading">
+        
+        <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="state.loading">
             <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
-        </div> -->
+        </div>
         
         <app-modal-dialog modalId="list-options">
             <!-- <h4 class="font-bold text-lg">Impostazioni lista</h4> -->
@@ -83,7 +84,7 @@
                 <li><a (click)="restoreAll(state.list?.id, state.list?.items) && listOptionsModalTrigger.click()"><i [app-icon]="icons.reply"></i>Ripristina tutti</a></li>
                 <li *ngIf="state.list?.items?.length > 0" class="text-red-600" (click)="listOptionsModalTrigger.click()"><label for="delete-all-modal"><i [app-icon]="icons.trash"></i>Elimina tutti</label></li>
                 <li *ngIf="!state.list?.items?.length"><a><i [app-icon]="icons.trash"></i>Elimina tutti</a></li>
-                <li class="text-base-content" (click)="listOptionsModalTrigger.click()"><label for="share-list-modal"><i [app-icon]="icons.share"></i>Condividi</label></li>
+                <li class="text-base-content" (click)="createShareToken(state.list) && listOptionsModalTrigger.click()"><label for="share-list-modal"><i [app-icon]="icons.share"></i>Condividi</label></li>
             </ul>
             <div class="text-base-300 text-sm mt-2 mb-2">Impostazioni</div>
             <div class="flex flex-row">
@@ -102,9 +103,11 @@
             <p class="py-4">Vuoi eliminare tutti gli elementi della lista?</p>
         </app-modal-dialog>
 
-        <app-modal-dialog modalId="share-list-modal" [cancelButton]="true" [confirmButton]="true" (confirm)="shareList(state.list?.id, state.list?.updateToken)">
-            <h3 class="font-bold text-lg">Condividi la lista</h3>
-            <p class="py-4">Verrà copiato un token da inviare a chiunque tu voglia condividere la lista. Vuoi proseguire?</p>
+        <app-modal-dialog modalId="share-list-modal" [cancelButton]="false" [confirmButton]="true" confirmButtonText="Ok">
+            <p class="py-4 font-bold text-4xl text-center">{{state.shareToken}}</p>
+            <p class="text-justify">Comunica questo codice a chi vuoi condividere la tua lista.</p>
+            <p class="py-4">In alternativa puoi condividerla attraverso questo QRCode.</p>
+            <app-qr-canvas [text]="state.shareToken"></app-qr-canvas>
         </app-modal-dialog>
 
     </ng-container>

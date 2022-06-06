@@ -23,6 +23,7 @@ import { ItemElementComponent } from './common/item-element/item-element.compone
 import { PanManagerComponent } from './common/pan-manager/pan-manager.component';
 import { ModalDialogComponent } from './common/modal-dialog/modal-dialog.component';
 import { DropdownMenuComponent } from './common/dropdown-menu/dropdown-menu.component';
+import { QrCanvasComponent } from './qr-canvas/qr-canvas.components';
 
 const routes: Routes = [
   {
@@ -91,7 +92,8 @@ const routes: Routes = [
     ItemElementComponent,
     PanManagerComponent,
     ModalDialogComponent,
-    DropdownMenuComponent
+    DropdownMenuComponent,
+    QrCanvasComponent
   ],
   imports: [
     CommonModule,

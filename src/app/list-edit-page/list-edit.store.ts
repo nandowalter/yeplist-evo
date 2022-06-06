@@ -11,6 +11,7 @@ export interface ListEditState extends BaseState {
     list: List;
     selectedItems: string[];
     currentShownCategory: string;
+    shareToken: string;
 }
 
 @Injectable()
@@ -18,7 +19,7 @@ export class ListEditStore extends BaseStore<ListEditState> {
     constructor(
         private dataService: MainDataService
     ) {
-      super({ listId: null, loading: false, list: null, selectedItems: [], currentShownCategory: null, error: null });
+      super({ listId: null, loading: false, list: null, selectedItems: [], currentShownCategory: null, shareToken: null, error: null });
     }
 
     readonly getList = this.effect((listId$: Observable<string>) => {
@@ -63,6 +64,18 @@ export class ListEditStore extends BaseStore<ListEditState> {
         );
     });
 
+    readonly createShareToken = this.effect((params$: Observable<{ listId: string, updateToken: string }>) => {
+        return params$.pipe(
+            tap(params => this.updateStore({ loading: true, error: null })),
+            switchMap(params => this.dataService.addShareToken(params.listId, params.updateToken).pipe(
+                tapResponse(
+                    value => this.updateStore({ loading: false, shareToken: value }),
+                    error => this.updateStore({ loading: false, error })
+                )
+            ))
+        );
+    });
+
     readonly unselectAll = this.updater((state: ListEditState) => ({
         ...state,
         ...{ selectedItems: [] }
@@ -76,6 +89,11 @@ export class ListEditStore extends BaseStore<ListEditState> {
     readonly updateCurrentShownCategory = this.updater((state: ListEditState, currentShownCategory: string) => ({
         ...state,
         currentShownCategory
+    }));
+
+    readonly resetShareToken = this.updater((state: ListEditState) => ({
+        ...state,
+        shareToken: null
     }));
 
     private readonly updateStoreList = this.updater((state: ListEditState, list: List) => {

@@ -2,7 +2,7 @@ import { Injectable, Optional } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, query, QueryConstraint, updateDoc, where, writeBatch } from '@angular/fire/firestore';
 import { setDoc } from 'firebase/firestore';
-import { combineLatest, firstValueFrom, from, map, Observable, of, switchMap, take } from 'rxjs';
+import { combineLatest, firstValueFrom, from, map, mapTo, Observable, of, switchMap, take } from 'rxjs';
 import { KnownItem } from '../_models/known-item';
 import { List } from '../_models/list';
 import { ListItem } from '../_models/list-item';
@@ -214,6 +214,11 @@ export class MainDataService {
         )).pipe(
             map(values => values ? values.map(i => new KnownItem(i)) : [])
         );
+    }
+
+    addShareToken(listId: string, updateToken: string) {
+        let shareToken = Math.floor(Math.random() * 9999999).toString(16).toUpperCase();
+        return from(addDoc(collection(this.firestore, `shareTokens`), { shareToken, listId, updateToken })).pipe(mapTo(shareToken));
     }
 
     private getYListsQuery(...constraints: QueryConstraint[]) {

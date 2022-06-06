@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, Observable, take } from 'rxjs';
 import { rotateInOutAnimation, showHideBottomAnimation } from '../animations';
@@ -6,6 +6,7 @@ import { ScrollDirection } from '../common/scroll-direction';
 import { icon_arrow_left, icon_check, icon_clipboard_check, icon_cog, icon_dots_horizontal, icon_dots_vertical, icon_plus, icon_reply, icon_share, icon_trash, icon_x } from '../icon/icon-set';
 import { List } from '../_models/list';
 import { ListItem } from '../_models/list-item';
+import { MainDataService } from '../_services/main-data.service';
 import { ListEditState, ListEditStore } from './list-edit.store';
 
 @Component({
@@ -44,7 +45,8 @@ export class ListEditPageComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
-        private pageStore: ListEditStore
+        private pageStore: ListEditStore,
+        private dataService: MainDataService
     ) {
         this.state$ = this.pageStore.state$;
     }
@@ -111,8 +113,13 @@ export class ListEditPageComponent implements OnInit {
         return true;
     }
 
-    shareList(listId: string, updateToken: string) {
-        navigator?.clipboard?.writeText(btoa(`${listId}_$_${updateToken}`));
+    createShareToken(list: List) {
+        this.pageStore.createShareToken({ listId: list.id, updateToken: list.updateToken });
+        return true;
+    }
+
+    shareList(shareToken: string) {
+        navigator?.clipboard?.writeText(shareToken);
         return true;
     }
 

@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Opti
 import { Auth } from '@angular/fire/auth';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { stringify } from 'querystring';
 import { concat, of, switchMap, take, tap } from 'rxjs';
-import { icon_arrow_left, icon_save } from '../icon/icon-set';
+import { icon_arrow_left, icon_qrcode, icon_save, icon_x } from '../icon/icon-set';
 import { List } from '../_models/list';
 import { MainDataService } from '../_services/main-data.service';
+import QrScanner from 'qr-scanner';
 
 @Component({
     selector: 'app-list-create-page',
@@ -16,9 +16,12 @@ import { MainDataService } from '../_services/main-data.service';
 })
 export class ListCreatePageComponent {
     @ViewChild('nameInput') nameInput: ElementRef;
+    @ViewChild('videoCam') private videoCamElement: ElementRef;
     icons = {
         save: icon_save,
-        arrow_left: icon_arrow_left
+        arrow_left: icon_arrow_left,
+        qrcode: icon_qrcode,
+        x: icon_x
     };
     dataGroup: FormGroup = new FormGroup({
         name: new FormControl('', [ Validators.required, Validators.maxLength(100) ])
@@ -30,6 +33,8 @@ export class ListCreatePageComponent {
             notUnique: 'Nome già utilizzato'
         }
     };
+    qrScannerVisible: boolean;
+    qrScanner: any;
 
     constructor(
         @Optional() private auth: Auth,
@@ -99,5 +104,20 @@ export class ListCreatePageComponent {
             return '';
         
         return this.errorConfig[fieldName][errors.required ? 'required' : Object.keys(errors)[0]];
+    }
+
+    activateQrCodeScanner() {
+        this.qrScannerVisible = true;
+        this.qrScanner = new QrScanner(this.videoCamElement.nativeElement, this.onQrCode, {});
+        this.qrScanner.start();
+    }
+
+    closeQrCodeScanner() {
+        this.qrScanner.stop();
+        this.qrScannerVisible = false;
+    }
+
+    private onQrCode(result) {
+        console.log('decoded qr code:', result);
     }
 }
