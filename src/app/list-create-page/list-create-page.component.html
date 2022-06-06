@@ -21,10 +21,13 @@
               <span class="label-text">Nome o codice di condivisione</span>
               <span class="label-text-alt text-error" *ngIf="dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid">{{getErrorMessage('name', dataGroup.get('name')?.errors)}}</span>
             </label>
-            <input #nameInput formControlName="name" type="text" placeholder="nome" maxlength="100" class="w-full input input-bordered" [ngClass]="{'input-error': dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid}">
+            <input #nameInput formControlName="name" type="text" placeholder="nome" maxlength="25" class="w-full input input-bordered" [ngClass]="{'input-error': dataGroup.get('name')?.touched && dataGroup.get('name')?.invalid}">
         </div>
-
         <video #videoCam></video>
+
+        <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="loading">
+            <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
+        </div>
 
     </div>
 </div>

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Observable, take } from 'rxjs';
+import { map, Observable, take, tap } from 'rxjs';
 import { rotateInOutAnimation, showHideBottomAnimation } from '../animations';
 import { ScrollDirection } from '../common/scroll-direction';
 import { icon_arrow_left, icon_check, icon_clipboard_check, icon_cog, icon_dots_horizontal, icon_dots_vertical, icon_plus, icon_reply, icon_share, icon_trash, icon_x } from '../icon/icon-set';
@@ -23,7 +23,7 @@ import { ListEditState, ListEditStore } from './list-edit.store';
         rotateInOutAnimation
     ]
 })
-export class ListEditPageComponent implements OnInit {
+export class ListEditPageComponent implements OnInit, OnDestroy {
     state$: Observable<ListEditState>;
     actualScrollDirection: ScrollDirection;
     ScrollDirection = ScrollDirection;
@@ -55,9 +55,20 @@ export class ListEditPageComponent implements OnInit {
         this.pageStore.getList(
             this.route.paramMap.pipe(
                 take(1),
-                map(values => values.get('listId'))
+                map(values => values.get('listId')),
+                tap(listId => {
+                    if (typeof localStorage != 'undefined') {
+                        localStorage.setItem('yp_lastEditedListId', listId);
+                    }
+                })
             )
         );
+    }
+
+    ngOnDestroy(): void {
+        if (typeof localStorage != 'undefined') {
+            localStorage.removeItem('yp_lastEditedListId');
+        }
     }
 
     markItem(listId: string, item: ListItem) {

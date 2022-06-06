@@ -6,6 +6,7 @@ import { combineLatest, firstValueFrom, from, map, mapTo, Observable, of, switch
 import { KnownItem } from '../_models/known-item';
 import { List } from '../_models/list';
 import { ListItem } from '../_models/list-item';
+import { ShareTokenData } from '../_models/share-token-data';
 
 @Injectable({providedIn: 'root'})
 export class MainDataService {
@@ -219,6 +220,16 @@ export class MainDataService {
     addShareToken(listId: string, updateToken: string) {
         let shareToken = Math.floor(Math.random() * 9999999).toString(16).toUpperCase();
         return from(addDoc(collection(this.firestore, `shareTokens`), { shareToken, listId, updateToken })).pipe(mapTo(shareToken));
+    }
+
+    getShareTokenData(shareToken: string): Observable<ShareTokenData> {
+        return collectionData(query(
+            collection(this.firestore, 'shareTokens'),
+            where('shareToken', '==', shareToken)
+        )).pipe(
+            map(values => values?.[0] ? new ShareTokenData(values?.[0]) : null),
+            take(1)
+        );
     }
 
     private getYListsQuery(...constraints: QueryConstraint[]) {

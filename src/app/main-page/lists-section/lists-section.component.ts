@@ -92,6 +92,12 @@ export class ListsSectionComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        if (typeof localStorage != 'undefined' && localStorage.getItem('yp_lastEditedListId')) {
+            let lastEditedListId = localStorage.getItem('yp_lastEditedListId');
+            localStorage.removeItem('yp_lastEditedListId');
+            this.router.navigate([{outlets: { 'secondaryPage': ['list', 'edit', lastEditedListId]}} ], { relativeTo: this.route.parent });
+        }
+        
         this.state$ = this.store.state$.pipe(
             tap(state => {
                 if (this.navbarCommand$$) {

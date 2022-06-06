@@ -24,17 +24,19 @@ export class ListCreatePageComponent {
         x: icon_x
     };
     dataGroup: FormGroup = new FormGroup({
-        name: new FormControl('', [ Validators.required, Validators.maxLength(100) ])
+        name: new FormControl('', [ Validators.required, Validators.maxLength(25) ])
     });
     private readonly errorConfig: {[key:string]: {[key:string]: string}} = {
         name: {
             required: 'Informazione obbligatoria',
-            maxlength: 'Lunghezza massima 100 caratteri',
-            notUnique: 'Nome già utilizzato'
+            maxlength: 'Lunghezza massima 25 caratteri',
+            notUnique: 'Nome già utilizzato',
+            notValidCode: 'Codice non valido'
         }
     };
     qrScannerVisible: boolean;
     qrScanner: any;
+    loading: boolean;
 
     constructor(
         @Optional() private auth: Auth,
@@ -45,21 +47,17 @@ export class ListCreatePageComponent {
     ) { }
 
     async save() {
-        let decodedValue;
-        try {
-            decodedValue = atob(this.dataGroup.get('name')?.value);
-        } catch(e) {
-            decodedValue = null;
-        }
-
-        if (decodedValue?.indexOf('_$_') > -1) {
-            this.importSharedList(...(decodedValue.split('_$_') as [string, string]))
+        let inputValue: string = this.dataGroup.get('name')?.value ?? '';
+        if (inputValue.startsWith('YP')) {
+            this.onShareToken(inputValue.substring(2))
         } else {
             this.saveNewList();
         }
     }
 
     importSharedList(listId: string, updateToken: string) {
+        this.loading = true;
+        this.cd.markForCheck();
         concat(
             this.mainData.updateList(listId, { updateToken, tempAllowedUserId: this.auth.currentUser?.uid} as any),
             this.mainData.getList(listId).pipe(
@@ -73,7 +71,9 @@ export class ListCreatePageComponent {
                 })
             )
         ).subscribe({
+            error: error => this.loading = false,
             complete: () => {
+                this.loading = false;
                 this.dataGroup.reset();
                 this.router.navigate(['..'], { relativeTo: this.route });
                 this.cd.markForCheck();
@@ -82,9 +82,12 @@ export class ListCreatePageComponent {
     }
 
     async saveNewList() {
+        this.loading = true;
+        this.cd.markForCheck();
         let name = this.dataGroup.get('name')?.value;
         let result = await this.mainData.findListByName(name);
         if(result != null) {
+            this.loading = false;
             this.dataGroup.controls['name'].setErrors({
                 notUnique: true
             });
@@ -93,6 +96,7 @@ export class ListCreatePageComponent {
         } else {
             let newList = new List({ name, userIds: [this.auth.currentUser?.uid], ownerId: this.auth.currentUser?.uid, viewType: 'itemList', updateToken: `${Date.now()}` });
             await this.mainData.addList(newList);
+            this.loading = false;
             this.dataGroup.reset();
             this.router.navigate(['..'], { relativeTo: this.route });
             this.cd.markForCheck();
@@ -107,17 +111,49 @@ export class ListCreatePageComponent {
     }
 
     activateQrCodeScanner() {
+        this.dataGroup.reset();
         this.qrScannerVisible = true;
-        this.qrScanner = new QrScanner(this.videoCamElement.nativeElement, this.onQrCode, {});
+        this.qrScanner = new QrScanner(this.videoCamElement.nativeElement, (result) => this.onShareToken(result?.data), {});
         this.qrScanner.start();
     }
 
     closeQrCodeScanner() {
-        this.qrScanner.stop();
+        this.qrScanner?.stop();
         this.qrScannerVisible = false;
+        this.cd.markForCheck();
     }
 
-    private onQrCode(result) {
-        console.log('decoded qr code:', result);
+    private onShareToken(shareToken: string) {
+        if (shareToken?.length > 4) {
+            this.closeQrCodeScanner();
+            this.loading = true;
+            this.cd.markForCheck();
+            this.mainData.getShareTokenData(shareToken).subscribe({
+                next: shareTokenData => {
+                    if (shareToken) {
+                        this.importSharedList(shareTokenData.listId, shareTokenData.updateToken);
+                    } else {
+                        this.loading = false;
+                        if (this.qrScannerVisible) {
+                            this.closeQrCodeScanner();
+                        } else {
+                            this.dataGroup.controls['name'].setErrors({
+                                notValidCode: true
+                            });
+                        }
+                        this.cd.markForCheck();
+                    }
+                },
+                error: error => {
+                    this.loading = false;
+                    this.cd.markForCheck();
+                }
+            });
+        } else {
+            this.dataGroup.controls['name'].setErrors({
+                notValidCode: true
+            });
+            this.cd.markForCheck();
+        }
     }
 }

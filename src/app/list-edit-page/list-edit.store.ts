@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import { tapResponse } from "@ngrx/component-store";
 import { Observable, of, switchMap, tap } from "rxjs";
 import { List } from "../_models/list";
@@ -17,7 +18,9 @@ export interface ListEditState extends BaseState {
 @Injectable()
 export class ListEditStore extends BaseStore<ListEditState> {
     constructor(
-        private dataService: MainDataService
+        private dataService: MainDataService,
+        private route: ActivatedRoute,
+        private router: Router
     ) {
       super({ listId: null, loading: false, list: null, selectedItems: [], currentShownCategory: null, shareToken: null, error: null });
     }
@@ -28,7 +31,10 @@ export class ListEditStore extends BaseStore<ListEditState> {
             switchMap(listId => (listId ? this.dataService.getList(listId) : of<List>(null)).pipe(
                 tapResponse(
                     value => this.updateStoreList(value), /*, currentShownCategory: value.viewType === 'category' ? value.categories?.[0] : null }),*/
-                    error => this.updateStore({ loading: false, error })
+                    error => {
+                        this.updateStore({ loading: false, error });
+                        this.router.navigate(['../../..'], { relativeTo: this.route });
+                    }
                 )
             ))
         );
