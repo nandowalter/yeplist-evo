@@ -84,7 +84,7 @@
                 <li><a (click)="restoreAll(state.list?.id, state.list?.items) && listOptionsModalTrigger.click()"><i [app-icon]="icons.reply"></i>Ripristina tutti</a></li>
                 <li *ngIf="state.list?.items?.length > 0" class="text-red-600" (click)="listOptionsModalTrigger.click()"><label for="delete-all-modal"><i [app-icon]="icons.trash"></i>Elimina tutti</label></li>
                 <li *ngIf="!state.list?.items?.length"><a><i [app-icon]="icons.trash"></i>Elimina tutti</a></li>
-                <li class="text-base-content" (click)="createShareToken(state.list) && listOptionsModalTrigger.click()"><label for="share-list-modal"><i [app-icon]="icons.share"></i>Condividi</label></li>
+                <li [ngClass]="{'text-base-300': state.list?.ownerId != auth.currentUser.uid}" (click)="createShareToken(state.list) && listOptionsModalTrigger.click()"><label for="share-list-modal"><i [app-icon]="icons.share"></i>Condividi</label></li>
             </ul>
             <div class="text-base-300 text-sm mt-2 mb-2">Impostazioni</div>
             <div class="flex flex-row">

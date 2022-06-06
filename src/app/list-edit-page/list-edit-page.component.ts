@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Auth } from '@angular/fire/auth';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, Observable, take, tap } from 'rxjs';
 import { rotateInOutAnimation, showHideBottomAnimation } from '../animations';
@@ -43,6 +44,7 @@ export class ListEditPageComponent implements OnInit, OnDestroy {
     itemPanning: boolean;
 
     constructor(
+        public auth: Auth,
         private route: ActivatedRoute,
         private router: Router,
         private pageStore: ListEditStore,
@@ -125,6 +127,9 @@ export class ListEditPageComponent implements OnInit, OnDestroy {
     }
 
     createShareToken(list: List) {
+        if (this.auth.currentUser.uid != list.ownerId)
+            return false;
+            
         this.pageStore.createShareToken({ listId: list.id, updateToken: list.updateToken });
         return true;
     }
