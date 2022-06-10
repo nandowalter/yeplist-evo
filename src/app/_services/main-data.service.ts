@@ -183,6 +183,23 @@ export class MainDataService {
         });
     }
 
+    findItemsInLists(searchText: string): Observable<List[]> {
+        return collectionData(this.getYListsQuery(), { idField: 'id' }).pipe(
+            map(values => values.map(v => new List(v))),
+            switchMap((lists: List[]) => {
+                if (lists.length === 0)
+                    return of([]);
+                return combineLatest(lists.map(i => {
+                    return collectionData(query(collection(this.firestore, `ylists/${i.id}/items`)), { idField: 'id' }).pipe(
+                        map(subColl => i.patch({ items: Object.freeze(subColl.map(s => new ListItem(s))) }))
+                    );
+                })).pipe(
+                    map(result => result.filter(r => r.items.find(i => i.name.toLowerCase().indexOf(searchText.toLowerCase()) > -1) != null))
+                );
+            })
+        );
+    }
+
     addKnownItem(name: string, category: string, um: string) {
         const MIN = 4;
         let letters = [];

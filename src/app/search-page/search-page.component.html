@@ -20,11 +20,15 @@
         </div>
     </div>
     <div class="tabs w-full flex flex-row">
-        <a class="tab tab-bordered tab-active grow" [ngClass]="{ 'tab-active': activePanel === 0 || !activePanel }" (click)="activePanel = 0">Liste</a> 
-        <a class="tab tab-bordered grow" [ngClass]="{ 'tab-active': activePanel === 1 }" (click)="activePanel = 1">Elementi</a>
+        <a class="tab tab-bordered tab-active grow" [ngClass]="{ 'tab-active': activePanel === 0 || !activePanel }" (click)="activePanel = 0">
+            Liste<span *ngIf="state.lists?.length > 0">&nbsp;({{state.lists?.length}})</span>
+        </a> 
+        <a class="tab tab-bordered grow" [ngClass]="{ 'tab-active': activePanel === 1 }" (click)="activePanel = 1">
+            Elementi<span *ngIf="state.itemsInLists?.length > 0">&nbsp;({{state.itemsInLists?.length}})</span>
+        </a>
     </div> 
     <div class="grow relative overflow-auto">
-        <div class="h-full w-full bg-custom-pattern">
+        <div class="h-full w-full bg-custom-pattern" *ngIf="activePanel === 0 || !activePanel">
             <div class="grid grid-cols-1 pb-12">
                 <app-list-entry
                     *ngFor="let list of state.lists; index as i; trackBy: trackListsById" 
@@ -32,6 +36,20 @@
                     [mode]="ListEntryMode.Normal"
                     (entryTap)="onListItemTap(i, $event)"
                 ></app-list-entry>
+            </div>
+        </div>
+
+        <div class="h-full w-full bg-custom-pattern" *ngIf="activePanel === 1">
+            <div class="grid grid-cols-1 pb-12">
+                <ng-container *ngFor="let itemInList of state.itemsInLists">
+                    <app-item-element [item]="itemInList.item" [showQty]="false" [contextButton]="true">
+                        <ng-container dropdownMenuItems>
+                            <li><a (click)="goToList(itemInList.list)"><i [app-icon]="icons.collection"></i>Vai a lista</a></li>
+                            <li><a (click)="goToItemInList(itemInList.list, itemInList.item)"><i [app-icon]="icons.pencil"></i>Vai a modifica elemento</a></li>
+                        </ng-container>
+                        <span subText>lista: {{itemInList.list.name}}</span>
+                    </app-item-element>
+                </ng-container>
             </div>
         </div>
     </div>

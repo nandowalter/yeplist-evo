@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { icon_check_circle, icon_chevron_right } from 'src/app/icon/icon-set';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { icon_check_circle, icon_chevron_right, icon_dots_horizontal } from 'src/app/icon/icon-set';
 import { ListEntryMode } from '../list-entry-mode';
 
 @Component({
@@ -12,9 +12,13 @@ export class ItemElementComponent implements OnInit {
     @Input() item: any;
     @Input() mode: ListEntryMode;
     @Input() selected: boolean;
+    @Input() showQty = true;
+    @Input() contextButton = false;
+    @Output() contextBtnClick = new EventEmitter<void>();
     icons = {
         chevron_right: icon_chevron_right,
-        check_circle: icon_check_circle
+        check_circle: icon_check_circle,
+        dots_horizontal: icon_dots_horizontal
     };
     ListEntryMode = ListEntryMode;
 
@@ -24,4 +28,8 @@ export class ItemElementComponent implements OnInit {
 
     onTap(itemId: string) {}
     onPress(itemId: string) {}
+
+    onContextBtnClick() {
+        this.contextBtnClick.emit();
+    }
 }
