@@ -23,7 +23,7 @@ export class MainDataService {
                     return of(lists);
                 return combineLatest(lists.map(i => {
                     return collectionData(query(collection(this.firestore, `ylists/${i.id}/items`)), { idField: 'id' }).pipe(
-                        map(subColl => i.patch({ items: Object.freeze(subColl.map(s => new ListItem(s))) }))
+                        map(subColl => i.patch({ items: Object.freeze(subColl.map(s => new ListItem(s)).sort(this.sortListItemsByName)) }))
                     );
                 }));
             })
@@ -41,7 +41,7 @@ export class MainDataService {
                 if (!item)
                     return of(item);
                 return collectionData(query(collection(this.firestore, `ylists/${item.id}/items`)), { idField: 'id' }).pipe(
-                    map(subColl => item.patch({ items: Object.freeze(subColl.map(s => new ListItem(s))) }))
+                    map(subColl => item.patch({ items: Object.freeze(subColl.map(s => new ListItem(s)).sort(this.sortListItemsByName)) }))
                 );
             })
         );
@@ -257,5 +257,11 @@ export class MainDataService {
                 ...constraints
             ]
         );
+    }
+
+    private sortListItemsByName(a: ListItem, b: ListItem) {
+        const nameA = a.name.toLocaleLowerCase();
+        const nameB = b.name.toLocaleLowerCase();
+        return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
     }
 }
