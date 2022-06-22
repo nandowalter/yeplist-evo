@@ -1,0 +1,9 @@
+.circle {
+  fill: transparent;
+  stroke: #FFFFFF;
+  stroke-width: 0.1875em;
+}
+
+.circle:active{
+  fill: red;
+}

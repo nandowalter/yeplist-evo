@@ -2,11 +2,12 @@ import { Injectable, Optional } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, query, QueryConstraint, updateDoc, where, writeBatch } from '@angular/fire/firestore';
 import { setDoc } from 'firebase/firestore';
-import { combineLatest, firstValueFrom, from, map, mapTo, Observable, of, switchMap, take } from 'rxjs';
+import { combineLatest, combineLatestAll, firstValueFrom, from, map, mapTo, Observable, of, switchMap, take } from 'rxjs';
 import { KnownItem } from '../_models/known-item';
 import { List } from '../_models/list';
 import { ListItem } from '../_models/list-item';
 import { ShareTokenData } from '../_models/share-token-data';
+import { Storage, uploadString, ref as storageRef } from '@angular/fire/storage';
 
 @Injectable({providedIn: 'root'})
 export class MainDataService {
@@ -14,6 +15,7 @@ export class MainDataService {
     
     constructor(
         private firestore: Firestore,
+        private storage: Storage,
         @Optional() private auth: Auth
     ) {
         this.data$ = collectionData(this.getYListsQuery(), { idField: 'id' }).pipe(
@@ -129,15 +131,28 @@ export class MainDataService {
         ));
     }
 
-    addItem(listId: string, item: any) {
-        return new Observable<void>(subscriber => {
-            addDoc(collection(this.firestore, `ylists/${listId}/items`), item.toObject()).then(resp => {
-                subscriber.next();
-                subscriber.complete();
-            }).catch(e => {
-                subscriber.error(e);
-            });
-        });
+    addItem(listId: string, item: ListItem) {
+        let upload$: Observable<string>[];
+        if (item.newImages?.length > 0) {
+            upload$ = item.newImages.map((imageData, idx) => from(uploadString(storageRef(this.storage, `images/${listId}_${idx}.jpg`), imageData, 'data_url')).pipe(map(result => result.ref.fullPath)));
+        } else {
+            upload$ = [of(null)];
+        }
+
+        return combineLatest(upload$).pipe(
+            switchMap(uploadedImages => {
+                debugger;
+                item = new ListItem({ ...item, imageUrls: [ ...(item.imageUrls ?? []), ...uploadedImages ], newImages: undefined });
+                return new Observable<void>(subscriber => {
+                    addDoc(collection(this.firestore, `ylists/${listId}/items`), item.toObject()).then(resp => {
+                        subscriber.next();
+                        subscriber.complete();
+                    }).catch(e => {
+                        subscriber.error(e);
+                    });
+                });
+            })
+        );
     }
 
     getItem(listId: string, itemId: string) {
@@ -147,14 +162,26 @@ export class MainDataService {
     }
 
     updateItem(listId: string, item: ListItem) {
-        return new Observable<void>(subscriber => {
-            updateDoc(doc(this.firestore, `ylists/${listId}/items/${item.id}`), item.toObject()).then(resp => {
-                subscriber.next();
-                subscriber.complete();
-            }).catch(e => {
-                subscriber.error(e);
-            });
-        });
+        let upload$: Observable<string>[];
+        if (item.newImages?.length > 0) {
+            upload$ = item.newImages.map((imageData, idx) => from(uploadString(storageRef(this.storage, `images/${listId}_${idx}.jpg`), imageData, 'data_url')).pipe(map(result => result.ref.fullPath)));
+        } else {
+            upload$ = [of(null)];
+        }
+
+        return combineLatest(upload$).pipe(
+            switchMap(uploadedImages => {
+                item = new ListItem({ ...item, imageUrls: [ ...(item.imageUrls ?? []), ...uploadedImages ], newImages: undefined });
+                return new Observable<void>(subscriber => {
+                    updateDoc(doc(this.firestore, `ylists/${listId}/items/${item.id}`), item.toObject()).then(resp => {
+                        subscriber.next();
+                        subscriber.complete();
+                    }).catch(e => {
+                        subscriber.error(e);
+                    });
+                });
+            })
+        );
     }
 
     updateItems(listId: string, items: ListItem[]) {

@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, debounceTime, filter, map, Observable, Subscription, take, tap } from 'rxjs';
-import { icon_arrow_left, icon_chevron_down, icon_chevron_up, icon_light_bulb, icon_pencil, icon_plus, icon_save, icon_x } from '../icon/icon-set';
+import { combineLatest, debounceTime, filter, from, map, Observable, Subscription, tap } from 'rxjs';
+import { icon_arrow_left, icon_light_bulb, icon_pencil, icon_plus, icon_save, icon_x } from '../icon/icon-set';
 import { KnownItem } from '../_models/known-item';
 import { ListItem } from '../_models/list-item';
 import { ItemEditState, ItemEditStore } from './item-edit.store';
+
+import { Storage, getDownloadURL, ref as storageRef } from '@angular/fire/storage';
 
 @Component({
     selector: 'app-item-edit-page',
@@ -18,6 +20,7 @@ import { ItemEditState, ItemEditStore } from './item-edit.store';
 })
 
 export class ItemEditPageComponent implements OnInit, OnDestroy {
+    @ViewChild('video') video: ElementRef<HTMLVideoElement>;
     dataGroup: FormGroup;
     private readonly errorConfig: {[key:string]: {[key:string]: string}} = {
         name: {
@@ -44,11 +47,13 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
     nameTextBoxFocus: boolean;
     suggestionsExpanded = false;
     nameTextBoxChange$$: Subscription;
+    videoEnabled: boolean;
 
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private pageStore: ItemEditStore
+        private pageStore: ItemEditStore,
+        private storage: Storage
     ) { 
         this.initForm();
     }
@@ -93,7 +98,8 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
             category: new FormControl('generico'),
             qty: new FormControl(1, [ Validators.max(999) ]),
             um: new FormControl(''),
-            notes: new FormControl('',[ Validators.maxLength(100) ])
+            notes: new FormControl('',[ Validators.maxLength(100) ]),
+            newImages: new FormControl([])
         });
 
         if (this.nameTextBoxChange$$)
@@ -142,5 +148,20 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
 
     toggleSuggestionsExpand() {
         this.suggestionsExpanded = !this.suggestionsExpanded;
+    }
+
+    async enableVideo() {
+        this.videoEnabled = true;
+    }
+
+    onCamImageConfirm(imageData: string) {
+        this.dataGroup.get('newImages').patchValue([
+            ...this.dataGroup.get('newImages').value,
+            imageData
+        ]);
+    }
+
+    getImageCompleteUrl(imageUrl: string) {
+        return `https://firebasestorage.googleapis.com/v0/b/yeplist-evo.appspot.com/o/${encodeURIComponent(imageUrl)}?alt=media`;
     }
 }

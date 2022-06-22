@@ -1,0 +1,16 @@
+<div #container class="fixed top-0 left-0 z-10 h-screen w-screen">
+    <video #video class="absolute w-screen h-screen object-cover" autoplay (canplay)="onVideoCanPlay()" (loadeddata)="videoLoaded = true"></video>
+    <canvas #canvas class="absolute hidden"></canvas>
+    <img #photo class="absolute" [ngClass]="{ hidden: !shooted && streaming }" alt="">
+    
+    <div class="absolute w-screen h-screen flex flex-col justify-between p-4" *ngIf="videoLoaded">
+        <app-icon class="text-primary-content" [iconSvg]="icons.x" iconClass="w-8 h-8" (click)="onCloseClick()"></app-icon>
+        <svg *ngIf="!shooted" class="w-full" viewBox="0 0 80 80" width="80" height="80">
+            <circle class="circle" (click)="onCircleClick()"cx="40" cy="40" r="38"/>
+        </svg>
+        <div *ngIf="shooted">
+            <button (click)="initCam()">Annulla</button>
+            <button (click)="onConfirmButtonClick()">Conferma</button>
+        </div>
+    </div>
+</div>

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { browserPopupRedirectResolver, indexedDBLocalPersistence, initializeAuth, provideAuth } from '@angular/fire/auth';
 import { enableMultiTabIndexedDbPersistence, getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getStorage, provideStorage } from '@angular/fire/storage';
 import { BrowserModule, HammerModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { environment } from 'src/environments/environment';
@@ -30,6 +31,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
             });
             return auth;
         }),
+        provideStorage(() => getStorage()),
         AppModule,
         ServiceWorkerModule.register('ngsw-worker.js', {
           enabled: environment.production,

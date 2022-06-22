@@ -68,6 +68,16 @@
                 </label>
                 <textarea formControlName="notes" placeholder="note" maxlength="100" rows="4" class="textarea textarea-bordered" [ngClass]="{ 'textarea-error': dataGroup.get('notes')?.touched && dataGroup.get('notes')?.invalid}"></textarea>
             </div>
+
+            <ng-container *ngIf="state.item?.imageUrls?.length > 0">
+                <img *ngFor="let imageUrl of state.item.imageUrls" [attr.src]="getImageCompleteUrl(imageUrl)" width="100">
+            </ng-container>
+    
+            <ng-container *ngIf="dataGroup.get('newImages')?.value?.length > 0">
+                <img class="newImage" *ngFor="let imageData of dataGroup.get('newImages')?.value" [attr.src]="imageData" width="100">
+            </ng-container>
+    
+            <button (click)="enableVideo()">Scatta foto</button>
         </div>
 
         <div class="absolute top-0 left-0 h-full w-full z-10 backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" 
@@ -75,6 +85,8 @@
             (click)="toggleSuggestionsExpand()"
         >
         </div>
+
+        <app-cam *ngIf="videoEnabled" (close)="videoEnabled = false" (confirm)="onCamImageConfirm($event)"></app-cam>
 
         <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="state.loading">
             <button class="btn btn-ghost btn-lg btn-circle loading"></button> 

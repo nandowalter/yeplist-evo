@@ -24,6 +24,7 @@ import { PanManagerComponent } from './common/pan-manager/pan-manager.component'
 import { ModalDialogComponent } from './common/modal-dialog/modal-dialog.component';
 import { DropdownMenuComponent } from './common/dropdown-menu/dropdown-menu.component';
 import { QrCanvasComponent } from './qr-canvas/qr-canvas.components';
+import { CamComponent } from './cam/cam.component';
 
 const routes: Routes = [
   {
@@ -93,7 +94,8 @@ const routes: Routes = [
     PanManagerComponent,
     ModalDialogComponent,
     DropdownMenuComponent,
-    QrCanvasComponent
+    QrCanvasComponent,
+    CamComponent
   ],
   imports: [
     CommonModule,

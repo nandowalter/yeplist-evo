@@ -9,4 +9,6 @@ export class ListItem extends BaseImmutable<ListItem> {
     @Field() um?: string;
     @Field() notes?: string;
     @Field() marked?: boolean;
+    @Field() imageUrls: string[];
+    @Field() newImages: string[];
 }
