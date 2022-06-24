@@ -141,11 +141,10 @@ export class MainDataService {
 
         return combineLatest(upload$).pipe(
             switchMap(uploadedImages => {
-                debugger;
-                item = new ListItem({ ...item, imageUrls: [ ...(item.imageUrls ?? []), ...uploadedImages ], newImages: undefined });
-                return new Observable<void>(subscriber => {
+                item = new ListItem({ ...item, imageUrls: [ ...(item.imageUrls ?? []), ...(uploadedImages.filter(i => i) ?? []) ], newImages: undefined });
+                return new Observable<ListItem>(subscriber => {
                     addDoc(collection(this.firestore, `ylists/${listId}/items`), item.toObject()).then(resp => {
-                        subscriber.next();
+                        subscriber.next(item);
                         subscriber.complete();
                     }).catch(e => {
                         subscriber.error(e);
@@ -171,10 +170,10 @@ export class MainDataService {
 
         return combineLatest(upload$).pipe(
             switchMap(uploadedImages => {
-                item = new ListItem({ ...item, imageUrls: [ ...(item.imageUrls ?? []), ...uploadedImages ], newImages: undefined });
-                return new Observable<void>(subscriber => {
+                item = new ListItem({ ...item, imageUrls: [ ...(item.imageUrls ?? []), ...(uploadedImages.filter(i => i) ?? []) ], newImages: undefined });
+                return new Observable<ListItem>(subscriber => {
                     updateDoc(doc(this.firestore, `ylists/${listId}/items/${item.id}`), item.toObject()).then(resp => {
-                        subscriber.next();
+                        subscriber.next(item);
                         subscriber.complete();
                     }).catch(e => {
                         subscriber.error(e);
@@ -227,7 +226,7 @@ export class MainDataService {
         );
     }
 
-    addKnownItem(name: string, category: string, um: string) {
+    addKnownItem(name: string, category: string, um: string, imageUrls: string[]) {
         const MIN = 4;
         let letters = [];
         if (name.length >= MIN) {
@@ -243,7 +242,7 @@ export class MainDataService {
         }
 
         return new Observable<void>(subscriber => {
-            setDoc(doc(this.firestore, `users/${this.auth.currentUser?.uid}/knownitems/${name.toLowerCase()}`), { name, category, um, letters }).then(resp => {
+            setDoc(doc(this.firestore, `users/${this.auth.currentUser?.uid}/knownitems/${name.toLowerCase()}`), { name, category, um, letters, imageUrls }).then(resp => {
                 subscriber.next();
                 subscriber.complete();
             }).catch(e => {

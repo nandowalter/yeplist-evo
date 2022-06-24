@@ -43,7 +43,7 @@ export class ItemEditStore extends BaseStore<ItemEditState> {
                     return value;
                 }),
                 concatMap(value => this.dataService.updateItem(value.listId, value.item).pipe(
-                    concatMap(() => this.dataService.addKnownItem(value.item.name, value.item.category, value.item.um))
+                    concatMap(savedItem => this.dataService.addKnownItem(value.item.name, value.item.category, value.item.um, savedItem.imageUrls))
                 )),
                 tapResponse(
                     () => this.updateStore({ loading: false, saved: true }),
@@ -63,7 +63,7 @@ export class ItemEditStore extends BaseStore<ItemEditState> {
                     return value;
                 }),
                 concatMap(value => this.dataService.addItem(value.listId, value.item).pipe(
-                    concatMap(() => this.dataService.addKnownItem(value.item.name, value.item.category, value.item.um))
+                    concatMap(savedItem => this.dataService.addKnownItem(value.item.name, value.item.category, value.item.um, savedItem.imageUrls))
                 )),
                 tapResponse(
                     () => this.updateStore({ loading: false, saved: true }),

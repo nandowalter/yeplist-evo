@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, View
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, debounceTime, filter, from, map, Observable, Subscription, tap } from 'rxjs';
-import { icon_arrow_left, icon_light_bulb, icon_pencil, icon_plus, icon_save, icon_x } from '../icon/icon-set';
+import { icon_arrow_left, icon_camera, icon_light_bulb, icon_pencil, icon_plus, icon_save, icon_trash, icon_x } from '../icon/icon-set';
 import { KnownItem } from '../_models/known-item';
 import { ListItem } from '../_models/list-item';
 import { ItemEditState, ItemEditStore } from './item-edit.store';
@@ -41,7 +41,9 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
         save: icon_save,
         x: icon_x,
         lightBulb: icon_light_bulb,
-        pencil: icon_pencil
+        pencil: icon_pencil,
+        camera: icon_camera,
+        trash: icon_trash
     };
     state$: Observable<ItemEditState>;
     nameTextBoxFocus: boolean;
@@ -99,6 +101,7 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
             qty: new FormControl(1, [ Validators.max(999) ]),
             um: new FormControl(''),
             notes: new FormControl('',[ Validators.maxLength(100) ]),
+            imageUrls: new FormControl([]),
             newImages: new FormControl([])
         });
 
@@ -142,7 +145,7 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
 
     onSuggestionKnownClick(item: KnownItem) {
         this.suggestionsExpanded = false;
-        this.dataGroup.patchValue({ name: item.name, category: item.category, um: item.um });
+        this.dataGroup.patchValue({ name: item.name, category: item.category, um: item.um, imageUrls: item.imageUrls, newImages: [] });
         this.pageStore.clearSuggestions();
     }
 
@@ -155,10 +158,17 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
     }
 
     onCamImageConfirm(imageData: string) {
-        this.dataGroup.get('newImages').patchValue([
-            ...this.dataGroup.get('newImages').value,
-            imageData
-        ]);
+        this.dataGroup.patchValue({
+            imageUrls: [],
+            newImages: [imageData]
+        });
+    }
+
+    removePhoto() {
+        this.dataGroup.patchValue({
+            imageUrls: [],
+            newImages: []
+        });
     }
 
     getImageCompleteUrl(imageUrl: string) {

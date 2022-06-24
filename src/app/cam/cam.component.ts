@@ -37,7 +37,7 @@ export class CamComponent implements AfterViewInit, OnDestroy {
 
     async initCam() {
         this.width = this.containerElement.nativeElement.clientWidth;
-        this.height = this.containerElement.nativeElement.clientHeight;
+        this.height = (this.width * 16 / 9); //Aspect ratio 16/9;
         this.stream = await navigator.mediaDevices.getUserMedia(
             { 
                 video: {
@@ -79,7 +79,7 @@ export class CamComponent implements AfterViewInit, OnDestroy {
         this.disableCam();
         this.canvasElement.nativeElement.width = this.width;
         this.canvasElement.nativeElement.height = this.height;
-        this.canvasElement.nativeElement.getContext('2d').drawImage(this.videoElement.nativeElement, 0, 0, this.width, this.height);
+        this.canvasElement.nativeElement.getContext('2d').drawImage(this.videoElement.nativeElement, 0, 0, this.width, this.height, 0, 0, this.width, this.height);
    	    let image_data_url = this.canvasElement.nativeElement.toDataURL('image/jpeg');
         this.photoElement.nativeElement.src = image_data_url;
     }
