@@ -64,13 +64,14 @@
             </div>
 
             <div class="flex flex-row py-4">
+                <input #inputFile type="file" accept="image/*" capture="environment" style="display:none;" (change)="onFileChange($event)"/>
                 <div class="rounded-lg overflow-hidden grow shrink basis-0 max-w-[200px]">
                     <img [hidden]="dataGroup.get('imageUrls')?.value?.length > 0 || dataGroup.get('newImages')?.value?.length > 0" src="assets/images/dummy_item_photo.webp">
                     <ng-container *ngIf="dataGroup.get('imageUrls')?.value?.length > 0"><img *ngFor="let imageUrl of dataGroup.get('imageUrls')?.value" [attr.src]="getImageCompleteUrl(imageUrl)"></ng-container>
                     <ng-container *ngIf="dataGroup.get('newImages')?.value?.length > 0"><img *ngFor="let imageData of dataGroup.get('newImages')?.value" [attr.src]="imageData"></ng-container>
                 </div>
                 <div class="grow flex flex-row shrink basis-0 justify-center self-center">
-                    <button class="btn btn-circle btn-outline mx-auto block text-accent" (click)="enableVideo()">
+                    <button class="btn btn-circle btn-outline mx-auto block text-accent" (click)="inputFile.click()">
                         <app-icon [iconSvg]="icons.camera" iconClass="mx-auto w-6"></app-icon>
                     </button>
                     <button *ngIf="dataGroup.get('imageUrls')?.value?.length > 0 || dataGroup.get('newImages')?.value?.length > 0" class="btn btn-circle btn-outline mx-auto block text-warning" (click)="removePhoto()">
@@ -93,8 +94,7 @@
         >
         </div>
 
-        <app-cam *ngIf="videoEnabled" (close)="videoEnabled = false" (confirm)="onCamImageConfirm($event)"></app-cam>
-
+        
         <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="state.loading">
             <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
         </div>

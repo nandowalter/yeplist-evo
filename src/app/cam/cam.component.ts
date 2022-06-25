@@ -43,9 +43,10 @@ export class CamComponent implements AfterViewInit, OnDestroy {
                 video: {
                     width: { min: this.width, max: this.width },
                     height: { min: this.height, max: this.height},
-                }, 
+                },
+                facingMode: { exact: "environment" },
                 audio: false 
-            }
+            } as any
         );
         this.videoElement.nativeElement.srcObject = this.stream;
         this.shooted = false;

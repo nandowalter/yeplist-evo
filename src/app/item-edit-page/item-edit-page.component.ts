@@ -1,13 +1,11 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, debounceTime, filter, from, map, Observable, Subscription, tap } from 'rxjs';
+import { combineLatest, debounceTime, filter, map, Observable, Subscription, tap } from 'rxjs';
 import { icon_arrow_left, icon_camera, icon_light_bulb, icon_pencil, icon_plus, icon_save, icon_trash, icon_x } from '../icon/icon-set';
 import { KnownItem } from '../_models/known-item';
 import { ListItem } from '../_models/list-item';
 import { ItemEditState, ItemEditStore } from './item-edit.store';
-
-import { Storage, getDownloadURL, ref as storageRef } from '@angular/fire/storage';
 
 @Component({
     selector: 'app-item-edit-page',
@@ -55,7 +53,7 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private pageStore: ItemEditStore,
-        private storage: Storage
+        private cd: ChangeDetectorRef
     ) { 
         this.initForm();
     }
@@ -153,15 +151,22 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
         this.suggestionsExpanded = !this.suggestionsExpanded;
     }
 
-    async enableVideo() {
-        this.videoEnabled = true;
-    }
+    onFileChange(e: Event) {
+        if ((e.target as HTMLInputElement).files) {
+            let file = (e.target as HTMLInputElement).files[0];
+            const reader = new FileReader();
 
-    onCamImageConfirm(imageData: string) {
-        this.dataGroup.patchValue({
-            imageUrls: [],
-            newImages: [imageData]
-        });
+            reader.addEventListener("load", () => {
+                this.dataGroup.patchValue({
+                    imageUrls: [],
+                    newImages: [reader.result]
+                });
+                this.cd.markForCheck();
+            }, false);
+
+            reader.readAsDataURL(file);
+        }
+
     }
 
     removePhoto() {
