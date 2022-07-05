@@ -188,7 +188,7 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
                     ctx.drawImage(img, 0, 0, width, height);
 
                     // Show resized image in preview element
-                    let dataUrl = canvas.toDataURL("image/jpeg", 0.7);
+                    let dataUrl = canvas.toDataURL("image/webp", 0.6);
                     this.dataGroup.patchValue({
                         imageUrls: [],
                         newImages: [dataUrl]
@@ -217,12 +217,12 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
     showImage(imageUrl: string) {
         this.fullscreenImageUrl = imageUrl;
         let actualViewport = this.document.head.querySelector('meta[name="viewport"]').getAttribute('content');
-        this.document.head.querySelector('meta[name="viewport"]').setAttribute('content', actualViewport.replace(', user-scalable=no', ''));
+        this.document.head.querySelector('meta[name="viewport"]').setAttribute('content', actualViewport.replace(', minimum-scale=1, maximum-scale=1, user-scalable=no', ''));
     }
 
     hideImage() {
         let actualViewport = this.document.head.querySelector('meta[name="viewport"]').getAttribute('content');
-        this.document.head.querySelector('meta[name="viewport"]').setAttribute('content',`${actualViewport}, user-scalable=no`);
+        this.document.head.querySelector('meta[name="viewport"]').setAttribute('content',`${actualViewport}, minimum-scale=1, maximum-scale=1, user-scalable=no`);
         this.fullscreenImageUrl = undefined;
     }
 }
