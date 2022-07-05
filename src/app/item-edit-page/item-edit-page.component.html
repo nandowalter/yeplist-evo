@@ -67,8 +67,8 @@
                 <input #inputFile type="file" accept="image/*" capture="environment" style="display:none;" (change)="onFileChange($event)"/>
                 <div class="rounded-lg overflow-hidden grow shrink basis-0 max-w-[200px]">
                     <img [hidden]="dataGroup.get('imageUrls')?.value?.length > 0 || dataGroup.get('newImages')?.value?.length > 0" src="assets/images/dummy_item_photo.webp">
-                    <ng-container *ngIf="dataGroup.get('imageUrls')?.value?.length > 0"><img (click)="fullscreenImageUrl = getImageCompleteUrl(imageUrl)" *ngFor="let imageUrl of dataGroup.get('imageUrls')?.value" [attr.src]="getImageCompleteUrl(imageUrl)"></ng-container>
-                    <ng-container *ngIf="dataGroup.get('newImages')?.value?.length > 0"><img (click)="fullscreenImageUrl = imageData" *ngFor="let imageData of dataGroup.get('newImages')?.value" [attr.src]="imageData"></ng-container>
+                    <ng-container *ngIf="dataGroup.get('imageUrls')?.value?.length > 0"><img (click)="showImage(getImageCompleteUrl(imageUrl))" *ngFor="let imageUrl of dataGroup.get('imageUrls')?.value" [attr.src]="getImageCompleteUrl(imageUrl)"></ng-container>
+                    <ng-container *ngIf="dataGroup.get('newImages')?.value?.length > 0"><img (click)="showImage(imageData)" *ngFor="let imageData of dataGroup.get('newImages')?.value" [attr.src]="imageData"></ng-container>
                 </div>
                 <div class="grow flex flex-row shrink basis-0 justify-center self-center">
                     <button class="btn btn-circle btn-outline mx-auto block text-accent" (click)="inputFile.click()">
@@ -99,7 +99,7 @@
         </div>
 
         <div class="absolute top-0 left-0 h-full w-full bg-zinc-900" *ngIf="fullscreenImageUrl">
-            <img class="h-full w-full object-contain" [attr.src]="fullscreenImageUrl" (click)="fullscreenImageUrl = undefined">
+            <img class="h-full w-full object-contain" [attr.src]="fullscreenImageUrl" (click)="hideImage()">
         </div>
     </ng-container>
 </div>

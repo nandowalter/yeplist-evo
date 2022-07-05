@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, debounceTime, filter, map, Observable, Subscription, tap } from 'rxjs';
@@ -54,7 +55,8 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private pageStore: ItemEditStore,
-        private cd: ChangeDetectorRef
+        private cd: ChangeDetectorRef,
+        @Inject(DOCUMENT) private document: Document
     ) { 
         this.initForm();
     }
@@ -158,7 +160,7 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
             const reader = new FileReader();
 
             reader.addEventListener("load", (e) => {
-                var img = document.createElement("img");
+                var img = this.document.createElement("img");
                 img.onload = (event) => {
                     var MAX_WIDTH = 1024;
                     var MAX_HEIGHT = 1024;
@@ -179,14 +181,14 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
                         }
                     }
 
-                    var canvas = document.createElement("canvas");
+                    var canvas = this.document.createElement("canvas");
                     canvas.width = width;
                     canvas.height = height;
                     var ctx = canvas.getContext("2d");
                     ctx.drawImage(img, 0, 0, width, height);
 
                     // Show resized image in preview element
-                    let dataUrl = canvas.toDataURL(file.type);
+                    let dataUrl = canvas.toDataURL("image/jpeg", 0.7);
                     this.dataGroup.patchValue({
                         imageUrls: [],
                         newImages: [dataUrl]
@@ -210,5 +212,17 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
 
     getImageCompleteUrl(imageUrl: string) {
         return `https://firebasestorage.googleapis.com/v0/b/yeplist-evo.appspot.com/o/${encodeURIComponent(imageUrl)}?alt=media`;
+    }
+
+    showImage(imageUrl: string) {
+        this.fullscreenImageUrl = imageUrl;
+        let actualViewport = this.document.head.querySelector('meta[name="viewport"]').getAttribute('content');
+        this.document.head.querySelector('meta[name="viewport"]').setAttribute('content', actualViewport.replace(', user-scalable=no', ''));
+    }
+
+    hideImage() {
+        let actualViewport = this.document.head.querySelector('meta[name="viewport"]').getAttribute('content');
+        this.document.head.querySelector('meta[name="viewport"]').setAttribute('content',`${actualViewport}, user-scalable=no`);
+        this.fullscreenImageUrl = undefined;
     }
 }
