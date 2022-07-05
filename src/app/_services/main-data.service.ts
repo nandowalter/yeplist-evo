@@ -163,7 +163,7 @@ export class MainDataService {
     updateItem(listId: string, item: ListItem) {
         let upload$: Observable<string>[];
         if (item.newImages?.length > 0) {
-            upload$ = item.newImages.map((imageData, idx) => from(uploadString(storageRef(this.storage, `images/${item.id}_${idx}.jpg`), imageData, 'data_url')).pipe(map(result => result.ref.fullPath)));
+            upload$ = item.newImages.map((imageData, idx) => from(uploadString(storageRef(this.storage, `images/${item.id}_${idx}_${Date.now()}.jpg`), imageData, 'data_url')).pipe(map(result => result.ref.fullPath)));
         } else {
             upload$ = [of(null)];
         }

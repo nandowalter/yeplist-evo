@@ -48,6 +48,7 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
     suggestionsExpanded = false;
     nameTextBoxChange$$: Subscription;
     videoEnabled: boolean;
+    fullscreenImageUrl: string;
 
     constructor(
         private router: Router,
