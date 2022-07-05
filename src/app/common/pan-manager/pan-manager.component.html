@@ -1,4 +1,4 @@
-<div class="absolute h-full w-full noselect transition-colors {{actionLeftActive || actionRightActive ? 'bg-neutral' : (actionColor === 'warning' ? 'bg-warning' : 'bg-success')}}  flex flex-row justify-center content-center {{iconColor === 'base-100' ? 'text-base-100' : 'text-info-content'}}">
+<div class="absolute h-full w-full noselect transition-colors rounded-full {{actionLeftActive || actionRightActive ? 'bg-neutral' : (actionColor === 'warning' ? 'bg-warning' : 'bg-success')}}  flex flex-row justify-center content-center {{iconColor === 'base-100' ? 'text-base-100' : 'text-info-content'}}">
     <app-icon class="flex-none self-center mx-4 transition-transform" [ngClass]="{ 'scale-175': actionLeftActive }" [iconSvg]="iconSvg"></app-icon>
     <div class="grow"></div>
     <app-icon class="flex-none self-center mx-4 transition-transform" [ngClass]="{ 'scale-175': actionRightActive }" [iconSvg]="iconSvg"></app-icon>

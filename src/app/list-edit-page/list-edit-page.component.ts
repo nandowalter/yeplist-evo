@@ -150,4 +150,8 @@ export class ListEditPageComponent implements OnInit, OnDestroy {
     onCurrentShowCategoryChange(currentShownCategory: string) {
         this.pageStore.updateCurrentShownCategory(currentShownCategory);
     }
+
+    itemTrack(index: number, item: ListItem) {
+        return item.id;
+    }
 }

@@ -42,7 +42,7 @@
             </div>
 
             <div class="pb-12" *ngIf="state.list?.items?.length > 0">
-                <ng-container *ngFor="let item of (state.list?.viewType === 'category' ? state.list.itemsByCategory[state.currentShownCategory] : state.list.items)">
+                <ng-container *ngFor="let item of (state.list?.viewType === 'category' ? state.list.itemsByCategory[state.currentShownCategory] : state.list.items);trackBy: itemTrack">
                     <app-pan-manager 
                         class="block relative" 
                         [disabled]="state.selectedItems.length > 0" 
