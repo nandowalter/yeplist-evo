@@ -154,4 +154,14 @@ export class ListEditPageComponent implements OnInit, OnDestroy {
     itemTrack(index: number, item: ListItem) {
         return item.id;
     }
+
+    async shareBy(listName: string, shareToken: string, items: readonly ListItem[]) {
+        let shareData = {
+            title: `yeplist - ${listName}`,
+            text: `codice di condivisione:YP${shareToken}\r\n${items.map(i => `${i.qty} x ${i.name}`).join(',\r\n')}`
+        }
+
+        await navigator.share(shareData);
+        return true;
+    }
 }
