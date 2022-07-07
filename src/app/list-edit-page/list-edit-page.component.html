@@ -104,8 +104,6 @@
         </app-modal-dialog>
 
         <app-modal-dialog modalId="share-list-modal" [cancelButton]="false" [confirmButton]="false">
-            <!-- <p class="text-justify">Comunica questo codice a chi vuoi condividere la tua lista.</p> -->
-            <!-- <p class="py-4 text-justify">Per condividere puoi</p> -->
             <div class="flex flex-col items-center">
                 <span>Usa il QRCode</span>
                 <app-qr-canvas [text]="state.shareToken"></app-qr-canvas>
