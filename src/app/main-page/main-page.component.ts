@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { rotateInOutAnimation, secondaryPageAnimations } from '../animations';
-import { icon_collection, icon_heart, icon_home, icon_menu, icon_search, icon_trash, icon_x } from '../icon/icon-set';
+import { icon_arrow_left, icon_collection, icon_heart, icon_home, icon_menu, icon_search, icon_trash, icon_x } from '../icon/icon-set';
 import { NavbarCommand } from '../_models/navbar-command';
 import { NavbarMode } from '../_models/navbar-mode';
 import { NavbarModeService } from '../_services/navbar-mode.service';
@@ -11,6 +11,7 @@ import { NavbarModeService } from '../_services/navbar-mode.service';
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
+  styleUrls: [ 'main-page.component.scss' ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     secondaryPageAnimations,
@@ -25,7 +26,8 @@ export class MainPageComponent {
     collection: icon_collection,
     heart: icon_heart,
     x: icon_x,
-    trash: icon_trash
+    trash: icon_trash,
+    arrowLeft: icon_arrow_left
   };
   state$: Observable<{ navbar: { mode: NavbarMode, label: string } }>;
   NavbarMode = NavbarMode;
@@ -40,5 +42,13 @@ export class MainPageComponent {
 
   onNavbarCommand(command: NavbarCommand) {
     this.navbarModeService.triggerCommand(command);
+  }
+
+  activateSearchMode() {
+    this.navbarModeService.setMode(NavbarMode.Search);
+  }
+
+  deactivateSearchMode() {
+    this.navbarModeService.setMode(NavbarMode.Normal);
   }
 }

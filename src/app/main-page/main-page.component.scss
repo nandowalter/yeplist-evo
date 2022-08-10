@@ -1,0 +1,27 @@
+.focusable-input {
+    &.active {
+        input {
+            width: 100%;
+        }
+    }
+
+    &:not(.active) {
+        input {
+            width: 0;
+            padding: 0;
+            margin: 0;
+            border: 0;
+        }
+    }
+
+    .icon {
+
+    }
+
+    // &::after {
+    //     content: 'F';
+    //     background-color: yellow;
+    //     color: red;
+    //     font-weight: bold;
+    // }
+}

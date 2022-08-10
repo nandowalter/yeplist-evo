@@ -6,14 +6,22 @@
                 <div class="inline-block w-8 mx-2">&nbsp;</div>
                 <label @rotateInOut *ngIf="state.navbar.mode === NavbarMode.Normal" for="my-drawer" class="absolute left-0 btn btn-square btn-ghost drawer-button" [app-icon]="icons.menu"></label>
                 <label @rotateInOut *ngIf="state.navbar.mode === NavbarMode.Selection" class="absolute left-0 btn btn-square btn-ghost" [app-icon]="icons.x" (click)="onNavbarCommand(NavbarCommand.Unselect)"></label>
+                <label @rotateInOut *ngIf="state.navbar.mode === NavbarMode.Search" class="absolute left-0 btn btn-square btn-ghost" [app-icon]="icons.arrowLeft" (click)="deactivateSearchMode()"></label>
             </div> 
-            <div class="flex-1 px-2 mx-2">
-                <span class="text-lg font-bold" *ngIf="state.navbar.mode === NavbarMode.Normal"><img class="w-24" alt="" src="assets/images/logo_text_negative.svg"></span>
+            <div class="flex-1 px-2 mx-2 relative">
+                <!-- <span class="text-lg font-bold" *ngIf="state.navbar.mode === NavbarMode.Normal || state.navbar.mode === NavbarMode.Search"> -->
+                <img *ngIf="state.navbar.mode === NavbarMode.Normal" class="w-24" alt="" src="assets/images/logo_text_negative.svg">
+                <!-- </span> -->
                 <span class="text-lg font-bold" *ngIf="state.navbar.mode === NavbarMode.Selection">{{state.navbar.label}}</span>
-            </div> 
-            <div class="flex-none">
-                <button class="btn btn-square btn-ghost" *ngIf="state.navbar.mode === NavbarMode.Normal" [app-icon]="icons.search" [routerLink]="[{ outlets: { secondaryPage: ['search'] } }]"></button>
-                <button class="btn btn-square btn-ghost" *ngIf="state.navbar.mode === NavbarMode.Selection" [app-icon]="icons.trash" (click)="onNavbarCommand(NavbarCommand.Delete)"></button>
+
+                <label class="focusable-input w-full flex flex-row-reverse items-center gap-x-7" [ngClass]="{active: state.navbar.mode === NavbarMode.Search}" *ngIf="state.navbar.mode === NavbarMode.Normal || state.navbar.mode === NavbarMode.Search">
+                    <app-icon class="icon" [iconSvg]="icons.search"></app-icon>
+                    <input type="text" class="input input-bordered text-neutral" (focus)="activateSearchMode()">
+                </label>
+            </div>
+            <div class="flex-none" *ngIf="state.navbar.mode === NavbarMode.Selection">
+                <!-- <button class="btn btn-square btn-ghost" *ngIf="state.navbar.mode === NavbarMode.Normal" [app-icon]="icons.search" [routerLink]="[{ outlets: { secondaryPage: ['search'] } }]"></button> -->
+                <button class="btn btn-square btn-ghost" [app-icon]="icons.trash" (click)="onNavbarCommand(NavbarCommand.Delete)"></button>
             </div>
         </section>
         
