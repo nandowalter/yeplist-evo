@@ -1,24 +1,4 @@
-<div class="w-full h-full bg-base-200 flex flex-col" *ngIf="state$ | async as state">
-    <div class="flex-none navbar shadow-lg bg-primary text-neutral-content">
-        <div class="flex-none"> 
-            <a class="btn btn-square btn-ghost" [routerLink]="['..']" [app-icon]="icons.arrow_left"></a>
-        </div> 
-        <div class="flex-1 px-2 mx-2">
-            <span class="text-lg font-bold" [formGroup]="dataGroup">
-                <input 
-                    autofocus 
-                    #searchInput 
-                    class="bg-primary border-none appearance-none outline-none focus:border-0 focus-visible:outline-0 focus-visible:border-0" 
-                    type="text" 
-                    placeholder="Cerca..."
-                    formControlName='searchText'
-                >
-            </span>
-        </div>
-        <div class="flex-none">
-            <!--<button class="btn btn-square btn-ghost" [app-icon]="icons.save"></button>-->
-        </div>
-    </div>
+<div class="relative h-screen overflow-hidden bg-base-200 flex flex-col" *ngIf="state$ | async as state">
     <div class="tabs w-full flex flex-row">
         <a class="tab tab-bordered tab-active grow" [ngClass]="{ 'tab-active': activePanel === 0 || !activePanel }" (click)="activePanel = 0">
             Liste<span *ngIf="state.lists?.length > 0">&nbsp;({{state.lists?.length}})</span>

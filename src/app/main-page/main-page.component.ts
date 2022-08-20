@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
 import { rotateInOutAnimation, secondaryPageAnimations } from '../animations';
 import { icon_arrow_left, icon_collection, icon_heart, icon_home, icon_menu, icon_search, icon_trash, icon_x } from '../icon/icon-set';
 import { NavbarCommand } from '../_models/navbar-command';
@@ -18,7 +19,7 @@ import { NavbarModeService } from '../_services/navbar-mode.service';
     rotateInOutAnimation
   ]
 })
-export class MainPageComponent {
+export class MainPageComponent implements OnInit, OnDestroy {
   icons = {
     menu: icon_menu,
     search: icon_search,
@@ -32,6 +33,8 @@ export class MainPageComponent {
   state$: Observable<{ navbar: { mode: NavbarMode, label: string } }>;
   NavbarMode = NavbarMode;
   NavbarCommand = NavbarCommand;
+  searchDataGroup: FormGroup;
+  searchText$$: Subscription;
 
   constructor(
     public router: Router,
@@ -40,15 +43,35 @@ export class MainPageComponent {
     this.state$ = navbarModeService.state.pipe(map(value => ({ navbar: value })));
   }
 
+  ngOnInit(): void {
+    this.initSearchForm();
+  }
+
+  ngOnDestroy(): void {
+    if (this.searchText$$)
+      this.searchText$$.unsubscribe();
+  }
+
   onNavbarCommand(command: NavbarCommand) {
     this.navbarModeService.triggerCommand(command);
   }
 
-  activateSearchMode() {
+  goToSearch() {
     this.navbarModeService.setMode(NavbarMode.Search);
+    this.router.navigate(['/search'], { skipLocationChange: true });
   }
 
   deactivateSearchMode() {
     this.navbarModeService.setMode(NavbarMode.Normal);
+  }
+
+  private initSearchForm() {
+    this.searchDataGroup = new FormGroup({
+      searchText: new FormControl(null, [])
+    });
+
+    this.searchText$$ = this.searchDataGroup.get('searchText').valueChanges.pipe(debounceTime(500)).subscribe({
+      next: text => this.navbarModeService.triggerCommand(NavbarCommand.SearchText, text)
+    });
   }
 }

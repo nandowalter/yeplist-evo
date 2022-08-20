@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, distinct, tap } from 'rxjs/operators';
 import { NavbarCommand } from '../_models/navbar-command';
 import { NavbarMode } from '../_models/navbar-mode';
 
@@ -9,12 +9,12 @@ export class NavbarModeService {
     private mode$ = new BehaviorSubject<NavbarMode>(NavbarMode.Normal);
     private label$ = new BehaviorSubject<string>(null);
     private state$: Observable<{ mode: NavbarMode, label: string }>;
-    private command$ = new Subject<NavbarCommand>();
+    private command$ = new Subject<{ command: NavbarCommand, value?: any }>();
 
     constructor() {
         this.state$ = combineLatest([
-            this.mode$,
-            this.label$,
+            this.mode$.pipe(),
+            this.label$.pipe(),
         ]).pipe(
             map(value => ({ mode: value[0], label: value[1] }))
         );
@@ -24,7 +24,7 @@ export class NavbarModeService {
         return this.state$;
     }
 
-    get command(): Observable<NavbarCommand> {
+    get command(): Observable<{ command: NavbarCommand, value?: any }> {
         return this.command$;
     }
 
@@ -36,7 +36,7 @@ export class NavbarModeService {
         this.label$.next(label);
     }
 
-    triggerCommand(command: NavbarCommand) {
-        this.command$.next(command);
+    triggerCommand(command: NavbarCommand, value?: any) {
+        this.command$.next({ command, value });
     }
 }

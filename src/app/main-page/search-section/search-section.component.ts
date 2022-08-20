@@ -1,29 +1,28 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Route, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject } from 'rxjs';
-import { ListEntryMode } from '../common/list-entry-mode';
-import { icon_arrow_left, icon_collection, icon_pencil } from '../icon/icon-set';
-import { List } from '../_models/list';
-import { ListItem } from '../_models/list-item';
-import { MainDataService } from '../_services/main-data.service';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, combineLatest, map, Observable, Subscription } from 'rxjs';
+import { NavbarCommand } from 'src/app/_models/navbar-command';
+import { NavbarModeService } from 'src/app/_services/navbar-mode.service';
+import { ListEntryMode } from '../../common/list-entry-mode';
+import { icon_arrow_left, icon_collection, icon_pencil } from '../../icon/icon-set';
+import { List } from '../../_models/list';
+import { ListItem } from '../../_models/list-item';
+import { MainDataService } from '../../_services/main-data.service';
 
 @Component({
-    selector: 'app-search-page',
-    templateUrl: 'search-page.component.html',
-    styleUrls: [ 'search-page.component.css' ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {'class': 'fixed top-0 left-0 h-full w-screen z-30'}
+    selector: 'app-search-section',
+    templateUrl: 'search-section.component.html',
+    styleUrls: [ 'search-section.component.css' ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class SearchPageComponent implements OnInit, AfterViewInit {
-    @ViewChild('searchInput') searchInput: ElementRef;
+export class SearchSectionComponent implements OnInit, OnDestroy {
     activePanel: number;
-    dataGroup: FormGroup;
     lists$ = new BehaviorSubject<List[]>(null);
     items$ = new BehaviorSubject<{ list: List, item: ListItem }[]>(null);
     state$: Observable<{ lists: List[], itemsInLists: { list: List, item: ListItem }[] }>;
     ListEntryMode = ListEntryMode;
+    navbarMode$$: Subscription;
 
     icons = {
         arrow_left: icon_arrow_left,
@@ -34,7 +33,8 @@ export class SearchPageComponent implements OnInit, AfterViewInit {
     constructor(
         private mainData: MainDataService,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private navbarModeService: NavbarModeService
     ) {
         this.state$ = combineLatest([
             this.lists$,
@@ -45,11 +45,14 @@ export class SearchPageComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.initForm();
+        this.navbarMode$$ = this.navbarModeService.command.subscribe({
+            next: (navbarCommand: { command: NavbarCommand, value?: string}) => this.onSearchText(navbarCommand.value)
+        });
     }
 
-    ngAfterViewInit(): void {
-        this.searchInput.nativeElement.focus();
+    ngOnDestroy(): void {
+        if (this.navbarMode$$)
+            this.navbarMode$$.unsubscribe();
     }
 
     trackListsById(index: number, item: List) {
@@ -66,14 +69,6 @@ export class SearchPageComponent implements OnInit, AfterViewInit {
 
     goToItemInList(list: List, item: ListItem) {
         this.router.navigate(['..', 'list', 'edit', list.id, 'item', item.id], { relativeTo: this.route });
-    }
-
-    private initForm() {
-        this.dataGroup = new FormGroup({
-            searchText: new FormControl(null)
-        });
-
-        this.dataGroup.controls['searchText'].valueChanges.pipe(debounceTime(500)).subscribe(value => this.onSearchText(value));
     }
 
     private onSearchText(searchText: string) {

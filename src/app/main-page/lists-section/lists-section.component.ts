@@ -73,8 +73,8 @@ export class ListsSectionComponent implements OnInit, OnDestroy {
     }
 
     onNavbarCommandTriggerFactory(selectedLists?: string[]) {
-        return (command: NavbarCommand) => {
-            switch (command) {
+        return (navbarCommand: { command: NavbarCommand, value?: any }) => {
+            switch (navbarCommand.command) {
                 case NavbarCommand.Unselect:
                     this.clearSelection();
                     break;

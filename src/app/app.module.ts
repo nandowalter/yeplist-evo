@@ -15,7 +15,7 @@ import { AlertComponent } from './alert/alert.component';
 import { IconComponent } from './icon/icon.component';
 import { IconDirective } from './icon/icon.directive';
 import { AppScrollDirective } from './common/app-scroll.directive';
-import { SearchPageComponent } from './search-page/search-page.component';
+import { SearchSectionComponent } from './main-page/search-section/search-section.component';
 import { ListEntryComponent } from './common/list-entry/list-entry.component';
 import { ListEditPageComponent } from './list-edit-page/list-edit-page.component';
 import { ItemEditPageComponent } from './item-edit-page/item-edit-page.component';
@@ -33,7 +33,8 @@ const routes: Routes = [
     canActivate: [ AuthenticationGuard ],
     children: [
       { path: '', redirectTo: '/lists', pathMatch: 'full' /* component: HomeSectionComponent, canActivate: [ AuthenticationGuard ] */ },
-      { path: 'lists', component: ListsSectionComponent, canActivate: [ AuthenticationGuard ]},
+      { path: 'lists', component: ListsSectionComponent, canActivate: [ AuthenticationGuard ] },
+      { path: 'search', component: SearchSectionComponent, canActivate: [ AuthenticationGuard ] },
       {
         path: 'list',
         canActivate: [ AuthenticationGuard ],
@@ -57,12 +58,6 @@ const routes: Routes = [
             component: ItemEditPageComponent
           }
         ]
-      },
-      {
-        path: 'search',
-        component: SearchPageComponent,
-        outlet: 'secondaryPage',
-        canActivate: [ AuthenticationGuard ]
       }
     ]
   },
@@ -88,7 +83,7 @@ const routes: Routes = [
     IconComponent,
     IconDirective,
     AppScrollDirective,
-    SearchPageComponent,
+    SearchSectionComponent,
     ItemEditPageComponent,
     ItemElementComponent,
     PanManagerComponent,

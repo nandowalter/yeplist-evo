@@ -1,4 +1,5 @@
 export enum NavbarCommand {
     Unselect,
-    Delete
+    Delete,
+    SearchText
 }
