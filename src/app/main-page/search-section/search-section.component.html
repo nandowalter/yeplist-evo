@@ -21,8 +21,8 @@
 
         <div class="h-full w-full bg-custom-pattern" *ngIf="activePanel === 1">
             <div class="grid grid-cols-1 pb-12">
-                <ng-container *ngFor="let itemInList of state.itemsInLists">
-                    <app-item-element [item]="itemInList.item" [showQty]="false" [contextButton]="true">
+                <ng-container *ngFor="let itemInList of state.itemsInLists; trackBy: itemTrack">
+                    <app-item-element class="p-4" [item]="itemInList.item" [showQty]="false" [contextButton]="true">
                         <ng-container dropdownMenuItems>
                             <li><a (click)="goToList(itemInList.list)"><i [app-icon]="icons.collection"></i>Vai a lista</a></li>
                             <li><a (click)="goToItemInList(itemInList.list, itemInList.item)"><i [app-icon]="icons.pencil"></i>Vai a modifica elemento</a></li>

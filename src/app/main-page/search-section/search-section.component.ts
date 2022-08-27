@@ -60,11 +60,11 @@ export class SearchSectionComponent implements OnInit, OnDestroy {
     }
 
     onListItemTap(index: number, listId: string) {
-        this.router.navigate(['..', 'list', 'edit', listId], { relativeTo: this.route });
+        this.router.navigate(['..', 'list', {outlets: { 'secondaryPage': ['list', 'edit', listId]}}], { relativeTo: this.route });
     }
 
     goToList(list: List) {
-        this.router.navigate(['..', 'list', 'edit', list.id], { relativeTo: this.route });
+        this.router.navigate([{outlets: { 'secondaryPage': ['list', 'edit', list.id]}}], { relativeTo: this.route });
     }
 
     goToItemInList(list: List, item: ListItem) {
@@ -85,5 +85,9 @@ export class SearchSectionComponent implements OnInit, OnDestroy {
                 next: (value) => this.items$.next(value)
             });
         }
+    }
+
+    itemTrack(index: number, value: { list: List, item: ListItem }) {
+        return `${value.list.id}_${value.item.id}`;
     }
 }
