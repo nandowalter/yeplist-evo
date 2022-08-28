@@ -55,12 +55,17 @@
                 <label class="label">
                 <span class="label-text">Quantità</span>
                 </label>
-                <input formControlName="qty" type="number" pattern="[0-9,.]*" inputmode="decimal" placeholder="quantità" min="1" max="999" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid}">
+                <input formControlName="qty" type="number" pattern="[0-9,.]*" inputmode="decimal" placeholder="quantità" [attr.min]="MIN_VALUE" [attr.max]="MAX_VALUE" [maxLength]="6" class="input input-bordered" [ngClass]="{ 'input-error': dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid}">
                 <ng-container *ngIf="dataGroup.get('qty')?.touched && dataGroup.get('qty')?.invalid">    
                     <div [attr.data-tip]="getErrorMessage('qty', dataGroup.get('qty')?.errors)" class="tooltip tooltip-open tooltip-error tooltip-bottom">
                         <label></label>
                     </div>
                 </ng-container>
+                <div class="mt-1 mb-1 flex">
+                    <button class="btn btn-xs" (click)="decreaseQty(dataGroup.get('qty'), MIN_VALUE)">-</button>
+                    <span class="grow">&nbsp;</span>
+                    <button class="btn btn-xs" (click)="increaseQty(dataGroup.get('qty'), MAX_VALUE)">+</button>
+                </div>
             </div>
 
             <div class="flex flex-row py-4">

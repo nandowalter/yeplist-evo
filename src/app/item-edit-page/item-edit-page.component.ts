@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, debounceTime, filter, map, Observable, Subscription, tap } from 'rxjs';
 import { icon_arrow_left, icon_camera, icon_light_bulb, icon_pencil, icon_plus, icon_save, icon_trash, icon_x } from '../icon/icon-set';
@@ -28,7 +28,8 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
             notUnique: 'Nome già esistente in lista'
         },
         qty: {
-            max: 'Numero massimo 999'
+            min: 'Qta minima 1',
+            max: 'Qta massima 999'
         },
         notes: {
             maxlength: 'Lunghezza massima 100 caratteri'
@@ -50,6 +51,8 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
     nameTextBoxChange$$: Subscription;
     videoEnabled: boolean;
     fullscreenImageUrl: string;
+    readonly MIN_VALUE = 1;
+    readonly MAX_VALUE = 999;
 
     constructor(
         private router: Router,
@@ -99,7 +102,7 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
             listId: new FormControl(null),
             name: new FormControl('', [ Validators.required, Validators.maxLength(25) ]),
             category: new FormControl('generico'),
-            qty: new FormControl(1, [ Validators.max(999) ]),
+            qty: new FormControl(1, [ Validators.min(1), Validators.max(999), Validators.maxLength(6) ]),
             um: new FormControl(''),
             notes: new FormControl('',[ Validators.maxLength(100) ]),
             imageUrls: new FormControl([]),
@@ -224,5 +227,20 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
         let actualViewport = this.document.head.querySelector('meta[name="viewport"]').getAttribute('content');
         this.document.head.querySelector('meta[name="viewport"]').setAttribute('content',`${actualViewport}, minimum-scale=1, maximum-scale=1, user-scalable=no`);
         this.fullscreenImageUrl = undefined;
+    }
+
+    decreaseQty(control: AbstractControl, minValue: number) {
+        if (control.value === minValue)
+            return;
+
+        control.patchValue((control.value > minValue) ? control.value - 1 : 1);
+    }
+
+    increaseQty(control: AbstractControl, maxValue: number) {
+        if (control.value === maxValue)
+            return;
+
+        let fallbackValue = control.value > maxValue ? maxValue : 1;
+        control.patchValue((control.value >= 0) && (control.value < maxValue) ? control.value + 1 : fallbackValue);
     }
 }
