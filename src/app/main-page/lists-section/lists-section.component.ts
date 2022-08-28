@@ -66,7 +66,7 @@ export class ListsSectionComponent implements OnInit, OnDestroy {
 
     onItemTap(id: string, selectedListsCount: number) {
         if (selectedListsCount === 0) {
-            this.router.navigate([{outlets: { 'secondaryPage': ['list', 'edit', id]}} ], { relativeTo: this.route.parent });
+            this.router.navigate([ 'list', 'edit', id ], { relativeTo: this.route.parent });
         } else {
             this.store.toggleListSelection(id);
         }
@@ -88,14 +88,14 @@ export class ListsSectionComponent implements OnInit, OnDestroy {
     }
 
     goToAddList() {
-        this.router.navigate([{outlets: { 'secondaryPage': ['list']}} ], { relativeTo: this.route.parent });
+        this.router.navigate([ 'list' ], { relativeTo: this.route.parent });
     }
 
     ngOnInit() {
         if (typeof localStorage != 'undefined' && localStorage.getItem('yp_lastEditedListId')) {
             let lastEditedListId = localStorage.getItem('yp_lastEditedListId');
             localStorage.removeItem('yp_lastEditedListId');
-            this.router.navigate([{outlets: { 'secondaryPage': ['list', 'edit', lastEditedListId]}} ], { relativeTo: this.route.parent });
+            this.router.navigate([ 'list', 'edit', lastEditedListId ], { relativeTo: this.route.parent });
         }
         
         this.state$ = this.store.state$.pipe(

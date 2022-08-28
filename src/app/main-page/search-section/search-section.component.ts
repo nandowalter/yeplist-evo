@@ -60,15 +60,16 @@ export class SearchSectionComponent implements OnInit, OnDestroy {
     }
 
     onListItemTap(index: number, listId: string) {
-        this.router.navigate(['..', 'list', {outlets: { 'secondaryPage': ['list', 'edit', listId]}}], { relativeTo: this.route });
+        // this.router.navigate(['..', 'lists', {outlets: { 'secondaryPage': ['list', 'edit', listId]}}], { relativeTo: this.route });
+        this.router.navigate([ 'list', 'edit', listId ], { relativeTo: this.route.parent });
     }
 
     goToList(list: List) {
-        this.router.navigate([{outlets: { 'secondaryPage': ['list', 'edit', list.id]}}], { relativeTo: this.route });
+        this.router.navigate([ 'list', 'edit', list.id ], { relativeTo: this.route.parent });
     }
 
     goToItemInList(list: List, item: ListItem) {
-        this.router.navigate(['..', 'list', 'edit', list.id, 'item', item.id], { relativeTo: this.route });
+        this.router.navigate([ 'list', 'edit', list.id, 'item', item.id ], { relativeTo: this.route.parent });
     }
 
     private onSearchText(searchText: string) {

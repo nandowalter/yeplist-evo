@@ -38,13 +38,13 @@ const routes: Routes = [
       {
         path: 'list',
         canActivate: [ AuthenticationGuard ],
-        outlet: 'secondaryPage',
+        // outlet: 'secondaryPage',
         component: ListCreatePageComponent
       },
       {
         path: 'list/edit/:listId',
         canActivate: [ AuthenticationGuard ],
-        outlet: 'secondaryPage',
+        //outlet: 'secondaryPage',
         component: ListEditPageComponent,
         children: [
           {

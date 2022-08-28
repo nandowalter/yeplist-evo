@@ -25,12 +25,12 @@
             </div>
         </section>
         
-        <section class="grow relative overflow-auto">
-            <router-outlet></router-outlet>
+        <section class="grow relative overflow-hidden" [@secondaryPage]="outlet?.isActivated">
+            <router-outlet #outlet="outlet"></router-outlet>
         </section>
 
-        <div class="w-0 h-0 overflow-hidden" [@secondaryPage]="outlet?.isActivated">
-            <router-outlet #outlet="outlet" name="secondaryPage"></router-outlet>
+        <div class="w-0 h-0 overflow-hidden">
+            <router-outlet name="secondaryPage"></router-outlet>
         </div>
 
         <section class="flex-none bg-base-200">
