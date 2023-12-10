@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -33,7 +33,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   state$: Observable<{ navbar: { mode: NavbarMode, label: string } }>;
   NavbarMode = NavbarMode;
   NavbarCommand = NavbarCommand;
-  searchDataGroup: FormGroup;
+  searchDataGroup: UntypedFormGroup;
   searchText$$: Subscription;
 
   constructor(
@@ -66,8 +66,8 @@ export class MainPageComponent implements OnInit, OnDestroy {
   }
 
   private initSearchForm() {
-    this.searchDataGroup = new FormGroup({
-      searchText: new FormControl(null, [])
+    this.searchDataGroup = new UntypedFormGroup({
+      searchText: new UntypedFormControl(null, [])
     });
 
     this.searchText$$ = this.searchDataGroup.get('searchText').valueChanges.pipe(debounceTime(500)).subscribe({

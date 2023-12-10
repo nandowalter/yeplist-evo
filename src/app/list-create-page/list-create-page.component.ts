@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Optional, ViewChild } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { concat, of, switchMap, take, tap } from 'rxjs';
 import { icon_arrow_left, icon_qrcode, icon_save, icon_x } from '../icon/icon-set';
@@ -23,8 +23,8 @@ export class ListCreatePageComponent {
         qrcode: icon_qrcode,
         x: icon_x
     };
-    dataGroup: FormGroup = new FormGroup({
-        name: new FormControl('', [ Validators.required, Validators.maxLength(25) ])
+    dataGroup: UntypedFormGroup = new UntypedFormGroup({
+        name: new UntypedFormControl('', [ Validators.required, Validators.maxLength(25) ])
     });
     private readonly errorConfig: {[key:string]: {[key:string]: string}} = {
         name: {

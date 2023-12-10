@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, debounceTime, filter, map, Observable, Subscription, tap } from 'rxjs';
 import { icon_arrow_left, icon_camera, icon_light_bulb, icon_pencil, icon_plus, icon_save, icon_trash, icon_x } from '../icon/icon-set';
@@ -20,7 +20,7 @@ import { ItemEditState, ItemEditStore } from './item-edit.store';
 
 export class ItemEditPageComponent implements OnInit, OnDestroy {
     @ViewChild('video') video: ElementRef<HTMLVideoElement>;
-    dataGroup: FormGroup;
+    dataGroup: UntypedFormGroup;
     private readonly errorConfig: {[key:string]: {[key:string]: string}} = {
         name: {
             required: 'Informazione obbligatoria',
@@ -97,16 +97,16 @@ export class ItemEditPageComponent implements OnInit, OnDestroy {
     }
 
     initForm() {
-        this.dataGroup = new FormGroup({
-            id: new FormControl(null),
-            listId: new FormControl(null),
-            name: new FormControl('', [ Validators.required, Validators.maxLength(25) ]),
-            category: new FormControl('generico'),
-            qty: new FormControl(1, [ Validators.min(1), Validators.max(999), Validators.maxLength(6) ]),
-            um: new FormControl(''),
-            notes: new FormControl('',[ Validators.maxLength(100) ]),
-            imageUrls: new FormControl([]),
-            newImages: new FormControl([])
+        this.dataGroup = new UntypedFormGroup({
+            id: new UntypedFormControl(null),
+            listId: new UntypedFormControl(null),
+            name: new UntypedFormControl('', [ Validators.required, Validators.maxLength(25) ]),
+            category: new UntypedFormControl('generico'),
+            qty: new UntypedFormControl(1, [ Validators.min(1), Validators.max(999), Validators.maxLength(6) ]),
+            um: new UntypedFormControl(''),
+            notes: new UntypedFormControl('',[ Validators.maxLength(100) ]),
+            imageUrls: new UntypedFormControl([]),
+            newImages: new UntypedFormControl([])
         });
 
         if (this.nameTextBoxChange$$)
