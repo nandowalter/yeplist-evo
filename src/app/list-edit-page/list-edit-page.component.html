@@ -106,7 +106,7 @@
         <app-modal-dialog modalId="share-list-modal" [cancelButton]="false" [confirmButton]="false">
             <div class="flex flex-col items-center">
                 <span>Usa il QRCode</span>
-                <app-qr-canvas [text]="state.shareToken"></app-qr-canvas>
+                <app-qr-canvas *ngIf="state.shareToken" [text]="state.shareToken"></app-qr-canvas>
                 <span>o condividi il codice</span>
                 <p class="py-4 font-bold text-4xl text-center">YP{{state.shareToken}}</p>
                 <span>oppure</span>
