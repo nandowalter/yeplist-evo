@@ -2,11 +2,10 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Opti
 import { Auth } from '@angular/fire/auth';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { concat, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, concat, of, switchMap, take } from 'rxjs';
 import { icon_arrow_left, icon_qrcode, icon_save, icon_x } from '../icon/icon-set';
 import { List } from '../_models/list';
 import { MainDataService } from '../_services/main-data.service';
-import QrScanner from 'qr-scanner';
 
 @Component({
     selector: 'app-list-create-page',
@@ -34,9 +33,10 @@ export class ListCreatePageComponent {
             notValidCode: 'Codice non valido'
         }
     };
-    qrScannerVisible: boolean;
+
+    qrScannerVisible$ = new BehaviorSubject<boolean>(false);
     qrScanner: any;
-    loading: boolean;
+    loading$ = new BehaviorSubject<boolean>(false);
 
     constructor(
         @Optional() private auth: Auth,
@@ -56,7 +56,7 @@ export class ListCreatePageComponent {
     }
 
     importSharedList(listId: string, updateToken: string) {
-        this.loading = true;
+        this.loading$.next(true);
         this.cd.markForCheck();
         concat(
             this.mainData.updateList(listId, { updateToken, tempAllowedUserId: this.auth.currentUser?.uid} as any),
@@ -71,9 +71,9 @@ export class ListCreatePageComponent {
                 })
             )
         ).subscribe({
-            error: error => this.loading = false,
+            error: error => this.loading$.next(false),
             complete: () => {
-                this.loading = false;
+                this.loading$.next(false);
                 this.dataGroup.reset();
                 this.router.navigate(['..'], { relativeTo: this.route });
                 this.cd.markForCheck();
@@ -82,12 +82,12 @@ export class ListCreatePageComponent {
     }
 
     async saveNewList() {
-        this.loading = true;
+        this.loading$.next(true);
         this.cd.markForCheck();
         let name = this.dataGroup.get('name')?.value;
         let result = await this.mainData.findListByName(name);
         if(result != null) {
-            this.loading = false;
+            this.loading$.next(false);
             this.dataGroup.controls['name'].setErrors({
                 notUnique: true
             });
@@ -96,7 +96,7 @@ export class ListCreatePageComponent {
         } else {
             let newList = new List({ name, userIds: [this.auth.currentUser?.uid], ownerId: this.auth.currentUser?.uid, viewType: 'itemList', updateToken: `${Date.now()}` });
             await this.mainData.addList(newList);
-            this.loading = false;
+            this.loading$.next(false);
             this.dataGroup.reset();
             this.router.navigate(['..'], { relativeTo: this.route });
             this.cd.markForCheck();
@@ -111,42 +111,36 @@ export class ListCreatePageComponent {
     }
 
     activateQrCodeScanner() {
-        this.dataGroup.reset();
-        this.qrScannerVisible = true;
-        this.qrScanner = new QrScanner(this.videoCamElement.nativeElement, (result) => this.onShareToken(result?.data), {});
-        this.qrScanner.start();
+        //@ts-ignore
+        import('qr-scanner').then((module: Module) => {
+            this.dataGroup.reset();
+            this.qrScannerVisible$.next(true);
+            this.qrScanner = new module.default(this.videoCamElement.nativeElement, (result) => this.onShareToken(result?.data), {});
+            this.qrScanner.start();
+        });
     }
 
     closeQrCodeScanner() {
         this.qrScanner?.stop();
-        this.qrScannerVisible = false;
-        this.cd.markForCheck();
+        this.qrScannerVisible$.next(false);
     }
 
     private onShareToken(shareToken: string) {
         if (shareToken?.length > 4) {
             this.closeQrCodeScanner();
-            this.loading = true;
+            this.loading$.next(true);
             this.cd.markForCheck();
             this.mainData.getShareTokenData(shareToken).subscribe({
                 next: shareTokenData => {
                     if (shareToken) {
                         this.importSharedList(shareTokenData.listId, shareTokenData.updateToken);
                     } else {
-                        this.loading = false;
-                        if (this.qrScannerVisible) {
-                            this.closeQrCodeScanner();
-                        } else {
-                            this.dataGroup.controls['name'].setErrors({
-                                notValidCode: true
-                            });
-                        }
-                        this.cd.markForCheck();
+                        this.loading$.next(false);
+                        this.closeQrCodeScanner();
                     }
                 },
                 error: error => {
-                    this.loading = false;
-                    this.cd.markForCheck();
+                    this.loading$.next(false);
                 }
             });
         } else {

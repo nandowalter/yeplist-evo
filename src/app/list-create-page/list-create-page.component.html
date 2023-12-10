@@ -1,4 +1,4 @@
-<div class="fixed w-screen h-full bg-base-200 flex flex-col">
+<div class="fixed w-screen h-full bg-base-200 flex flex-col" *ngrxLet="qrScannerVisible$ as qrScannerVisible">
     <div class="navbar mb-2 shadow-lg bg-primary text-neutral-content">
         <div class="flex-none"> 
             <a *ngIf="!qrScannerVisible" class="btn btn-square btn-ghost" [routerLink]="['..']" [app-icon]="icons.arrow_left"></a>
@@ -25,9 +25,10 @@
         </div>
         <video #videoCam></video>
 
-        <div class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center" *ngIf="loading">
-            <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
-        </div>
-
+        <ng-container *ngrxLet="loading$ as loading">
+            <div *ngIf="loading" class="absolute top-0 left-0 h-full w-full backdrop-opacity-10 backdrop-invert bg-black/10 flex justify-center items-center">
+                <button class="btn btn-ghost btn-lg btn-circle loading"></button> 
+            </div>
+        </ng-container>
     </div>
 </div>

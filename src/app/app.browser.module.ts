@@ -3,7 +3,7 @@ import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { browserPopupRedirectResolver, indexedDBLocalPersistence, initializeAuth, provideAuth } from '@angular/fire/auth';
 import { provideFirestore, initializeFirestore, persistentLocalCache } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
-import { BrowserModule, HammerModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+import { HammerModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { environment } from 'src/environments/environment';
 import { AppComponent } from './app.component';
@@ -15,7 +15,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
     imports: [
-      BrowserModule,
       BrowserAnimationsModule,
       HammerModule,
       provideFirebaseApp(() => initializeApp(environment.firebase)),

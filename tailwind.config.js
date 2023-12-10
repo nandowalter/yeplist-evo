@@ -1,10 +1,9 @@
 module.exports = {
   content: [
-    './src/app/**/*.{html,ts}',
+    './src/**/*.{html,ts}',
   ],
-  safelist: process?.argv?.some(arg => arg.includes('deploy')) ? undefined : [{ pattern: /./ }],
   plugins: [
-    require('daisyui'),
+    require('daisyui')
   ],
   theme: {
     extend: {
@@ -38,16 +37,4 @@ module.exports = {
       }
     }, "dark"]
   }
-
-  /*
-  ,
-  purge: {
-    content: ['**//*.html'],
-    options: {
-      safelist: [
-        /data-theme$/,
-      ]
-    },
-  }
-  */
 }

@@ -25,6 +25,7 @@ import { ModalDialogComponent } from './common/modal-dialog/modal-dialog.compone
 import { DropdownMenuComponent } from './common/dropdown-menu/dropdown-menu.component';
 import { QrCanvasComponent } from './qr-canvas/qr-canvas.components';
 import { CamComponent } from './cam/cam.component';
+import { LetDirective } from '@ngrx/component';
 
 const routes: Routes = [
   {
@@ -99,7 +100,8 @@ const routes: Routes = [
       enableTracing: false
     }),
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    LetDirective
   ],
   exports: [
     AppComponent,

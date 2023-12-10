@@ -1,5 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import QRCode from 'qrcode'
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'app-qr-canvas',
@@ -24,7 +23,8 @@ export class QrCanvasComponent implements OnChanges, AfterViewInit {
     }
 
     private initCanvas(text: string) {
-        if (text && this.canvasEl?.nativeElement)
-            QRCode.toCanvas(this.canvasEl.nativeElement, text);
+        if (text && this.canvasEl?.nativeElement) {
+            import('qrcode').then((module) => module.default.toCanvas(this.canvasEl.nativeElement, text));
+        }
     }
 }
