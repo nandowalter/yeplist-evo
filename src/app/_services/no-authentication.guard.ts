@@ -1,12 +1,12 @@
 import { Injectable, Optional } from '@angular/core';
 import { Auth, authState } from '@angular/fire/auth';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NoAuthenticationGuard implements CanActivate {
+export class NoAuthenticationGuard  {
 
   constructor(
     @Optional() private auth: Auth,
